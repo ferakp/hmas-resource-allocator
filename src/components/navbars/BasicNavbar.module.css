@@ -1,0 +1,100 @@
+.container a {
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  background-color: #282a35;
+  height: 45px;
+}
+
+.mobileModeContainer {
+  display: none;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+}
+
+.link {
+  color: white;
+  font-size: 1.0rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.link {
+  margin-left: 10px;
+}
+
+.mobileModeLinks {
+  display: none;
+}
+
+@media only screen and (max-width: 767px) {
+  .mobileMode.upperContainer {
+    position: relative;
+  }
+
+  .mobileMode .mobileModeLinks {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    position: absolute;
+
+    background-color: #282a35;
+  }
+
+  .header {
+    display: none;
+    background-color: #282a35;
+  }
+
+  .headerLine {
+    width: 100%;
+    color: white;
+  }
+
+  .mobileModeLinks .link {
+      margin-top: 10px;
+  }
+
+  .mobileModeContainer {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+  }
+
+  .trigram {
+    color: white;
+    font-size: 2.1rem;
+    margin: 0px;
+    margin-left: auto;
+    margin-right: 10px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .menuName {
+    margin-left: 10px;
+    display: inline-block;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .link:nth-last-child(1) {
+      margin-bottom: 10px;
+  }
+}
