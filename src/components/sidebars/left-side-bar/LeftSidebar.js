@@ -1,26 +1,31 @@
 import React from "react";
 import styles from "./LeftSidebar.module.css";
-import image from "../../boxes/box/box.png";
 import Icon from "@mdi/react";
+import { getContext } from "../../../state/context";
 import { mdiCog } from "@mdi/js";
 import { mdiViewDashboardVariant } from "@mdi/js";
 import { mdiRobotOutline } from "@mdi/js";
 import { mdiCogOutline } from "@mdi/js";
 import { mdiLogin } from "@mdi/js";
 import { mdiHelpCircle } from "@mdi/js";
-import { mdiAccountDetails } from '@mdi/js';
+import { mdiAccountDetails } from "@mdi/js";
 
 /**
- * Mode: default, loggedIn
+ * Mode: default, user
  */
 
 export class LeftSidebar extends React.Component {
+  static AppContext = getContext();
   state = { mode: "default" };
 
   constructor(props) {
     super(props);
     this.wrapperRef = React.createRef();
   }
+
+  linkClick = (link) => {
+    if (link) this.props.onLinkClick(link);
+  };
 
   render() {
     return (
@@ -53,7 +58,10 @@ export class LeftSidebar extends React.Component {
             </div>
           </div>
           <div className={styles.linkContainer}>
-            <div className={styles.link}>
+            <div
+              className={styles.link}
+              onClick={() => this.linkClick("Dashboard")}
+            >
               <Icon
                 path={mdiViewDashboardVariant}
                 size={1}
@@ -62,7 +70,10 @@ export class LeftSidebar extends React.Component {
               />
               <p className={styles.linkName}>Dashboard</p>
             </div>
-            <div className={styles.link}>
+            <div
+              className={styles.link}
+              onClick={() => this.linkClick("Holons")}
+            >
               <Icon
                 path={mdiRobotOutline}
                 size={1}
@@ -71,7 +82,7 @@ export class LeftSidebar extends React.Component {
               />
               <p className={styles.linkName}>Holons</p>
             </div>
-            <div className={styles.link}>
+            <div className={styles.link} onClick={() => this.linkClick("Help")}>
               <Icon
                 path={mdiHelpCircle}
                 size={1}
@@ -80,7 +91,10 @@ export class LeftSidebar extends React.Component {
               />
               <p className={styles.linkName}>Help</p>
             </div>
-            <div className={styles.link}>
+            <div
+              className={styles.link}
+              onClick={() => this.linkClick("Settings")}
+            >
               <Icon
                 path={mdiCogOutline}
                 size={1}
@@ -92,25 +106,37 @@ export class LeftSidebar extends React.Component {
 
             <div className={styles.footer}>
               <hr></hr>
-              <div className={styles.link}>
+              <div
+                className={styles.link}
+                onClick={() => this.linkClick("Login")}
+              >
                 <Icon
-                  rotate={this.state.mode === "loggedIn" ? 180 : 0}
+                  rotate={this.state.mode === "user" ? 180 : 0}
                   path={mdiLogin}
                   size={1}
                   color="rgba(255, 255, 255, 0.548)"
                   className={styles.linkIcon}
                 />
-                <p className={styles.linkName}>Login</p>
+                <p className={styles.linkName}>
+                  {this.props.state.user.username ? "Logout" : "Login"}
+                </p>
               </div>
-              <div className={styles.link}>
-                <Icon
-                  path={mdiAccountDetails}
-                  size={1}
-                  color="rgba(255, 255, 255, 0.548)"
-                  className={styles.linkIcon}
-                />
-                <p className={styles.linkName}>Account</p>
-              </div>
+              {this.state.mode === "user" ? (
+                <div
+                  className={styles.link}
+                  onClick={() => this.linkClick("Account")}
+                >
+                  <Icon
+                    path={mdiAccountDetails}
+                    size={1}
+                    color="rgba(255, 255, 255, 0.548)"
+                    className={styles.linkIcon}
+                  />
+                  <p className={styles.linkName}>Account</p>
+                </div>
+              ) : (
+                ""
+              )}
               <hr></hr>
               <div className={styles.versionInfoContainer}>
                 <p>Version number</p>

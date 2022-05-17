@@ -74,6 +74,7 @@
     color: rgba(255, 255, 255, 0.476);
     cursor: default;
     user-select: none;
+    text-align: center;
 }
 
 .linkContainer {
