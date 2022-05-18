@@ -50,6 +50,7 @@
 .logoContainer {
     padding: 10px;
     margin-top: 10px;
+    border-bottom: 1px grey solid;
 }
 
 
@@ -83,7 +84,6 @@
     flex: 1;
     align-items: flex-start;
     margin-top: 50px;
-    cursor: pointer;
     height: 100%;
     overflow: hidden;
 }
@@ -110,6 +110,7 @@
     padding-bottom: 5px;
     padding-top: 5px;
     max-height: 45px;
+    cursor: pointer;
 }
 
 .versionInfoContainer {
@@ -134,6 +135,7 @@
     margin-top: auto;
     align-content: flex-end;
     align-self: flex-end;
+    cursor: auto;
 }
 
 .footer hr {
