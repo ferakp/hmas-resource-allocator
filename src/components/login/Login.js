@@ -17,8 +17,12 @@ export class Login extends React.Component {
   }
 
   signin = () => {
-    console.log("Clicked");
+    console.log("Signin");
   };
+
+  sendPassword = () => {
+    console.log("Send password");
+  }
 
   forgotPassword = () => {
     this.setState({ mode: "password" });
@@ -93,7 +97,7 @@ export class Login extends React.Component {
                 <Button
                   variant="contained"
                   className={styles.button}
-                  onClick={() => this.signin()}
+                  onClick={() => this.sendPassword()}
                 >
                   Send
                 </Button>
