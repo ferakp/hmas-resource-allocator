@@ -20,11 +20,20 @@ class App extends React.Component {
   }
 
   linkClick = (link) => {
-    this.setState({ activeContainer: link });
+    switch (link) {
+      case "Login":
+        this.setState({ activeContainer: "Default" });
+      case "Logout":
+        this.props.dispatch({ type: "LOGOUT" });
+        this.setState({ activeContainer: "Default" });
+
+      default:
+        this.setState({ activeContainer: link });
+    }
   };
 
   getContainer = () => {
-    if (!this.props.state.user.username) return <Login />;
+    if (!this.props.state.auth.user.username) return <Login {...this.props} />;
     switch (this.state.activeContainer) {
       case "Dashboard":
         return <Dashboard {...this.props} />;
@@ -36,6 +45,8 @@ class App extends React.Component {
         return <Settings {...this.props} />;
       case "Account":
         return <Account {...this.props} />;
+      case "Default":
+        return <Dashboard {...this.props} />;
     }
   };
 
