@@ -10,13 +10,9 @@ import { mdiLogin } from "@mdi/js";
 import { mdiHelpCircle } from "@mdi/js";
 import { mdiAccountDetails } from "@mdi/js";
 
-/**
- * Mode: default, user
- */
-
 export class LeftSidebar extends React.Component {
   static AppContext = getContext();
-  state = { mode: "default" };
+  state = {};
 
   constructor(props) {
     super(props);
@@ -29,11 +25,7 @@ export class LeftSidebar extends React.Component {
 
   render() {
     return (
-      <div
-        className={styles.container}
-        ref={this.wrapperRef}
-        style={{ width: this.state.width + "px" }}
-      >
+      <div className={styles.container} ref={this.wrapperRef}>
         <div className={styles.innerContainer}>
           <div className={styles.logoContainer}>
             <div className={styles.iconContainer}>
@@ -108,7 +100,11 @@ export class LeftSidebar extends React.Component {
               <hr></hr>
               <div
                 className={styles.link}
-                onClick={() => this.linkClick("Login")}
+                onClick={() =>
+                  this.props.state.auth.user.username
+                    ? this.linkClick("Logout")
+                    : this.linkClick("Login")
+                }
               >
                 <Icon
                   rotate={this.state.mode === "user" ? 180 : 0}
@@ -118,10 +114,10 @@ export class LeftSidebar extends React.Component {
                   className={styles.linkIcon}
                 />
                 <p className={styles.linkName}>
-                  {this.props.state.user.username ? "Logout" : "Login"}
+                  {this.props.state.auth.user.username ? "Logout" : "Login"}
                 </p>
               </div>
-              {this.state.mode === "user" ? (
+              {this.props.state.auth.user.username ? (
                 <div
                   className={styles.link}
                   onClick={() => this.linkClick("Account")}

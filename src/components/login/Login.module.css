@@ -103,3 +103,46 @@
 .noMargin {
     margin: 0 !important;
 }
+
+.notificationContainer {
+    display: flex;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.082);
+    border-radius: 3%;
+    background-color: rgba(255, 0, 0, 0.35);
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    opacity: 1;
+    transition: all 0.8s;
+}
+
+.notificationContainer p {
+    font-size: 14px;
+    color: rgba(36, 41, 47, 0.705);
+    margin: 0px;
+}
+
+.hideNotification p {
+    display: none;
+}
+
+.hideNotification {
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.notificationMessage {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.notificationCloseButton:hover {
+    cursor: pointer;
+}
+
+.passwordNotificationContainer {
+    background-color: rgba(0, 128, 0, 0.283);
+}
