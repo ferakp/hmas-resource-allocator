@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import { messages } from "../../messages/messages";
 import { mdiCog } from "@mdi/js";
 import { mdiKeyboardBackspace } from "@mdi/js";
-import { getContext } from "../../state/context";
+import { getContext } from "../../../state/context";
 import { mdiCloseBox } from "@mdi/js";
 
 /**
