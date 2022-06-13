@@ -5,18 +5,33 @@ import helmet  from "helmet";
 import compression  from "compression";
 import bodyParser from "body-parser";
 import apiRoutes  from "./rest-api/v1/router/api";
+import * as database from './relational-database/database';
 import crypto from 'crypto';
-import * as utils from './utils/utils';
 import path from 'path';
 import dotenv from 'dotenv';
-import {initializeDatabase} from './relational-database/database';
-import * as databaseApi from './relational-database/api';
+import rateLimit from 'express-rate-limit'
 
 export default function initializeServer (router) {
+  // JTW configuration
+  const SECRET_KEY = crypto.randomBytes(64).toString('hex');
+  //utils.addEnvVariable(path.join(__dirname, ".env"), "SECRET_KEY", SECRET_KEY);
+
+  // Rate limit configuration
+  const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000, 
+    max: 60, 
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+
+  // dotenv configuration
+  dotenv.config({path: path.join(__dirname+"/.env")});
+
   const app = express();
   const isProduction = process.env.NODE_ENV === "production";
   const origin = { origin: isProduction ? false : "*" };
 
+  app.use(limiter);
   app.use(express.json());
   app.use(cookieParser());
   app.use(bodyParser.urlencoded({ extended: false }))
@@ -26,16 +41,7 @@ export default function initializeServer (router) {
   app.use(compression());
 
   app.use("/api/v1", apiRoutes);
-
-  // JTW configuration
-  const SECRET_KEY = crypto.randomBytes(64).toString('hex');
-  //utils.addEnvVariable(path.join(__dirname, ".env"), "SECRET_KEY", SECRET_KEY);
-
-  // dotenv configuration
-  dotenv.config({path: path.join(__dirname+"/.env")});
-
-  // Relational database configuration
-  initializeDatabase();
+  database.initializeDatabase();
 
   return app;
 };

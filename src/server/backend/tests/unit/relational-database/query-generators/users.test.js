@@ -1,6 +1,7 @@
 import * as usersQueryGenerator from "../../../../relational-database/query-generators/users";
 
-describe("getUsers query generator tests", () => {
+// GET USERS
+describe("getUsers() query generator tests", () => {
   test("request own profile", () => {
     expect(usersQueryGenerator.getUsers({ requester: case1.params.user, filters: case1.params.filters })).toStrictEqual(
       {
@@ -10,7 +11,7 @@ describe("getUsers query generator tests", () => {
     );
   });
 
-  test("request user with username", () => {
+  test("request user with username for auth", () => {
     expect(usersQueryGenerator.getUsers({ isForAuth: true, filters: case2.params.filters })).toStrictEqual({
       query: case2.query,
       values: case2.values,
@@ -45,23 +46,151 @@ describe("getUsers query generator tests", () => {
   });
 
   test("request with  8 valid (id, role, lastname, username, email, created_on, updated_on, last_login) filters", () => {
-    expect(
-      usersQueryGenerator.getUsers({ requester:  case6.params.user, filters: case6.params.filters })
-    ).toStrictEqual({
-      query: case6.query,
-      values: case6.values,
-    });
+    expect(usersQueryGenerator.getUsers({ requester: case6.params.user, filters: case6.params.filters })).toStrictEqual(
+      {
+        query: case6.query,
+        values: case6.values,
+      }
+    );
   });
 
   test("request with  8 valid (id, role, lastname, username, email, created_on.elt, updated_on.e, last_login.gt) filters using conditional parameters", () => {
-    expect(
-      usersQueryGenerator.getUsers({ requester:  case7.params.user, filters: case7.params.filters })
-    ).toStrictEqual({
-      query: case7.query,
-      values: case7.values,
+    expect(usersQueryGenerator.getUsers({ requester: case7.params.user, filters: case7.params.filters })).toStrictEqual(
+      {
+        query: case7.query,
+        values: case7.values,
+      }
+    );
+  });
+});
+
+// EDIT USER
+describe("editUser() query generator tests", () => {
+  test("generate query for email change", () => {
+    expect(usersQueryGenerator.editUser({ reqParams: case12.params.filters })).toStrictEqual({
+      query: case12.query,
+      values: case12.values,
+    });
+  });
+
+  test("generate query for email and role change", () => {
+    expect(usersQueryGenerator.editUser({ reqParams: case13.params.filters })).toStrictEqual({
+      query: case13.query,
+      values: case13.values,
+    });
+  });
+
+  test("generate query without id", () => {
+    expect(usersQueryGenerator.editUser({ reqParams: case14.params.filters })).toStrictEqual({
+      query: null,
+      values: null,
     });
   });
 });
+
+// DELETE USER
+describe("deleteUser() query generator tests", () => {
+  test("generate query for deleting user", () => {
+    expect(usersQueryGenerator.deleteUser({ filters: case15.params.filters })).toStrictEqual({
+      query: case15.query,
+      values: case15.values,
+    });
+  });
+
+  test("attempt to generate query for deleting user without id", () => {
+    expect(usersQueryGenerator.deleteUser({ filters: case16.params.filters })).toStrictEqual({
+      query: case16.query,
+      values: case16.values,
+    });
+  });
+});
+
+// CREATE USER
+describe("createUser() query generator tests", () => {
+  test("generate query for creating user", () => {
+    expect(usersQueryGenerator.createUser({ reqParams: case17.params.reqParams })).toStrictEqual({
+      query: case17.query,
+      values: case17.values,
+    });
+  });
+});
+
+// CASES FOR CREATE USER
+const case17 = {
+  params: {
+    reqParams: {
+      role: "user",
+      username: "demo",
+      password: "demo",
+      email: "demo@demo.com",
+      firstname: "demo",
+      lastname: "demo",
+    },
+  },
+  query: "INSERT INTO users (role,username,password,email,firstname,lastname) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *",
+  values: ["user", "demo", "demo", "demo@demo.com", "demo", "demo"],
+};
+
+// CASES FOR DELETE USER
+const case15 = {
+  params: {
+    filters: {
+      id: 24,
+    },
+  },
+  query: "DELETE FROM users WHERE id=$1 RETURNING id",
+  values: [24],
+};
+
+const case16 = {
+  params: {
+    filters: {
+      role: "user",
+    },
+  },
+  query: null,
+  values: null,
+};
+
+// CASES FOR EDIT USER
+const case12 = {
+  params: {
+    filters: {
+      id: 24,
+      email: "demo@demo.com",
+      updated_on: "2022-06-03T10:58:25.138Z",
+    },
+  },
+  query: "UPDATE users SET email=$1,updated_on=$2 WHERE id=$3 RETURNING *",
+  values: ["demo@demo.com", "2022-06-03T10:58:25.138Z", 24],
+};
+
+const case13 = {
+  params: {
+    filters: {
+      id: 24,
+      email: "demo@demo.com",
+      role: "user",
+      updated_on: "2022-06-03T10:58:25.138Z",
+    },
+  },
+  query: "UPDATE users SET email=$1,role=$2,updated_on=$3 WHERE id=$4 RETURNING *",
+  values: ["demo@demo.com", "user", "2022-06-03T10:58:25.138Z", 24],
+};
+
+const case14 = {
+  params: {
+    filters: {
+      email: "demo@demo.com",
+      role: "user",
+      updated_on: "2022-06-03T10:58:25.138Z",
+    },
+  },
+  query: null,
+  values: null,
+};
+
+// CASES FOR GET USERS
 
 const case1 = {
   params: {
@@ -76,7 +205,6 @@ const case1 = {
   query:
     "SELECT * FROM (SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users WHERE id=$1) users WHERE id=$2",
   values: [1, 1],
-  requireAdminPrivileges: false,
 };
 
 const case2 = {
@@ -143,7 +271,7 @@ const case6 = {
   params: {
     user: {
       id: "22",
-      role: "admin"
+      role: "admin",
     },
     filters: {
       role: "user",
@@ -170,7 +298,7 @@ const case6 = {
     "2022-06-03T10:58:25.138Z",
     "22",
     "user",
-    "moderator"
+    "moderator",
   ],
 };
 
@@ -178,7 +306,7 @@ const case7 = {
   params: {
     user: {
       id: "22",
-      role: "moderator"
+      role: "moderator",
     },
     filters: {
       role: "user",
@@ -204,7 +332,7 @@ const case7 = {
     "2022-06-03T10:58:25.138Z",
     "2022-06-03T10:58:25.138Z",
     "22",
-    "user"
+    "user",
   ],
 };
 
@@ -224,5 +352,4 @@ const case11 = {
   },
   query: null,
   values: null,
-  requireAdminPrivileges: false,
 };

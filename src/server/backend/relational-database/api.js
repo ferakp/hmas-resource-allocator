@@ -1,8 +1,16 @@
 import * as database from "./database";
 import * as holonsQueryGenerator from "./query-generators/holons";
 import * as usersQueryGenerator from "./query-generators/users";
-import * as errorMessages from './messages/errors';
-import * as utils from './utils/utils';
+import * as errorMessages from "./messages/errors";
+import * as utils from "./utils/utils";
+
+
+/**
+ * INTERNAL DATABASE API
+ * Internal database API provides methods for querying a database
+ *
+ * All methods have common response format {query, values}
+ */
 
 /**
  * AUTH
@@ -38,13 +46,13 @@ export async function getStatus() {
  */
 
 export async function getUsers(parameters) {
-  const { isForAuth, user, filters } = parameters;
+  const { isForAuth, requester, filters } = parameters;
   let response = { errors: [], results: null };
-  console.log("DB API ", parameters)
-  let queryObject = usersQueryGenerator.getUsers({ isForAuth, user, filters });
+
+  let queryObject = usersQueryGenerator.getUsers({ isForAuth, requester, filters });
 
   // Failure to generate query
-  if(!queryObject.query) {
+  if (!queryObject.query) {
     response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
     return response;
   }
@@ -69,50 +77,93 @@ export async function getUsers(parameters) {
   return response;
 }
 
-export async function createUser(user) {}
+export async function createUser(parameters) {
+  const { requester, reqParams } = parameters;
+  let response = { errors: [], results: [] };
+  let queryObject = usersQueryGenerator.createUser({ reqParams });
 
-export async function editUser(userId, editedFields) {
-  const response = { errorCodes: [], databaseErrorMessage: null, results: null };
-
-  let queryObject = usersQueryGenerator.editUser(userId, editedFields);
-
-  // Invalid API parameters
-  if (queryObject.errorCodes.length > 0) {
-    response.errorCodes = queryObject.errorCodes;
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
     return response;
   }
 
-  // Check admin privileges if needed
-  if (queryObject.requireAdminPrivileges) {
-    const { errorCodes, databaseErrorMessage, results } = await database.executeQuery(
-      "SELECT id FROM users WHERE id = $1 AND role = $2",
-      [userId, "admin"]
-    );
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
 
-    // Error occured or database returned error
-    if (errorCodes.length > 0) {
-      if (databaseErrorMessage) errorCodes[0].databaseErrorMessage = databaseErrorMessage.toString();
-      response.errorCodes = errorCodes;
-      return response;
-    }
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
 
-    // No required privileges
-    if (results.length !== 1) {
-      response.errorCodes.push(6);
-      return response;
-    }
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  delete results[0]["password"];
+  response.results = results;
+  return response;
+}
+
+export async function editUser(parameters) {
+  const { requester, reqParams } = parameters;
+  let response = { errors: [], results: [] };
+  let queryObject = usersQueryGenerator.editUser({ requester, reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
   }
 
   // Execute query
-  const { errorCodes, databaseErrorMessage, results } = await database.executeQuery(
-    queryObject.query,
-    queryObject.values
-  );
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
 
-  // Error occured or database returned error
-  if (errorCodes.length > 0) {
-    errorCodes[0].databaseErrorMessage = databaseErrorMessage.toString();
-    response.errorCodes = errorCodes;
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  delete results[0]["password"];
+  response.results = results;
+  return response;
+}
+
+export async function deleteUser(parameters) {
+  const { requester, filters } = parameters;
+  let response = { errors: [], results: [] };
+  let queryObject = usersQueryGenerator.deleteUser({ requester, filters });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
     return response;
   }
 
@@ -121,7 +172,36 @@ export async function editUser(userId, editedFields) {
   return response;
 }
 
-export async function deleteUser(userId) {}
+export async function userHasLoggedIn(id) {
+  let response = { errors: [], results: [] };
+
+  if (id == undefined || id === null) {
+    response.errors.push(errorMessages.USER_NOT_FOUND);
+  } else {
+    const queryObject = usersQueryGenerator.editUser({
+      reqParams: { id: id, last_login: new Date(), updated_on: new Date() },
+    });
+
+    if (queryObject.query) {
+      // Execute query
+      const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+      // Error occured
+      if (errors.length > 0) {
+        response.errors = errors;
+        return response;
+      }
+      // Database returned error
+      if (databaseError) {
+        response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+        return response;
+      }
+      response.results = results;
+    }
+  }
+
+  return response;
+}
 
 /**
  * HOLONS

@@ -3,4 +3,9 @@ import apiRouter from './rest-api/v1/router/api';
 
 const app = initializeServer(apiRouter);
 
-app.listen(5000, () => console.log(`Listening on port ${5000}`)); // eslint-disable-line
+const server = app.listen(5000, () => console.log(`Listening on port ${5000}`)); // eslint-disable-line
+
+export const stopServer = () => {
+    server.close((err) => {
+    });
+}

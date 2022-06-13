@@ -137,7 +137,7 @@ export const UNEXPECTED_DATABASE_RESPONSE_ERROR = {
 export const MISSING_AUTHENTICATION_CREDENTIALS = {
     status: 401,
     code: 17,
-    title: "MISSING AUTHENTICATION CREDENTIALS ",
+    title: "MISSING AUTHENTICATION CREDENTIALS",
     detail: "Request is missing authentication credentials",
     dbErrorMessage: "",
     time: new Date()
@@ -146,7 +146,7 @@ export const MISSING_AUTHENTICATION_CREDENTIALS = {
 export const INVALID_TOKEN = {
     status: 401,
     code: 18,
-    title: "INVALID AUTHENTICATION CREDENTIALS ",
+    title: "INVALID AUTHENTICATION CREDENTIALS",
     detail: "Request has invalid authentication token",
     time: new Date()
 }
@@ -154,7 +154,103 @@ export const INVALID_TOKEN = {
 export const USER_NOT_FOUND= {
     status: 404,
     code: 19,
-    title: "USER WAS NOT FOUND",
+    title: "USER NOT FOUND",
     detail: "User with given ID does not exist",
+    time: new Date()
+}
+
+export const INSUFFICIENT_PRIVILEGES = {
+    status: 403,
+    code: 20,
+    title: "INSUFFICIENT PRIVILEGES",
+    detail: "Server was unable to process the request due to insufficient privileges",
+    time: new Date()
+}
+
+export const DUPLICATE_QUERY_KEYS = {
+    status: 400,
+    code: 21,
+    title: "DUPLICATE QUERY KEYS",
+    detail: "The request has duplicate query keys",
+    time: new Date()
+}
+
+export const UNABLE_TO_FORMAT_QUERY = {
+    status: 500,
+    code: 22,
+    title: "UNABLE TO FORMAT QUERY",
+    detail: "Server was unable to format query",
+    time: new Date()
+}
+
+export const DUPLICATE_PARAMETERS = {
+    status: 400,
+    code: 23,
+    title: "DUPLICATE PARAMETERS",
+    detail: "The request has duplicate field",
+    time: new Date()
+}
+
+export const INVALID_PARAMETER_NAMES = {
+    status: 400,
+    code: 24,
+    title: "INVALID PARAMETER NAMES",
+    detail: "The request has invalid parameter name(s)",
+    time: new Date()
+}
+
+export const INVALID_PARAMETER_VALUES = {
+    status: 400,
+    code: 25,
+    title: "INVALID PARAMETER VALUES",
+    detail: "The request has invalid parameter value(s)",
+    time: new Date()
+}
+
+export const MISSING_OR_INVALID_PARAMETERS = {
+    status: 400,
+    code: 26,
+    title: "MISSING OR INVALID PARAMETERS",
+    detail: "The request has missing, invalid or illegal parameter(s)",
+    time: new Date()
+}
+
+export const UNEXPECTED_UPDATE_ERROR = {
+    status: 500,
+    code: 27,
+    title: "UNEXPECTED UPDATE ERROR",
+    detail: "Server was unable to update user due to internal server errors",
+    time: new Date()
+}
+
+export const EMAIL_ALREADY_REGISTERED = {
+    status: 400,
+    code: 28,
+    title: "EMAIL ALREADY REGISTERED",
+    detail: "Server was unable to process the request due to already registered email address",
+    time: new Date()
+}
+
+export const USERNAME_ALREADY_REGISTERED = {
+    status: 400,
+    code: 29,
+    title: "USERNAME ALREADY REGISTERED",
+    detail: "Server was unable to process the request due to already registered username",
+    time: new Date()
+}
+
+export const USERNAME_AND_EMAIL_ALREADY_REGISTERED = {
+    status: 400,
+    code: 30,
+    title: "USERNAME AND EMAIL ALREADY REGISTERED",
+    detail: "Server was unable to process the request due to already registered username and email",
+    time: new Date()
+}
+
+export const UNEXPECTED_ERROR = {
+    status: 500,
+    code: 31,
+    title: "UNEXPECTED ERROR",
+    detail: "Server was unable to process the request due to internal error",
     time: new Date()
 }

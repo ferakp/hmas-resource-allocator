@@ -13,19 +13,19 @@ const template = {
 };
 
 export function checkAuth(parameters) {
-  const { req, res, errorCodes = [], actionCodes = [] } = parameters;
-  let response = structuredClone(template);
-
-  response.links.self = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+  const { req, res, errors = [], actions = [] } = parameters;
+  let response = JSON.parse(JSON.stringify(template));
+  const pathname = new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`).pathname;
+  response.links.self = `${req.protocol}://${req.get("host")}${pathname}`;
 
   // Response for errors
-  if (errorCodes.length > 0) {
-    response.errors = response.errors.concat(utils.getErrorMessagesByCodes(errorCodes));
+  if (errors.length > 0) {
+    response.errors = errors;
   }
 
   // Response for actions
-  if(actionCodes.length > 0) {
-    response.actions = response.actions.concat(utils.getActionsByCodes(actionCodes));
+  if(actions.length > 0) {
+    response.actions = actions;
   }
 
   return response;

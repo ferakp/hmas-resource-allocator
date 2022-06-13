@@ -5,7 +5,6 @@ import * as errorMessages from "../messages/errors";
 import bcrypt from "bcrypt";
 
 export async function login(req, res) {
-  console.log("Request received");
   const responseDetails = { req, res, errors: [], token: null };
  
   // Parse authorization header
@@ -39,6 +38,7 @@ export async function login(req, res) {
   if (errors.length === 0 && results.length === 1) {
     // If password is correct
     if (await isPasswordCorrect(password, results[0].password)) {
+      rDatabaseApi.userHasLoggedIn(results[0]?.id);
       responseDetails.token = generateAccessToken({ userId: results[0].id });
       const response = authResponseGenerators.login(responseDetails);
       res.status(200);
@@ -47,7 +47,7 @@ export async function login(req, res) {
     }
 
     // If password is incorrect
-    responseDetails.errorCodes.push(errorMessages.INVALID_PASSWORD);
+    responseDetails.errors.push(errorMessages.INVALID_PASSWORD);
     const response = authResponseGenerators.login(responseDetails);
     res.status(response.errors[0].status);
     res.json(response);
