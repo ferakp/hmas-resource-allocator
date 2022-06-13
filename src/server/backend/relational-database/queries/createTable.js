@@ -1,5 +1,5 @@
 export const USERS =
-  "CREATE TABLE IF NOT EXISTS users ( id SERIAL PRIMARY KEY, role VARCHAR NOT NULL, username VARCHAR NOT NULL UNIQUE, password VARCHAR NOT NULL, firstname VARCHAR NOT NULL, lastname VARCHAR NOT NULL, email VARCHAR NOT NULL, created_on timestamp NOT NULL, last_login timestamp, updated_on timestamp NOT NULL )";
+  "CREATE TABLE IF NOT EXISTS users ( id SERIAL PRIMARY KEY, role VARCHAR NOT NULL DEFAULT 'user', username VARCHAR NOT NULL UNIQUE, password VARCHAR NOT NULL, firstname VARCHAR NOT NULL, lastname VARCHAR NOT NULL, email VARCHAR NOT NULL UNIQUE, created_on timestamp NOT NULL, last_login timestamp, updated_on timestamp NOT NULL )";
 
 export const HOLONS =
   "CREATE TABLE IF NOT EXISTS holons ( id SERIAL PRIMARY KEY, type VARCHAR NOT NULL, name VARCHAR NOT NULL, gender VARCHAR, daily_work_hours DECIMAL NOT NULL, latest_state VARCHAR, remote_address VARCHAR, api_token VARCHAR, availability_data VARCHAR NOT NULL, load_data VARCHAR NOT NULL, stress_data VARCHAR NOT NULL, cost_data VARCHAR NOT NULL, age DECIMAL, experience_years DECIMAL DEFAULT 0, created_on timestamp, created_by BIGINT REFERENCES users (id), updated_on timestamp NOT NULL )";

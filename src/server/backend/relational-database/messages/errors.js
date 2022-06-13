@@ -130,7 +130,6 @@ export const UNEXPECTED_DATABASE_RESPONSE_ERROR = {
     code: 16,
     title: "UNEXPECTED DATABASE RESPONSE ERROR",
     detail: "Database returned unexpected error",
-    dbErrorMessage: "",
     time: new Date()
 }
 
@@ -139,7 +138,6 @@ export const MISSING_AUTHENTICATION_CREDENTIALS = {
     code: 17,
     title: "MISSING AUTHENTICATION CREDENTIALS ",
     detail: "Request is missing authentication credentials",
-    dbErrorMessage: "",
     time: new Date()
 }
 
@@ -148,7 +146,6 @@ export const INVALID_TOKEN = {
     code: 18,
     title: "INVALID AUTHENTICATION CREDENTIALS ",
     detail: "Request has invalid authentication token",
-    dbErrorMessage: "",
     time: new Date()
 }
 
@@ -157,7 +154,6 @@ export const USER_NOT_FOUND= {
     code: 19,
     title: "USER WAS NOT FOUND",
     detail: "User with given ID does not exist",
-    dbErrorMessage: "",
     time: new Date()
 }
 

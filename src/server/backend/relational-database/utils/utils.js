@@ -22,58 +22,6 @@ export function generateComparableFields(field) {
   return [field, field + ".e", field + ".elt", field + ".egt", field + ".gt", field + ".lt"];
 }
 
-export function generateWhereClause(fields, joinWord) {
-  let whereClauseElements = [];
-  let tempValues = [];
-  Object.keys(fields).map((filter, i) => {
-    let clause = filter.split(".")[0];
-    filter.split(".").length === 2 ? (clause += getOperator(filter.split(".")[1])) : (clause += "=");
-    whereClauseElements.push(clause + "$" + (i + 1));
-    tempValues.push(fields[filter]);
-  });
-  return {
-    clause: whereClauseElements.join(" " + joinWord + " "),
-    values: tempValues,
-  };
-}
-
-export function generateInsertQuery(tableName, fields) {
-  let queryBase = "INSERT INTO holons(" + Object.keys(fields).join(",") + ") VALUES ";
-  let values = "(" + Object.values(fields).map((e, i) => "$" + (i + 1)) + ")";
-  return { query: queryBase + values, values: Object.values(fields) };
-}
-
-export function generateUpdateQuery(tableName, object, conditionFieldNames) {
-  let queryBase = "UPDATE " + tableName;
-
-  // Separate condition fields from updatable fields
-  let conditionObject = {};
-  conditionFieldNames.forEach((elementName) => {
-    conditionObject[elementName] = object[elementName];
-    delete object[elementName];
-  });
-
-  // Prepare set clause's elements
-  let setClauseElements = [];
-  Object.keys(object).map((fieldName, index) => {
-    setClauseElements.push(fieldName + " = " + "$" + (index + 1));
-  });
-
-  // Prepare where clause's elements
-  let whereClauseElements = [];
-  Object.keys(conditionObject).map((fieldName, index) => {
-    whereClauseElements.push(fieldName + " = " + "$" + (setClauseElements.length + index + 1));
-  });
-
-  let query = queryBase + " SET " + setClauseElements.join(",") + " WHERE " + whereClauseElements.join(",");
-  let values = Object.values(object).append(Object.values(conditionObject));
-
-  return {
-    query: query,
-    values: values,
-  };
-}
-
 /**
  * VALIDATION
  */
@@ -90,7 +38,7 @@ export function isObjectFieldsValid(object, acceptedFields, fieldNames, fieldCon
   response.isKeyNamesValid = Object.keys(object).every((fieldName) => {
     return acceptedFields.includes(fieldName);
   });
-  if(response.isKeyNamesValid === false) return response;
+  if (response.isKeyNamesValid === false) return response;
 
   // isKeyValuesValid validation
   response.isKeyValuesValid = Object.keys(object).every((fieldName) => {
@@ -117,7 +65,6 @@ export function isFieldNumber(field) {
 }
 
 export function hasRequiredFields(requiredFields, object) {
-  console.log(requiredFields, object);
   return requiredFields.every((field) => {
     return Object.keys(object).includes(field);
   });
@@ -130,6 +77,18 @@ export function hasDuplicateFields(object) {
 
 export function hasFieldWithValue(object, fieldName) {
   return object[fieldName] !== null && object[fieldName] !== undefined && object[fieldName] !== "";
+}
+
+export function hasFieldsWithValue(object = {}, fieldNames = []) {
+  if (Object.keys(object) === 0 || (!Array.isArray(fieldNames) && fieldNames.length === 0)) return false;
+  return fieldNames.every((fieldName) => {
+    return (
+      object.hasOwnProperty(fieldName) &&
+      object[fieldName] !== null &&
+      object[fieldName] !== undefined &&
+      object[fieldName] !== ""
+    );
+  });
 }
 
 /**

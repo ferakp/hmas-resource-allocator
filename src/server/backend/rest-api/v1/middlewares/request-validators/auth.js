@@ -1,4 +1,5 @@
 import * as authResponseGenerators from "../../response-generators/auth";
+import * as errorMessages from '../../messages/errors';
 
 export async function login(req, res, next) {
   const responseDetails = { req, res, errors: [], token: null };
@@ -18,13 +19,13 @@ export async function login(req, res, next) {
   const username = auth[0];
   const password = auth[1];
 
-  // If username or password are too short
-  if (username.length < process.env.USER_MIN_USERNAME_LENGTH || password < process.env.USER_MIN_PASSWORD_LENGTH) {
-    if (username.length < process.env.USER_MIN_USERNAME_LENGTH || password < process.env.USER_MIN_PASSWORD_LENGTH)
+  // If username or password are missing
+  if (username.length === 0 || password.length === 0) {
+    if (username.length === 0 && password.length === 0)
       responseDetails.errors.push(errorMessages.INVALID_USERNAME_AND_PASSWORD);
-    else if (username.length < process.env.USER_MIN_USERNAME_LENGTH)
+    else if (username.length === 0)
       responseDetails.errors.push(errorMessages.INVALID_USERNAME);
-    else if (password < process.env.USER_MIN_PASSWORD_LENGTH)
+    else if (password.length === 0)
       responseDetails.errors.push(errorMessages.INVALID_PASSWORD);
     const response = authResponseGenerators.login(responseDetails);
     if (response.errors.length > 0) res.status(response.errors[0].status);

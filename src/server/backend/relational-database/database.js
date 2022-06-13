@@ -9,7 +9,8 @@ export let connection = {
 };
 
 export async function executeQuery(query, values) {
-  if (!connection.isReady) return { errors: [errorMessages.DATABASE_CONNECTION_ERROR], databaseError: null, results: [] };
+  if (!connection.isReady)
+    return { errors: [errorMessages.DATABASE_CONNECTION_ERROR], databaseError: null, results: [] };
   else {
     const queryWrapper = async (query, values) => {
       return new Promise((resolve, reject) => {
@@ -39,6 +40,16 @@ export async function initializeDatabase() {
       err: { ...errorMessages.CREATE_TABLE_ERROR, errorStack: e },
       isReady: false,
     };
+  }
+}
+
+export function endConnection() {
+  if(connection.pool) {
+    try {
+      connection.pool.end();
+    } catch(err) {
+      console.log(err);
+    }
   }
 }
 
@@ -100,3 +111,4 @@ async function createTables(pool) {
     }
   })().catch((err) => console.log(err.stack));
 }
+

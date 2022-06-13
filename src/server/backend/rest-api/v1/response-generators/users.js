@@ -1,6 +1,3 @@
-import * as errorMessages from "../messages/errors";
-import * as utils from "../utils/utils";
-
 const template = {
   links: {
     self: "",
@@ -14,19 +11,35 @@ const template = {
 };
 
 export function getUsers(parameters) {
-  const { req, res, errorCodes = [], actionCodes = [], results = [] } = parameters;
-  let response = structuredClone(template);
+  return commonResponseGenerator(parameters);
+}
 
-  response.links.self = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+export function deleteUser(parameters) {
+  return commonResponseGenerator(parameters);
+}
+
+export function patchUser(parameters) {
+  return commonResponseGenerator(parameters);
+}
+
+export function postUser(parameters) {
+  return commonResponseGenerator(parameters);
+}
+
+function commonResponseGenerator(parameters) {
+  const { req, res, errors = [], actions = [], results = [] } = parameters;
+  let response = JSON.parse(JSON.stringify(template));
+  const pathname = new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`).pathname;
+  response.links.self = `${req.protocol}://${req.get("host")}${pathname}`;
 
   // Response for errors
-  if (errorCodes.length > 0) {
-    response.errors = response.errors.concat(utils.getErrorMessagesByCodes(errorCodes));
+  if (errors.length > 0) {
+    response.errors = errors;
   }
 
   // Response for actions
-  if (actionCodes.length > 0) {
-    response.actions = response.actions.concat(utils.getActionsByCodes(actionCodes));
+  if (actions.length > 0) {
+    response.actions = actions;
   }
 
   // Response for results
