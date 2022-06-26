@@ -1,6 +1,6 @@
 import jsonwebtoken from "jsonwebtoken";
 import * as errorMessages from "../../messages/errors";
-import * as rDatabaseApi from "../../../../relational-database/api";
+import * as rDatabaseApi from "../../../../relational-database-api/api";
 import * as checkAuthResponseGenerator from "../../response-generators/checkAuth";
 import * as actions from "../../messages/actions";
 

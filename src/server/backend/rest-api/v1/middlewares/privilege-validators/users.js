@@ -1,7 +1,7 @@
 import * as utils from "../../utils/utils";
 import * as errorMessages from "../../messages/errors";
 import * as responseGenerators from "../../response-generators/users";
-import * as rDatabaseApi from "../../../../relational-database/api";
+import * as rDatabaseApi from "../../../../relational-database-api/api";
 
 export async function getUsers(req, res, next) {
   let validationErrors = [];

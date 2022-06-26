@@ -1,4 +1,4 @@
-import * as holonsQueryGenerator from "../../../../relational-database/query-generators/holons";
+import * as holonsQueryGenerator from "../../../../relational-database-api/query-generators/holons";
 
 describe("GetHolons query generator", () => {
   test("getHolons return correct query and values", () => {

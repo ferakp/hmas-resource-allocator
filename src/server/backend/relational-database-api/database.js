@@ -106,6 +106,7 @@ async function createTables(pool) {
       await client.query("COMMIT");
     } catch (e) {
       await client.query("ROLLBACK");
+      console.log("Failed to create tables ", e);
     } finally {
       client.release();
     }

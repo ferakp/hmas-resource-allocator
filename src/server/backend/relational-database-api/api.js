@@ -1,9 +1,8 @@
-import * as database from "./database";
-import * as holonsQueryGenerator from "./query-generators/holons";
-import * as usersQueryGenerator from "./query-generators/users";
-import * as errorMessages from "./messages/errors";
-import * as utils from "./utils/utils";
-
+import * as database from './database';
+import * as holonsQueryGenerator from './query-generators/holons';
+import * as usersQueryGenerator from './query-generators/users';
+import * as errorMessages from './messages/errors';
+import * as utils from './utils/utils';
 
 /**
  * INTERNAL DATABASE API
@@ -18,7 +17,7 @@ import * as utils from "./utils/utils";
 
 export async function getStatus() {
   let response = { errors: [], results: null };
-  const { errors, databaseError, results } = await database.executeQuery("SELECT NOW()", []);
+  const { errors, databaseError, results } = await database.executeQuery('SELECT NOW()', []);
 
   // Invalid API parameters
   if (errors.length > 0) {
@@ -104,7 +103,7 @@ export async function createUser(parameters) {
   }
 
   // Successfull query
-  delete results[0]["password"];
+  delete results[0]['password'];
   response.results = results;
   return response;
 }
@@ -136,7 +135,7 @@ export async function editUser(parameters) {
   }
 
   // Successfull query
-  delete results[0]["password"];
+  delete results[0]['password'];
   response.results = results;
   return response;
 }
@@ -207,27 +206,30 @@ export async function userHasLoggedIn(id) {
  * HOLONS
  */
 
-export async function getHolons(userId, filters) {
-  let response = { errorCodes: [], databaseErrorMessage: null, results: null };
+export async function getHolons(parameters) {
+  const { filters } = parameters;
+  let response = { errors: [], results: null };
 
-  const queryObject = holonsQueryGenerator.getHolons(userId, filters);
+  let queryObject = holonsQueryGenerator.getHolons({ filters });
 
-  // Invalid API parameters
-  if (queryObject.errorCodes.length > 0) {
-    response.errorCodes = queryObject.errorCodes;
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
     return response;
   }
 
   // Execute query
-  const { errorCodes, databaseErrorMessage, results } = await database.executeQuery(
-    queryObject.query,
-    queryObject.values
-  );
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
 
-  // Error occured or database returned error
-  if (errorCodes.length > 0) {
-    if (databaseErrorMessage) errorCodes[0].databaseErrorMessage = databaseErrorMessage.toString();
-    response.errorCodes = errorCodes;
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
     return response;
   }
 
@@ -236,30 +238,101 @@ export async function getHolons(userId, filters) {
   return response;
 }
 
-export async function createHolon(userId, holon) {
-  let response = { errorCodes: [], databaseErrorMessage: null, results: null };
-  let queryObject = holonsQueryGenerator.createHolon(userId, holon);
+export async function createHolon(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
 
-  if (queryObject.errorCodes.length > 0) {
-    response.errorCodes = queryObject.errorCodes;
-  } else {
-    const { errorCodes, databaseErrorMessage, results } = await database.executeQuery(
-      queryObject.query,
-      queryObject.values
-    );
-    if (errorCodes.length > 0) {
-      if (databaseErrorMessage) response.databaseErrorMessage = databaseErrorMessage.toString();
-      response.errorCodes = errorCodes;
-    } else {
-      response.results = results;
-    }
+  let queryObject = holonsQueryGenerator.createHolon({ reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
   }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
   return response;
 }
 
-export async function editHolon(userId, editedFields) {}
+export async function editHolon(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
 
-export async function deleteHolon(userId, holonId) {}
+  let queryObject = holonsQueryGenerator.editHolon({ reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
+
+export async function deleteHolon(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
+
+  let queryObject = holonsQueryGenerator.deleteHolon({ reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
 
 /**
  * ALGORITHMS

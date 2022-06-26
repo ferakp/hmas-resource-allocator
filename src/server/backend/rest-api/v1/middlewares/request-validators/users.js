@@ -107,7 +107,7 @@ export function patchUser(req, res, next) {
 
   if (hasRequiredParameters) {
     // Check for duplicate parameters
-    hasDuplicateParameters = utils.hasDuplicateElements(Object.keys(parameters).map((key) => key.split(".")[0]));
+    hasDuplicateParameters = utils.hasDuplicateElements(Object.keys(parameters));
     // If query has no duplicate keys
     if (!hasDuplicateParameters) {
       // Validate parameter names
@@ -115,7 +115,7 @@ export function patchUser(req, res, next) {
       // Validate parameter values
       if (hasCorrectParameterNames) {
         hasCorrectParameterValues = utils.isObjectFieldValuesValid(
-          utils.removeOperatorFromObjectFieldNames(parameters),
+          parameters,
           allFieldNames,
           allFieldConstraints
         );
@@ -167,7 +167,6 @@ export function postUser(req, res, next) {
 
   // Check for required parameters
   // (1) Request must have parameters
-  // (2) Request must not have illegal id or username parameters
   if (Object.keys(parameters).length !== 6) hasRequiredParameters = false;
 
   // Override unaccepted role values

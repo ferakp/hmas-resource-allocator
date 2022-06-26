@@ -1,4 +1,4 @@
-import * as rDatabaseApi from "../../../relational-database/api";
+import * as rDatabaseApi from "../../../relational-database-api/api";
 import * as usersResponseGenerator from "../response-generators/users";
 import * as utils from "../utils/utils";
 import * as errorMessages from "../messages/errors";

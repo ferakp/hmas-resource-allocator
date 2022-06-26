@@ -1,13 +1,13 @@
-const axios = require("axios").default;
-import jsonwebtoken from "jsonwebtoken";
+const axios = require('axios').default;
+import jsonwebtoken from 'jsonwebtoken';
 
 export const login = async (username, password) => {
   try {
     return await axios({
-      url: "http://localhost:5000/api/v1/auth/login",
-      method: "get",
+      url: 'http://localhost:5000/api/v1/auth/login',
+      method: 'get',
       headers: {
-        Authorization: "Basic " + Buffer.from(username + ":" + password).toString("base64"),
+        Authorization: 'Basic ' + Buffer.from(username + ':' + password).toString('base64'),
       },
     });
   } catch (err) {
@@ -15,13 +15,27 @@ export const login = async (username, password) => {
   }
 };
 
-export const getUsers = async (token, query = "") => {
+export const getUsers = async (token, query = '') => {
   try {
     return await axios({
-      url: "http://localhost:5000/api/v1/users" + query,
-      method: "get",
+      url: 'http://localhost:5000/api/v1/users' + query,
+      method: 'get',
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
+      },
+    });
+  } catch (err) {
+    return err;
+  }
+};
+
+export const get = async (path, query, token) => {
+  try {
+    return await axios({
+      url: 'http://localhost:5000/api/v1/' + path + '/' + query,
+      method: 'get',
+      headers: {
+        Authorization: 'Bearer ' + token,
       },
     });
   } catch (err) {
@@ -32,10 +46,10 @@ export const getUsers = async (token, query = "") => {
 export const post = async (path, token, reqParams) => {
   try {
     return await axios({
-      url: "http://localhost:5000/api/v1/" + path,
-      method: "post",
+      url: 'http://localhost:5000/api/v1/' + path,
+      method: 'post',
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       },
       data: reqParams,
     });
@@ -47,10 +61,10 @@ export const post = async (path, token, reqParams) => {
 export const patch = async (path, token, reqParams) => {
   try {
     return await axios({
-      url: "http://localhost:5000/api/v1/" + path,
-      method: "patch",
+      url: 'http://localhost:5000/api/v1/' + path,
+      method: 'patch',
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       },
       data: reqParams,
     });
@@ -62,10 +76,10 @@ export const patch = async (path, token, reqParams) => {
 export const del = async (path, token) => {
   try {
     return await axios({
-      url: "http://localhost:5000/api/v1/" + path,
-      method: "delete",
+      url: 'http://localhost:5000/api/v1/' + path,
+      method: 'delete',
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       },
     });
   } catch (err) {
@@ -86,4 +100,18 @@ export async function verifyToken(token, secretKey) {
 
     return payload;
   });
+}
+
+export function hasError(result, errorTitle) {
+  if (result.data.errors.lengh === 0) throw Error();
+  else {
+    // Response has an error
+    expect(result.data.errors.length).toBe(1);
+
+    // Response contains no data object
+    expect(result.data.data.length).toBe(0);
+
+    // Response has correct holon
+    expect(result.data.errors[0].title).toBe(errorTitle);
+  }
 }
