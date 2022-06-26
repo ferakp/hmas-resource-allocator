@@ -254,3 +254,20 @@ export const UNEXPECTED_ERROR = {
     detail: "Server was unable to process the request due to internal error",
     time: new Date()
 }
+
+export const HOLON_NOT_FOUND= {
+    status: 404,
+    code: 32,
+    title: "HOLON NOT FOUND",
+    detail: "Holon with given ID does not exist",
+    time: new Date()
+}
+
+
+export const MISSING_TOKEN = {
+    status: 401,
+    code: 33,
+    title: "INVALID AUTHENTICATION CREDENTIALS ",
+    detail: "Request has invalid authentication token",
+    time: new Date()
+}

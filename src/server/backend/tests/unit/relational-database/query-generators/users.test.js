@@ -1,4 +1,4 @@
-import * as usersQueryGenerator from "../../../../relational-database/query-generators/users";
+import * as usersQueryGenerator from "../../../../relational-database-api/query-generators/users";
 
 // GET USERS
 describe("getUsers() query generator tests", () => {

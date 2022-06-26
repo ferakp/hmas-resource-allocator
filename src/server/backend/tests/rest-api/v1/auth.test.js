@@ -1,7 +1,7 @@
 import * as app from "../../../app";
 import * as utils from "../../utils/utils";
 import * as reqUtils from "../../../rest-api/v1/utils/utils";
-import * as db from "../../../relational-database/database";
+import * as db from "../../../relational-database-api/database";
 
 // Configuring test environment
 jest.useRealTimers();

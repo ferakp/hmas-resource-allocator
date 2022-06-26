@@ -1,7 +1,7 @@
-import fs from "fs";
-import path from "path";
-import * as errorMessages from "../messages/errors";
-import * as action from "../messages/actions";
+import fs from 'fs';
+import path from 'path';
+import * as errorMessages from '../messages/errors';
+import * as action from '../messages/actions';
 import bcrypt from 'bcrypt';
 
 /**
@@ -9,11 +9,11 @@ import bcrypt from 'bcrypt';
  */
 
 export function getOperator(operatorName) {
-  if (operatorName === "e") return "=";
-  else if (operatorName === "elt") return "<=";
-  else if (operatorName === "egt") return ">=";
-  else if (operatorName === "gt") return ">";
-  else if (operatorName === "lt") return "<";
+  if (operatorName === 'e') return '=';
+  else if (operatorName === 'elt') return '<=';
+  else if (operatorName === 'egt') return '>=';
+  else if (operatorName === 'gt') return '>';
+  else if (operatorName === 'lt') return '<';
 }
 
 /**
@@ -21,7 +21,7 @@ export function getOperator(operatorName) {
  */
 
 export function generateComparableFields(field) {
-  return [field, field + ".e", field + ".elt", field + ".egt", field + ".gt", field + ".lt"];
+  return [field, field + '.e', field + '.elt', field + '.egt', field + '.gt', field + '.lt'];
 }
 
 /**
@@ -53,11 +53,11 @@ export function isObjectFieldsValid(object, acceptedFields, fieldNames, fieldCon
   // isKeyValuesValid validation
   response.isKeyValuesValid = Object.keys(object).every((fieldName) => {
     let fieldValue = object[fieldName];
-    let constraints = fieldConstraints[fieldNames.indexOf(fieldName.split(".")[0])];
-    if (constraints.includes("NOT NULL") && !fieldValue) return false;
-    if (constraints.includes("String") && typeof fieldValue !== "string") return false;
-    if (constraints.includes("Number") && typeof Number(fieldValue) !== "number") return false;
-    if (constraints.includes("Date") && !isDate(new Date(fieldValue))) return false;
+    let constraints = fieldConstraints[fieldNames.indexOf(fieldName.split('.')[0])];
+    if (constraints.includes('NOT NULL') && !fieldValue) return false;
+    if (constraints.includes('String') && typeof fieldValue !== 'string') return false;
+    if (constraints.includes('Number') && typeof Number(fieldValue) !== 'number') return false;
+    if (constraints.includes('Date') && !isDate(new Date(fieldValue))) return false;
     return true;
   });
 
@@ -79,12 +79,12 @@ export function isObjectFieldValuesValid(object = {}, allFieldNames = [], allFie
   if (Object.keys(object).length === 0 || allFieldNames.length === 0 || allFieldConstraints.length === 0) return true;
   return Object.keys(object).every((fieldName) => {
     let fieldValue = object[fieldName];
-    if(allFieldNames.indexOf(fieldName) === -1) return false;
+    if (allFieldNames.indexOf(fieldName) === -1) return false;
     let constraints = allFieldConstraints[allFieldNames.indexOf(fieldName)];
-    if (constraints.includes("not null") && !fieldValue) return false;
-    if (constraints.includes("string") && typeof fieldValue !== "string") return false;
-    if (constraints.includes("number") && typeof Number(fieldValue) !== "number") return false;
-    if (constraints.includes("date") && !isDate(new Date(fieldValue))) return false;
+    if (constraints.includes('not null') && !fieldValue) return false;
+    if (constraints.includes('string') && typeof fieldValue !== 'string') return false;
+    if (constraints.includes('number') && !isFieldNumber(fieldValue)) return false;
+    if (constraints.includes('date') && !isDate(new Date(fieldValue))) return false;
     return true;
   });
 }
@@ -111,12 +111,12 @@ export function hasDuplicateElements(arr) {
 }
 
 export function hasFieldWithValue(object, fieldName) {
-  return object[fieldName] !== null && object[fieldName] !== undefined && object[fieldName] !== "";
+  return object[fieldName] !== null && object[fieldName] !== undefined && object[fieldName] !== '';
 }
 
 export function hasFieldsWithValue(object, fieldNames) {
-  return Object.keys(object).every(key => {
-    return object[key] !== null && object[key] !== undefined && object[key] !== "" && fieldNames.includes(key);
+  return Object.keys(object).every((key) => {
+    return object[key] !== null && object[key] !== undefined && object[key] !== '' && fieldNames.includes(key);
   });
 }
 
@@ -157,9 +157,9 @@ export function userHasPrivileges(requester, requestedUser) {
 
   if (Number(requester.id) === Number(requestedUser.id)) return hasPrivilege;
 
-  if (userRole === "user") hasPrivilege = false;
-  if (userRole === "moderator" && requestedUserRole !== "user") hasPrivilege = false;
-  if (userRole === "admin" && !["user", "moderator"].includes(requestedUserRole)) hasPrivilege = false;
+  if (userRole === 'user') hasPrivilege = false;
+  if (userRole === 'moderator' && requestedUserRole !== 'user') hasPrivilege = false;
+  if (userRole === 'admin' && !['user', 'moderator'].includes(requestedUserRole)) hasPrivilege = false;
 
   return hasPrivilege;
 }
@@ -172,22 +172,22 @@ export function removeOperatorFromObjectFieldNames(object) {
   let tempQuery = {};
 
   Object.keys(object).forEach((key) => {
-      tempQuery[key.split(".")[0]] = object[key];
+    tempQuery[key.split('.')[0]] = object[key];
   });
 
   return tempQuery;
 }
 
 export function formatRequestQuery(query = {}, allFieldNames = [], allFieldConstraints = []) {
-  let response = { errors: [], formattedQuery: null};
+  let response = { errors: [], formattedQuery: null };
   if (Object.keys(query).length === 0 || allFieldNames.length === 0 || allFieldConstraints.length === 0) return query;
   try {
     let tempQuery = removeOperatorFromObjectFieldNames(query);
     Object.keys(tempQuery).forEach((key, i) => {
       let constraints = allFieldConstraints[allFieldNames.indexOf(key)];
-      if (constraints.includes("string")) query[Object.keys(query)[i]] = tempQuery[key].toString();
-      else if (constraints.includes("number")) query[Object.keys(query)[i]] = Number(tempQuery[key]);
-      else if (constraints.includes("date")) query[Object.keys(query)[i]] = new Date(tempQuery[key]);
+      if (constraints.includes('string')) query[Object.keys(query)[i]] = tempQuery[key].toString();
+      else if (constraints.includes('number')) query[Object.keys(query)[i]] = Number(tempQuery[key]);
+      else if (constraints.includes('date')) query[Object.keys(query)[i]] = new Date(tempQuery[key]);
     });
     response.formattedQuery = query;
   } catch (err) {
@@ -196,12 +196,11 @@ export function formatRequestQuery(query = {}, allFieldNames = [], allFieldConst
   return response;
 }
 
-
 /**
  * PASSWORD
  */
 
- export async function encryptPassword(plainPassword) {
+export async function encryptPassword(plainPassword) {
   return new Promise(function (resolve, reject) {
     bcrypt.hash(plainPassword, 10, function (err, hash) {
       if (err) {
@@ -213,7 +212,6 @@ export function formatRequestQuery(query = {}, allFieldNames = [], allFieldConst
   });
 }
 
-
 export async function isPasswordCorrect(plainPassword, hash) {
   return new Promise(function (resolve, reject) {
     bcrypt.compare(plainPassword, hash, function (err, res) {
@@ -224,4 +222,172 @@ export async function isPasswordCorrect(plainPassword, hash) {
       }
     });
   });
+}
+
+/**
+ * REQUEST VALIDATORS
+ */
+
+export function getRequestValidationCheck(parameters) {
+  const { query, acceptedFieldNames, allFieldNames, allFieldConstraints } = parameters;
+  const errors = [];
+
+  if (acceptedFieldNames.length === 0 || allFieldNames.length === 0 || allFieldConstraints.length === 0) {
+    return { errors: errors.push(errorMessages.UNEXPECTED_ERROR) };
+  } else if (Object.keys(query).length === 0) return { errors };
+  // Validator responses
+  let hasDuplicateQueryKeys = false;
+  let hasCorrectQueryKeys = false;
+  let hasCorrectQueryValues = false;
+
+  // Validate for duplication check
+  hasDuplicateQueryKeys = hasDuplicateElements(Object.keys(query).map((key) => key.split('.')[0]));
+
+  // If query has no duplicate keys
+  if (!hasDuplicateQueryKeys) {
+    // Validate query keys
+    hasCorrectQueryKeys = isObjectFieldNamesValid(query, acceptedFieldNames);
+    // Validate query values
+    hasCorrectQueryValues = isObjectFieldValuesValid(removeOperatorFromObjectFieldNames(query), allFieldNames, allFieldConstraints);
+  }
+
+  // Duplicate keys
+  if (errors.length === 0 && hasDuplicateQueryKeys) {
+    errors.push(errorMessages.DUPLICATE_QUERY_KEYS);
+  }
+  // Invalid query keys
+  if (errors.length === 0 && !hasCorrectQueryKeys) {
+    errors.push(errorMessages.INVALID_QUERY_STRING_KEY);
+  }
+  // Invalid query values
+  if (errors.length === 0 && !hasCorrectQueryValues) {
+    errors.push(errorMessages.INVALID_QUERY_STRING_VALUE);
+  }
+
+  return errors;
+}
+
+export function patchRequestValidationCheck(parameters) {
+  const errors = [];
+  const { reqParams, acceptedFieldNames, allFieldNames, allFieldConstraints, id } = parameters;
+
+  // Validator responses
+  let hasRequiredParameters = true;
+  let hasDuplicateParameters = false;
+  let hasCorrectParameterNames = false;
+  let hasCorrectParameterValues = false;
+
+  // Check for required parameters
+  // (1) Request must have parameters
+  if (Object.keys(reqParams).length === 0) hasRequiredParameters = false;
+
+  if (hasRequiredParameters) {
+    // Check for duplicate parameters
+    hasDuplicateParameters = hasDuplicateElements(Object.keys(reqParams));
+    // If query has no duplicate keys
+    if (!hasDuplicateParameters) {
+      // Validate parameter names
+      hasCorrectParameterNames = isObjectFieldNamesValid(reqParams, acceptedFieldNames);
+      // Validate parameter values
+      if (hasCorrectParameterNames) {
+        hasCorrectParameterValues = isObjectFieldValuesValid(reqParams, allFieldNames, allFieldConstraints);
+      }
+    }
+  }
+
+  // Add error for missing parameters
+  if (!hasRequiredParameters) errors.push(errorMessages.MISSING_OR_INVALID_PARAMETERS);
+  // Add error for duplicate parameters
+  if (errors.length === 0 && hasDuplicateParameters) {
+    errors.push(errorMessages.DUPLICATE_PARAMETERS);
+  }
+  // Add error for invalid parameter names
+  if (errors.length === 0 && !hasCorrectParameterNames) {
+    errors.push(errorMessages.INVALID_PARAMETER_NAMES);
+  }
+  // Add error for invalid parameter values
+  if (errors.length === 0 && !hasCorrectParameterValues) {
+    errors.push(errorMessages.INVALID_PARAMETER_VALUES);
+  }
+  // Add error for invalid id
+  if (!isObjectFieldValuesValid({ id }, allFieldNames, allFieldConstraints)) {
+    errors.push(errorMessages.USER_NOT_FOUND);
+  }
+
+  return errors;
+}
+
+export function postRequestValidationCheck(parameters) {
+  const errors = [];
+  const { reqParams, acceptedFieldNames, allFieldNames, allFieldConstraints, requiredFieldNames } = parameters;
+
+  // Validator responses
+  let hasRequiredParameters = true;
+  let hasDuplicateParameters = false;
+  let hasCorrectParameterNames = false;
+  let hasCorrectParameterValues = false;
+
+  // Check for required parameters
+  hasRequiredParameters = requiredFieldNames.every((name) => Object.keys(reqParams).includes(name));
+
+  if (hasRequiredParameters) {
+    // Check for duplicate parameters
+    hasDuplicateParameters = hasDuplicateElements(Object.keys(reqParams));
+    // If query has no duplicate keys
+    if (!hasDuplicateParameters) {
+      // Validate parameter names
+      hasCorrectParameterNames = isObjectFieldNamesValid(reqParams, acceptedFieldNames);
+      // Validate parameter values
+      hasCorrectParameterValues = isObjectFieldValuesValid(reqParams, allFieldNames, allFieldConstraints);
+    }
+  }
+
+  // Add error for missing parameters
+  if (!hasRequiredParameters) errors.push(errorMessages.MISSING_OR_INVALID_PARAMETERS);
+  // Add error for duplicate parameters
+  if (errors.length === 0 && hasDuplicateParameters) {
+    errors.push(errorMessages.DUPLICATE_PARAMETERS);
+  }
+  // Add error for invalid parameter names
+  if (errors.length === 0 && !hasCorrectParameterNames) {
+    errors.push(errorMessages.INVALID_PARAMETER_NAMES);
+  }
+  // Add error for invalid parameter values
+  if (errors.length === 0 && !hasCorrectParameterValues) {
+    errors.push(errorMessages.INVALID_PARAMETER_VALUES);
+  }
+
+  return errors;
+}
+
+export function deleteRequestValidationCheck(parameters) {
+  const errors = [];
+  const { id, allFieldNames, allFieldConstraints } = parameters;
+
+  // Add error for invalid id
+  if (!isObjectFieldValuesValid({ id }, allFieldNames, allFieldConstraints)) {
+    errors.push(errorMessages.USER_NOT_FOUND);
+  }
+
+  return errors;
+}
+
+export function hasPermissionToEdit(parameters) {
+  const errors = [];
+  const { requester, resourceOwner } = parameters;
+
+  if ((!resourceOwner || Object.keys(resourceOwner).length === 0) && requester.role !== 'admin') {
+    errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
+    return errors;
+  } else if ((!resourceOwner || Object.keys(resourceOwner).length === 0) && requester.role === 'admin') return errors;
+  if (Number(requester.id) === Number(resourceOwner.id)) return errors;
+  if (hasFieldWithValue(requester, 'role') && hasFieldWithValue(resourceOwner, 'role')) {
+    if (requester.role === 'admin' && resourceOwner.role === 'admin') errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
+    else if (requester.role === 'moderator' && ['moderator', 'admin'].includes(resourceOwner.role)) errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
+    else if (requester.role === 'user') errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
+    return errors;
+  } else {
+    errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
+    return errors;
+  }
 }

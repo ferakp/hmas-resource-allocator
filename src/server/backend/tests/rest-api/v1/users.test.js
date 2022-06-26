@@ -1,7 +1,7 @@
 import * as app from "../../../app";
 import * as utils from "../../utils/utils";
-import * as reqUtils from "../../../rest-api/v1/utils/utils";
-import * as db from "../../../relational-database/database";
+import * as testEnvironment from '../../utils/test-environment';
+import * as db from "../../../relational-database-api/database";
 
 // Configuring test environment
 jest.useRealTimers();
@@ -9,68 +9,10 @@ jest.setTimeout(30000);
 
 beforeEach(async () => {
   // Wait server to be set up
-  await utils.wait(5);
+  await utils.wait(4);
 
-  // Empty all tables
-  let responseAlg = await db.executeQuery("TRUNCATE algorithms CASCADE");
-  let responseAll = await db.executeQuery("TRUNCATE allocations CASCADE");
-  let responseDas = await db.executeQuery("TRUNCATE dashboard_settings CASCADE");
-  let responseHol = await db.executeQuery("TRUNCATE holons CASCADE");
-  let responseTas = await db.executeQuery("TRUNCATE tasks CASCADE");
-  let responseUse = await db.executeQuery("TRUNCATE users CASCADE");
-
-  // Add three test users with roles of user, admin and moderator
-  let responseUser = await db.executeQuery(
-    "INSERT INTO users (role, username, password, email, firstname, lastname, created_on, updated_on) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-    [
-      "user",
-      "user",
-      await reqUtils.encryptPassword("password"),
-      "user@demo.com",
-      "demo",
-      "demo",
-      new Date("2022-06-10T18:24:21.381Z"),
-      new Date("2022-06-10T18:24:21.381Z"),
-    ]
-  );
-  let responseModerator = await db.executeQuery(
-    "INSERT INTO users (role, username, password, email, firstname, lastname, created_on, updated_on) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-    [
-      "moderator",
-      "moderator",
-      await reqUtils.encryptPassword("password"),
-      "moderator@demo.com",
-      "demo",
-      "demo",
-      new Date("2022-06-10T18:24:21.381Z"),
-      new Date("2022-06-10T18:24:21.381Z"),
-    ]
-  );
-  let responseAdmin = await db.executeQuery(
-    "INSERT INTO users (role, username, password, email, firstname, lastname, created_on, updated_on) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-    [
-      "admin",
-      "admin",
-      await reqUtils.encryptPassword("password"),
-      "admin@demo.com",
-      "demo",
-      "demo",
-      new Date("2022-06-10T18:24:21.381Z"),
-      new Date("2022-06-10T18:24:21.381Z"),
-    ]
-  );
-
-  let allResponseErrors = responseAlg.errors
-    .concat(responseAll.errors)
-    .concat(responseDas.errors)
-    .concat(responseHol.errors)
-    .concat(responseTas.errors)
-    .concat(responseUse.errors)
-    .concat(responseUser.errors)
-    .concat(responseModerator.errors)
-    .concat(responseAdmin.errors);
-
-  if (allResponseErrors.length > 0) throw new Error("Initialization of test environment failed");
+  // Set up test environment
+  await testEnvironment.addTestEnvironment(db);
 });
 
 afterAll(async () => {

@@ -1,5 +1,5 @@
 import jsonwebtoken from "jsonwebtoken";
-import * as rDatabaseApi from "../../../relational-database/api";
+import * as rDatabaseApi from "../../../relational-database-api/api";
 import * as authResponseGenerators from "../response-generators/auth";
 import * as errorMessages from "../messages/errors";
 import bcrypt from "bcrypt";
@@ -68,7 +68,7 @@ export async function refreshToken(req, res) {
 
 function generateAccessToken(payload) {
   return jsonwebtoken.sign(payload, process.env.SECRET_KEY, {
-    expiresIn: "1h",
+    expiresIn: "6h",
   });
 }
 

@@ -5,11 +5,12 @@ import helmet  from "helmet";
 import compression  from "compression";
 import bodyParser from "body-parser";
 import apiRoutes  from "./rest-api/v1/router/api";
-import * as database from './relational-database/database';
+import * as database from './relational-database-api/database';
 import crypto from 'crypto';
 import path from 'path';
 import dotenv from 'dotenv';
-import rateLimit from 'express-rate-limit'
+import rateLimit from 'express-rate-limit';
+import * as utils from "./utils/utils";
 
 export default function initializeServer (router) {
   // JTW configuration
