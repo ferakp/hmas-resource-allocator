@@ -102,6 +102,10 @@ export async function verifyToken(token, secretKey) {
   });
 }
 
+/**
+ * CHECKING FOR ERRORS
+ */
+
 export function hasError(result, errorTitle) {
   if (result.data.errors.lengh === 0) throw Error();
   else {
@@ -114,4 +118,15 @@ export function hasError(result, errorTitle) {
     // Response has correct holon
     expect(result.data.errors[0].title).toBe(errorTitle);
   }
+}
+
+
+/**
+ * DATE
+ */
+
+ export function isDate(param) {
+  if (param instanceof Date && !isNaN(param)) {
+    return true;
+  } else return false;
 }

@@ -51,22 +51,25 @@ export const addTestEnvironment = async (db) => {
     ]
   );
 
+  // Template for availability_data, load_data, stress_data and cost_data
+  const emptyDataTemplate = JSON.stringify({currentValue: 0, latestUpdate: new Date(), records: []});
+
   let responseHolon1 = await db.executeQuery(
     "INSERT INTO holons (type, name, gender, daily_work_hours, latest_state, availability_data, load_data, stress_data, cost_data, age, experience_years, created_by, created_on, updated_on) " +
       "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)",
-    ["employee", "demoholon1", "man", 8, "{}", "{}", "{}", "{}", "{}", 25, 8, responseUser.results[0].id, new Date(), new Date()]
+    ["employee", "demoholon1", "man", 8, "{}", emptyDataTemplate, emptyDataTemplate, emptyDataTemplate, emptyDataTemplate, 25, 8, responseUser.results[0].id, new Date(), new Date()]
   );
 
   let responseHolon2 = await db.executeQuery(
     "INSERT INTO holons (type, name, gender, daily_work_hours, latest_state, availability_data, load_data, stress_data, cost_data, age, experience_years, created_by, created_on, updated_on) " +
       "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)",
-    ["employee", "demoholon2", "man", 8, "{}", "{}", "{}", "{}", "{}", 29, 11, responseModerator.results[0].id, new Date(), new Date()]
+    ["employee", "demoholon2", "man", 8, "{}", emptyDataTemplate, emptyDataTemplate, emptyDataTemplate, emptyDataTemplate, 29, 11, responseModerator.results[0].id, new Date(), new Date()]
   );
 
   let responseHolon3 = await db.executeQuery(
     "INSERT INTO holons (type, name, gender, daily_work_hours, latest_state, availability_data, load_data, stress_data, cost_data, age, experience_years, created_by, created_on, updated_on) " +
       "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)",
-    ["employee", "demoholon3", "man", 8, "{}", "{}", "{}", "{}", "{}", 38, 13, responseAdmin.results[0].id, new Date(), new Date()]
+    ["employee", "demoholon3", "man", 8, "{}", emptyDataTemplate, emptyDataTemplate, emptyDataTemplate, emptyDataTemplate, 38, 13, responseAdmin.results[0].id, new Date(), new Date()]
   );
 
   let allResponseErrors = responseAlg.errors
