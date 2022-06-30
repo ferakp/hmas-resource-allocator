@@ -243,6 +243,127 @@ describe('testing GET /holons endpoint with queries', () => {
 });
 
 describe('testing PATCH /holons endpoint', () => {
+  test('patch the demoholon1 with availability_data', async () => {
+    let result = await testUtils.login('user', 'password');
+    const token = result.data.data[0].attributes.token;
+    result = await testUtils.get('holons', '', token);
+
+    const randomHolonId = result.data.data[0].attributes.id;
+    const reqParams = { availability_data: JSON.stringify({ currentValue: 0.3 }) };
+    result = await testUtils.patch('holons/' + randomHolonId, token, reqParams);
+
+    // Response has correct link
+    expect(result.data).toEqual(
+      expect.objectContaining({
+        links: expect.objectContaining({ self: expect.stringContaining('/api/v1/holons') }),
+      })
+    );
+
+    // Response has no errors
+    expect(result.data.errors.length).toBe(0);
+
+    // Response contains one data object
+    expect(result.data.data.length).toBe(1);
+
+    // Response's data object is type of holons
+    expect(result.data.data[0]).toEqual(
+      expect.objectContaining({
+        type: 'holons',
+      })
+    );
+
+    // Response has correct holon
+    expect(JSON.parse(result.data.data[0].attributes.availability_data).currentValue).toBe(0.3);
+    expect(testUtils.isDate(new Date(JSON.parse(result.data.data[0].attributes.availability_data).latestUpdate))).toBe(true);
+    expect(JSON.parse(result.data.data[0].attributes.availability_data).records.length).toBe(1);
+    expect(JSON.parse(result.data.data[0].attributes.availability_data).records[0].length).toBe(2);
+  });
+
+  test('patch the demoholon1 with availability_data twice', async () => {
+    let result = await testUtils.login('user', 'password');
+    const token = result.data.data[0].attributes.token;
+    result = await testUtils.get('holons', '', token);
+
+    const randomHolonId = result.data.data[0].attributes.id;
+    const reqParams = { availability_data: JSON.stringify({ currentValue: 0.3 }) };
+    result = await testUtils.patch('holons/' + randomHolonId, token, reqParams);
+    result = await testUtils.patch('holons/' + randomHolonId, token, reqParams);
+
+    // Response has correct link
+    expect(result.data).toEqual(
+      expect.objectContaining({
+        links: expect.objectContaining({ self: expect.stringContaining('/api/v1/holons') }),
+      })
+    );
+
+    // Response has no errors
+    expect(result.data.errors.length).toBe(0);
+
+    // Response contains one data object
+    expect(result.data.data.length).toBe(1);
+
+    // Response's data object is type of holons
+    expect(result.data.data[0]).toEqual(
+      expect.objectContaining({
+        type: 'holons',
+      })
+    );
+
+    // Response has correct holon
+    expect(JSON.parse(result.data.data[0].attributes.availability_data).currentValue).toBe(0.3);
+    expect(testUtils.isDate(new Date(JSON.parse(result.data.data[0].attributes.availability_data).latestUpdate))).toBe(true);
+    expect(JSON.parse(result.data.data[0].attributes.availability_data).records.length).toBe(2);
+    expect(JSON.parse(result.data.data[0].attributes.availability_data).records[0].length).toBe(2);
+    expect(JSON.parse(result.data.data[0].attributes.availability_data).records[1].length).toBe(2);
+  });
+
+  test('patch the demoholon1 with cost_data, load_data and stress_data', async () => {
+    let result = await testUtils.login('user', 'password');
+    const token = result.data.data[0].attributes.token;
+    result = await testUtils.get('holons', '', token);
+
+    const randomHolonId = result.data.data[0].attributes.id;
+    const reqParams = { cost_data: JSON.stringify({ currentValue: 0.3 }), load_data: JSON.stringify({ currentValue: 0.1 }), stress_data: JSON.stringify({ currentValue: 0.5 }) };
+    result = await testUtils.patch('holons/' + randomHolonId, token, reqParams);
+
+    // Response has correct link
+    expect(result.data).toEqual(
+      expect.objectContaining({
+        links: expect.objectContaining({ self: expect.stringContaining('/api/v1/holons') }),
+      })
+    );
+
+    // Response has no errors
+    expect(result.data.errors.length).toBe(0);
+
+    // Response contains one data object
+    expect(result.data.data.length).toBe(1);
+
+    // Response's data object is type of holons
+    expect(result.data.data[0]).toEqual(
+      expect.objectContaining({
+        type: 'holons',
+      })
+    );
+
+    // Response has correct holon
+    expect(JSON.parse(result.data.data[0].attributes.cost_data).currentValue).toBe(0.3);
+    expect(JSON.parse(result.data.data[0].attributes.load_data).currentValue).toBe(0.1);
+    expect(JSON.parse(result.data.data[0].attributes.stress_data).currentValue).toBe(0.5);
+
+    expect(testUtils.isDate(new Date(JSON.parse(result.data.data[0].attributes.cost_data).latestUpdate))).toBe(true);
+    expect(testUtils.isDate(new Date(JSON.parse(result.data.data[0].attributes.load_data).latestUpdate))).toBe(true);
+    expect(testUtils.isDate(new Date(JSON.parse(result.data.data[0].attributes.stress_data).latestUpdate))).toBe(true);
+
+    expect(JSON.parse(result.data.data[0].attributes.cost_data).records.length).toBe(1);
+    expect(JSON.parse(result.data.data[0].attributes.load_data).records.length).toBe(1);
+    expect(JSON.parse(result.data.data[0].attributes.stress_data).records.length).toBe(1);
+
+    expect(JSON.parse(result.data.data[0].attributes.cost_data).records[0].length).toBe(2);
+    expect(JSON.parse(result.data.data[0].attributes.load_data).records[0].length).toBe(2);
+    expect(JSON.parse(result.data.data[0].attributes.stress_data).records[0].length).toBe(2);
+  });
+
   test('patch the demoholon1 with new name, age, type, gender and daily_work_hours', async () => {
     let result = await testUtils.login('user', 'password');
     const token = result.data.data[0].attributes.token;

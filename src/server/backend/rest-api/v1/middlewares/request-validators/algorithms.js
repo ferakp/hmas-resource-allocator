@@ -7,68 +7,70 @@ const allFieldNames = requestConstraints.allFieldNames;
 const allFieldConstraints = requestConstraints.allFieldConstraints;
 
 export function getAlgorithms(req, res, next) {
-  const errors = [];
-  const query = JSON.parse(JSON.stringify(req.query));
-  // If path is users/:id
-  if (utils.hasFieldWithValue(req.params, "id")) query.id = req.params.id;
-  const acceptedFieldNames = requestConstraints.getUsers.acceptedFieldNames;
-
-  // Validator responses
-  let hasDuplicateQueryKeys = false;
-  let hasCorrectQueryKeys = false;
-  let hasCorrectQueryValues = false;
-
   // Pass
   next();
 }
 
 export function deleteAlgorithm(req, res, next) {
-    const errors = [];
-    const query = JSON.parse(JSON.stringify(req.query));
-    // If path is users/:id
-    if (utils.hasFieldWithValue(req.params, "id")) query.id = req.params.id;
-    const acceptedFieldNames = requestConstraints.deleteUser.acceptedFieldNames;
-  
-    // Validator responses
-    let hasCorrectQueryValues = false;
-  
-    // Validate query values
-    hasCorrectQueryValues = utils.isObjectFieldValuesValid(query, allFieldNames, allFieldConstraints);
-  
-    if (!hasCorrectQueryValues) {
-      res.sendStatus(204);
-      return;
-    }
+  const reqParams = JSON.parse(JSON.stringify(req.body));
+  const errors = utils.deleteRequestValidationCheck({ id: req.params.id, allFieldNames, allFieldConstraints });
+
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.deleteAlgorithm({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
+  }
   
     // Pass
     next();
   }
 
   export function patchAlgorithm(req, res, next) {
-    const errors = [];
-    const parameters = JSON.parse(JSON.stringify(req.body));
-    const acceptedFieldNames = requestConstraints.patchUser.acceptedFieldNames;
+    const reqParams = JSON.parse(JSON.stringify(req.body));
+    const acceptedFieldNames = requestConstraints.patchTask.acceptedFieldNames;
   
-    // Validator responses
-    let hasRequiredParameters = true;
-    let hasDuplicateParameters = false;
-    let hasCorrectParameterNames = false;
-    let hasCorrectParameterValues = false;
+    const errors = utils.patchRequestValidationCheck({
+      reqParams,
+      acceptedFieldNames,
+      allFieldConstraints,
+      allFieldNames,
+      id: req.params.id,
+    });
+  
+    // Return if error has occured
+    if (errors.length > 0) {
+      const response = responseGenerators.patchTask({ req, res, errors });
+      res.status(response.errors[0].status);
+      res.json(response);
+      return;
+    }
 
     // Pass
     next();
   }
 
   export function postAlgorithm(req, res, next) {
-    const errors = [];
-    const parameters = JSON.parse(JSON.stringify(req.body));
-    const acceptedFieldNames = requestConstraints.postUser.acceptedFieldNames;
+    const reqParams = JSON.parse(JSON.stringify(req.body));
+    const acceptedFieldNames = requestConstraints.postTask.acceptedFieldNames;
+    const requiredFieldNames =  requestConstraints.postTask.requiredFieldNames;
   
-    // Validator responses
-    let hasRequiredParameters = true;
-    let hasDuplicateParameters = false;
-    let hasCorrectParameterNames = false;
-    let hasCorrectParameterValues = false;
+    const errors = utils.postRequestValidationCheck({
+      reqParams,
+      acceptedFieldNames,
+      allFieldConstraints,
+      allFieldNames,
+      requiredFieldNames,
+    });
+  
+    // Return if error has occured
+    if (errors.length > 0) {
+      const response = responseGenerators.postTask({ req, res, errors });
+      res.status(response.errors[0].status);
+      res.json(response);
+      return;
+    }
 
     // Pass
     next();

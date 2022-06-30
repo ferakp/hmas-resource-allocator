@@ -1,6 +1,8 @@
 import * as database from './database';
 import * as holonsQueryGenerator from './query-generators/holons';
 import * as usersQueryGenerator from './query-generators/users';
+import * as tasksQueryGenerator from './query-generators/tasks';
+import * as settingsQueryGenerator from './query-generators/settings';
 import * as errorMessages from './messages/errors';
 import * as utils from './utils/utils';
 
@@ -338,38 +340,194 @@ export async function deleteHolon(parameters) {
  * ALGORITHMS
  */
 
-export async function getAlgorithms(filters) {}
+export async function getAlgorithms(parameters) {}
 
-export async function editAlgorithm(algorithmId, editedFields) {}
+export async function editAlgorithm(parameters) {}
 
-export async function deleteAlgorithm(algorithmId) {}
+export async function createAlgorithm(parameters) {}
+
+export async function deleteAlgorithm(parameters) {}
 
 /**
  * TASKS
  */
 
-export async function getTasks(userId, filters) {}
+export async function getTasks(parameters) {
+  const { filters } = parameters;
+  let response = { errors: [], results: null };
 
-export async function editTask(userId, editedFields) {}
+  let queryObject = tasksQueryGenerator.getTasks({ filters });
 
-export async function deleteTask(userId, taskId) {}
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
+
+export async function editTask(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
+
+  let queryObject = tasksQueryGenerator.editTask({ reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
+
+export async function deleteTask(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
+
+  let queryObject = tasksQueryGenerator.deleteTask({ reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
+
+export async function createTask(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
+
+  let queryObject = tasksQueryGenerator.createTask({ reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
 
 /**
  * DASHBOARD SETTINGS
  */
 
-export async function getDashboardSettings(userId) {}
+export async function getSettings(parameters) {
+  const { isForAuth, requester, filters } = parameters;
+  let response = { errors: [], results: null };
 
-export async function editDashboardSettings(userId, editedFields) {}
+  let queryObject = settingsQueryGenerator.getSettings({ isForAuth, requester, filters });
 
-export async function deleteDashboardSettings(userId) {}
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
+
+export async function editSettings(parameters) {}
+
+export async function createSettings(parameters) {}
+
+export async function deleteSettings(parameters) {}
 
 /**
  * ALLOCATIONS
  */
 
-export async function getAllocations(userId, filters) {}
+export async function getAllocations(parameters) {}
 
-export async function editAllocation(userId, editedFields) {}
+export async function editAllocation(parameters) {}
 
-export async function deleteAllocation(userId, allocationId) {}
+export async function deleteAllocation(parameters) {}

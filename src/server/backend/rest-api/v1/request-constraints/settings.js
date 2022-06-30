@@ -22,6 +22,7 @@ export const allFieldNames = [
   "settings",
   "created_on",
   "updated_on",
+  "created_by"
 ];
 
 export const allFieldConstraints = [
@@ -29,14 +30,15 @@ export const allFieldConstraints = [
   ["string", "not null"],
   ["date", "not null"],
   ["date", "not null"],
+  ["number", "not null"],
 ];
 
 export const getSettings = {
   acceptedFieldNames: [
     "id",
-    "settings",
-    "created_on",
-    "updated_on",
+    ...utils.generateComparableFields("created_on"),
+    ...utils.generateComparableFields("updated_on"),
+    "created_by"
   ],
 };
 

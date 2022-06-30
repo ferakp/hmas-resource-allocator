@@ -1,75 +1,179 @@
-import * as utils from "../../utils/utils";
-import * as errorMessages from "../../messages/errors";
-import * as responseGenerators from "../../response-generators/tasks";
-import * as requestConstraints from "../../request-constraints/tasks";
+import * as utils from '../../utils/utils';
+import * as errorMessages from '../../messages/errors';
+import * as responseGenerators from '../../response-generators/tasks';
+import * as requestConstraints from '../../request-constraints/tasks';
 
 const allFieldNames = requestConstraints.allFieldNames;
 const allFieldConstraints = requestConstraints.allFieldConstraints;
 
 export function getTasks(req, res, next) {
-  const errors = [];
   const query = JSON.parse(JSON.stringify(req.query));
-  // If path is users/:id
-  if (utils.hasFieldWithValue(req.params, "id")) query.id = req.params.id;
-  const acceptedFieldNames = requestConstraints.getUsers.acceptedFieldNames;
+  // If path is tasks/:id
+  if (utils.hasFieldWithValue(req.params, 'id')) query.id = req.params.id;
+  const acceptedFieldNames = requestConstraints.getTasks.acceptedFieldNames;
 
-  // Validator responses
-  let hasDuplicateQueryKeys = false;
-  let hasCorrectQueryKeys = false;
-  let hasCorrectQueryValues = false;
+  const errors = utils.getRequestValidationCheck({
+    query: query || {},
+    acceptedFieldNames: acceptedFieldNames || [],
+    allFieldNames: allFieldNames || {},
+    allFieldConstraints: allFieldConstraints || [],
+  });
+
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.getTasks({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
+  }
 
   // Pass
   next();
 }
 
 export function deleteTask(req, res, next) {
-    const errors = [];
-    const query = JSON.parse(JSON.stringify(req.query));
-    // If path is users/:id
-    if (utils.hasFieldWithValue(req.params, "id")) query.id = req.params.id;
-    const acceptedFieldNames = requestConstraints.deleteUser.acceptedFieldNames;
-  
-    // Validator responses
-    let hasCorrectQueryValues = false;
-  
-    // Validate query values
-    hasCorrectQueryValues = utils.isObjectFieldValuesValid(query, allFieldNames, allFieldConstraints);
-  
-    if (!hasCorrectQueryValues) {
-      res.sendStatus(204);
-      return;
+  const query = {};
+  const errors = utils.deleteRequestValidationCheck({ id: req.params.id, allFieldNames, allFieldConstraints });
+
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.deleteTask({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
+  }
+
+  // Pass
+  next();
+}
+
+export function patchTask(req, res, next) {
+  const reqParams = JSON.parse(JSON.stringify(req.body));
+  const acceptedFieldNames = requestConstraints.patchTask.acceptedFieldNames;
+
+  const errors = utils.patchRequestValidationCheck({
+    reqParams,
+    acceptedFieldNames,
+    allFieldConstraints,
+    allFieldNames,
+    id: req.params.id,
+  });
+
+  // Validate content of knowledge tags and resource demand
+  // Resource demand has assigned_to, structure of type, experience_years and knowledge_tags
+  if (errors.length === 0) {
+    try {
+      if (reqParams.hasOwnProperty('assigned_to') && !Array.isArray(JSON.parse(reqParams['assigned_to']).ids)) throw new Error();
+      if (reqParams.hasOwnProperty('knowledge_tags') && !Array.isArray(JSON.parse(reqParams['knowledge_tags']).tags)) throw new Error();
+      if (reqParams.hasOwnProperty('resource_demand') && !Array.isArray(JSON.parse(reqParams['resource_demand']).demands)) throw new Error();
+
+      if (reqParams.hasOwnProperty('assigned_to')) {
+        const assignedTo = JSON.parse(reqParams['assigned_to']).ids;
+        if (!utils.isArrayElementsNumber(assignedTo)) throw new Error();
+      }
+
+      if (reqParams.hasOwnProperty('knowledge_tags')) {
+        const tags = JSON.parse(reqParams['knowledge_tags']).tags;
+        if (!utils.isArrayElementsString(tags)) throw new Error();
+      }
+
+      if (reqParams.hasOwnProperty('resource_demand')) {
+        const demands = JSON.parse(reqParams['resource_demand']).demands;
+        demands.forEach((e) => {
+          if (
+            !e ||
+            !Array.isArray(e) ||
+            e.length !== 3 ||
+            !e[0] ||
+            typeof e[0] !== 'string' ||
+            !utils.isFieldNumber(e[1]) ||
+            !e[2] ||
+            !Array.isArray(e[2]) ||
+            !utils.isArrayElementsString(e[2])
+          ) {
+            throw new Error();
+          }
+        });
+      }
+    } catch (err) {
+      errors.push(errorMessages.INVALID_PARAMETER_VALUES);
     }
-  
-    // Pass
-    next();
   }
 
-  export function patchTask(req, res, next) {
-    const errors = [];
-    const parameters = JSON.parse(JSON.stringify(req.body));
-    const acceptedFieldNames = requestConstraints.patchUser.acceptedFieldNames;
-  
-    // Validator responses
-    let hasRequiredParameters = true;
-    let hasDuplicateParameters = false;
-    let hasCorrectParameterNames = false;
-    let hasCorrectParameterValues = false;
-
-    // Pass
-    next();
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.patchTask({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
   }
 
-  export function postTask(req, res, next) {
-    const errors = [];
-    const parameters = JSON.parse(JSON.stringify(req.body));
-    const acceptedFieldNames = requestConstraints.postUser.acceptedFieldNames;
-  
-    // Validator responses
-    let hasRequiredParameters = true;
-    let hasDuplicateParameters = false;
-    let hasCorrectParameterNames = false;
-    let hasCorrectParameterValues = false;
+  // Pass
+  next();
+}
 
-    // Pass
-    next();
+export function postTask(req, res, next) {
+  const reqParams = JSON.parse(JSON.stringify(req.body));
+  const acceptedFieldNames = requestConstraints.postTask.acceptedFieldNames;
+  const requiredFieldNames = requestConstraints.postTask.requiredFieldNames;
+
+  const errors = utils.postRequestValidationCheck({
+    reqParams,
+    acceptedFieldNames,
+    allFieldConstraints,
+    allFieldNames,
+    requiredFieldNames
+  });
+
+  // Validate content of knowledge tags and resource demand
+  // Resource demand has assigned_to, structure of type, experience_years and knowledge_tags
+  if (errors.length === 0) {
+    try {
+      if (reqParams.hasOwnProperty('assigned_to') && !Array.isArray(JSON.parse(reqParams['assigned_to']).ids)) throw new Error();
+      if (reqParams.hasOwnProperty('knowledge_tags') && !Array.isArray(JSON.parse(reqParams['knowledge_tags']).tags)) throw new Error();
+      if (reqParams.hasOwnProperty('resource_demand') && !Array.isArray(JSON.parse(reqParams['resource_demand']).demands)) throw new Error();
+
+      if (reqParams.hasOwnProperty('assigned_to')) {
+        const assignedTo = JSON.parse(reqParams['assigned_to']).ids;
+        if (!utils.isArrayElementsNumber(assignedTo)) throw new Error();
+      }
+
+      if (reqParams.hasOwnProperty('knowledge_tags')) {
+        const tags = JSON.parse(reqParams['knowledge_tags']).tags;
+        if (!utils.isArrayElementsString(tags)) throw new Error();
+      }
+
+      if (reqParams.hasOwnProperty('resource_demand')) {
+        const demands = JSON.parse(reqParams['resource_demand']).demands;
+        demands.forEach((e) => {
+          if (
+            !e ||
+            !Array.isArray(e) ||
+            e.length !== 3 ||
+            !e[0] ||
+            typeof e[0] !== 'string' ||
+            !utils.isFieldNumber(e[1]) ||
+            !e[2] ||
+            !Array.isArray(e[2]) ||
+            !utils.isArrayElementsString(e[2])
+          ) {
+            throw new Error();
+          }
+        });
+      }
+    } catch (err) {
+      errors.push(errorMessages.INVALID_PARAMETER_VALUES);
+    }
   }
+
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.patchTask({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
+  }
+
+  // Pass
+  next();
+}

@@ -50,7 +50,7 @@ export function patchHolon(req, res, next) {
       if (reqParams.hasOwnProperty('availability_data') && !utils.isFieldNumber(JSON.parse(reqParams['availability_data']).currentValue)) throw new Error();
       if (reqParams.hasOwnProperty('load_data') && !utils.isFieldNumber(JSON.parse(reqParams['load_data']).currentValue)) throw new Error();
       if (reqParams.hasOwnProperty('stress_data') && !utils.isFieldNumber(JSON.parse(reqParams['stress_data']).currentValue)) throw new Error();
-      if (reqParams.hasOwnProperty('cost_data') && !utils.isFieldNumber(JSON.parse(reqParams['stress_data']).currentValue)) throw new Error();
+      if (reqParams.hasOwnProperty('cost_data') && !utils.isFieldNumber(JSON.parse(reqParams['cost_data']).currentValue)) throw new Error();
     } catch (err) {
       errors.push(errorMessages.INVALID_PARAMETER_VALUES);
     }
@@ -71,7 +71,7 @@ export function patchHolon(req, res, next) {
 export function postHolon(req, res, next) {
   const reqParams = JSON.parse(JSON.stringify(req.body));
   const acceptedFieldNames = requestConstraints.postHolon.acceptedFieldNames;
-  const requiredFieldNames = ['type', 'name'];
+  const requiredFieldNames =  requestConstraints.postHolon.requiredFieldNames;
 
   const errors = utils.postRequestValidationCheck({
     reqParams,
@@ -87,7 +87,7 @@ export function postHolon(req, res, next) {
       if (reqParams.hasOwnProperty('availability_data') && !utils.isFieldNumber(JSON.parse(reqParams['availability_data']).currentValue)) throw new Error();
       if (reqParams.hasOwnProperty('load_data') && !utils.isFieldNumber(JSON.parse(reqParams['load_data']).currentValue)) throw new Error();
       if (reqParams.hasOwnProperty('stress_data') && !utils.isFieldNumber(JSON.parse(reqParams['stress_data']).currentValue)) throw new Error();
-      if (reqParams.hasOwnProperty('cost_data') && !utils.isFieldNumber(JSON.parse(reqParams['stress_data']).currentValue)) throw new Error();
+      if (reqParams.hasOwnProperty('cost_data') && !utils.isFieldNumber(JSON.parse(reqParams['cost_data']).currentValue)) throw new Error();
     } catch (err) {
       errors.push(errorMessages.INVALID_PARAMETER_VALUES);
     }
