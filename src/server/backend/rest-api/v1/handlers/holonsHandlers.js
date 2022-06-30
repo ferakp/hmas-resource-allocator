@@ -221,7 +221,7 @@ export async function deleteHolon(req, res) {
   }
 
   // Generate response
-  const response = responseGenerator.patchHolon(responseDetails);
+  const response = responseGenerator.deleteHolon(responseDetails);
 
   // Return response
   if (response.errors.length > 0) {

@@ -56,10 +56,7 @@ export const getTasks = {
     "id",
     "type",
     "name",
-    "description",
     "estimated_time",
-    "knowledge_tags",
-    "resource_demand",
     ...utils.generateComparableFields("priority"),
     ...utils.generateComparableFields("created_on"),
     "created_by",
@@ -89,7 +86,7 @@ export const patchTask = {
   ],
 };
 
-export const postTasks = {
+export const postTask = {
   requiredFieldNames: ["name", "description"],
   acceptedFieldNames: [
     "type",

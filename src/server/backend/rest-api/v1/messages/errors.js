@@ -271,3 +271,36 @@ export const MISSING_TOKEN = {
     detail: "Request has invalid authentication token",
     time: new Date()
 }
+
+export const TASK_NOT_FOUND= {
+    status: 404,
+    code: 34,
+    title: "TASK NOT FOUND",
+    detail: "Task with given ID does not exist",
+    time: new Date()
+}
+
+
+export const MAX_SETTINGS_SIZE_EXCEEDED = {
+    status: 400,
+    code: 35,
+    title: "MAX SETTINGS SIZE EXCEEDED",
+    detail: "Number of maximum settings fields is 100",
+    time: new Date()
+}
+
+export const MISSING_SETTINGS = {
+    status: 400,
+    code: 36,
+    title: "MISSING SETTINGS",
+    detail: "The request is missing settings",
+    time: new Date()
+}
+
+export const SETTINGS_NOT_FOUND= {
+    status: 404,
+    code: 37,
+    title: "SETTINGS NOT FOUND",
+    detail: "Settings with given id does not exist",
+    time: new Date()
+}

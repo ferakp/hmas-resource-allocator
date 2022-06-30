@@ -10,6 +10,7 @@ export const addTestEnvironment = async (db) => {
   let responseTas = await db.executeQuery("TRUNCATE tasks CASCADE");
   let responseUse = await db.executeQuery("TRUNCATE users CASCADE");
 
+  // USERS
   // Add three test users with roles of user, admin and moderator
   let responseUser = await db.executeQuery(
     "INSERT INTO users (role, username, password, email, firstname, lastname, created_on, updated_on) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
@@ -51,6 +52,7 @@ export const addTestEnvironment = async (db) => {
     ]
   );
 
+  // CREATE HOLONS
   // Template for availability_data, load_data, stress_data and cost_data
   const emptyDataTemplate = JSON.stringify({currentValue: 0, latestUpdate: new Date(), records: []});
 
@@ -72,6 +74,28 @@ export const addTestEnvironment = async (db) => {
     ["employee", "demoholon3", "man", 8, "{}", emptyDataTemplate, emptyDataTemplate, emptyDataTemplate, emptyDataTemplate, 38, 13, responseAdmin.results[0].id, new Date(), new Date()]
   );
 
+  // CREATE TASKS
+  const knowledgeTags = JSON.stringify({tags: ["sql"]});
+  const resourceDemand = JSON.stringify({demands: [["ordinary", 5, ["sql"]]]});
+
+  let responseTask1 = await db.executeQuery(
+    "INSERT INTO tasks (type, name, description, estimated_time, knowledge_tags, resource_demand, priority, created_by, created_on, updated_on) " +
+      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+    ["ordinary", "demotask1", "This is a task", 8, knowledgeTags, resourceDemand, 4, responseUser.results[0].id, new Date(), new Date()]
+  );
+
+  let responseTask2 = await db.executeQuery(
+    "INSERT INTO tasks (type, name, description, estimated_time, knowledge_tags, resource_demand, priority, created_by, created_on, updated_on) " +
+      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+    ["ordinary", "demotask2", "This is a task", 8, knowledgeTags, resourceDemand, 4, responseModerator.results[0].id, new Date(), new Date()]
+  );
+
+  let responseTask3 = await db.executeQuery(
+    "INSERT INTO tasks (type, name, description, estimated_time, knowledge_tags, resource_demand, priority, created_by, created_on, updated_on) " +
+      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+    ["ordinary1", "demotask3", "This is a task", 8, knowledgeTags, resourceDemand, 4, responseAdmin.results[0].id, new Date(), new Date()]
+  );
+
   let allResponseErrors = responseAlg.errors
     .concat(responseAll.errors)
     .concat(responseDas.errors)
@@ -83,7 +107,10 @@ export const addTestEnvironment = async (db) => {
     .concat(responseAdmin.errors)
     .concat(responseHolon1.errors)
     .concat(responseHolon2.errors)
-    .concat(responseHolon3.errors);
+    .concat(responseHolon3.errors)
+    .concat(responseTask1.errors)
+    .concat(responseTask2.errors)
+    .concat(responseTask3.errors);
 
   if (allResponseErrors.length > 0) throw new Error("Initialization of test environment failed");
 };

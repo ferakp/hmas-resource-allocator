@@ -95,6 +95,26 @@ export function isDate(param) {
   } else return false;
 }
 
+export function isArrayElementsString(array) {
+  if (!Array.isArray(array)) return false;
+  else {
+    return array.every((e) => {
+      if (!e || typeof e !== 'string') return false;
+      else return true;
+    });
+  }
+}
+
+export function isArrayElementsNumber(array) {
+  if (!Array.isArray(array)) return false;
+  else {
+    return array.every((e) => {
+      if (!isFieldNumber(e)) return false;
+      else return true;
+    });
+  }
+}
+
 export function isFieldNumber(field) {
   return !isNaN(Number(field));
 }
@@ -233,8 +253,9 @@ export function getRequestValidationCheck(parameters) {
   const errors = [];
 
   if (acceptedFieldNames.length === 0 || allFieldNames.length === 0 || allFieldConstraints.length === 0) {
-    return { errors: errors.push(errorMessages.UNEXPECTED_ERROR) };
-  } else if (Object.keys(query).length === 0) return { errors };
+    errors = errors.push(errorMessages.UNEXPECTED_ERROR);
+    return errors;
+  } else if (Object.keys(query).length === 0) return errors;
   // Validator responses
   let hasDuplicateQueryKeys = false;
   let hasCorrectQueryKeys = false;
@@ -366,7 +387,7 @@ export function deleteRequestValidationCheck(parameters) {
 
   // Add error for invalid id
   if (!isObjectFieldValuesValid({ id }, allFieldNames, allFieldConstraints)) {
-    errors.push(errorMessages.USER_NOT_FOUND);
+    errors.push(errorMessages.INVALID_PARAMETER_VALUES);
   }
 
   return errors;
@@ -390,4 +411,39 @@ export function hasPermissionToEdit(parameters) {
     errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
     return errors;
   }
+}
+
+/**
+ * HOLONS DATA FIELD UTILITIES
+ */
+
+export function formatAndFixHolonDataFields(holon) {
+  const temp = {currentValue: 0, latestUpdate: new Date(), records: []};
+
+  if(!isHolonDataFieldCorrect(holon, "cost_data")) holon["cost_data"] = JSON.parse(JSON.stringify(temp));
+  else holon["cost_data"] = JSON.parse(holon["cost_data"]);
+
+  if(!isHolonDataFieldCorrect(holon, "availability_data")) holon["availability_data"] = JSON.parse(JSON.stringify(temp));
+  else holon["availability_data"] = JSON.parse(holon["availability_data"]);
+
+  if(!isHolonDataFieldCorrect(holon, "stress_data")) holon["stress_data"] = JSON.parse(JSON.stringify(temp));
+  else holon["stress_data"] = JSON.parse(holon["stress_data"]);
+
+  if(!isHolonDataFieldCorrect(holon, "load_data")) holon["load_data"] = JSON.parse(JSON.stringify(temp));
+  else holon["load_data"] = JSON.parse(holon["load_data"]);
+
+  return holon;
+}
+
+function isHolonDataFieldCorrect(holonTemp, fieldName) {
+  try {
+    const holon = JSON.parse(JSON.stringify(holonTemp));
+    if (!holon[fieldName]) return false;
+    holon[fieldName] = JSON.parse(holon[fieldName]);
+    if (!holon[fieldName] || !isFieldNumber(holon[fieldName].currentValue) || !isDate(new Date(holon[fieldName].latestUpdate)) || !Array.isArray(holon[fieldName].records)) return false;
+    return true;
+  } catch(err) {
+    return false;
+  }
+  
 }

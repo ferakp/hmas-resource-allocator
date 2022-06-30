@@ -6,7 +6,7 @@ import * as checkPrivValid from '../middlewares/privilege-validators/settings';
 
 const router = express.Router();
 
-router.get('/', checkAuth, checkReqValid.getSettings, checkPrivValid.getSettings, handlers.getSettings);
+router.get('/', checkAuth, checkReqValid.getSettings, handlers.getSettings);
 router.post('/', checkAuth, checkReqValid.postSettings, checkPrivValid.postSettings, handlers.postSettings);
 
 router.get("/:id", checkAuth, checkReqValid.getSettings, checkPrivValid.getSettings, handlers.getSettings);

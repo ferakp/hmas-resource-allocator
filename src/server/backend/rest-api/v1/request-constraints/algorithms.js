@@ -17,10 +17,11 @@ import * as utils from "../utils/utils";
  *
  */
 
-export const allFieldNames = ["id", "type", "name", "created_on", "updated_on", "created_by"];
+export const allFieldNames = ["id", "type", "name", "description", "created_on", "updated_on", "created_by"];
 
 export const allFieldConstraints = [
   ["number", "not null"],
+  ["string", "not null"],
   ["string", "not null"],
   ["string", "not null"],
   ["date", "not null"],
@@ -28,25 +29,15 @@ export const allFieldConstraints = [
   ["number", "not null"],
 ];
 
-export const getAlgorithms = {
-  acceptedFieldNames: [
-    "id",
-    "request_by",
-    ...utils.generateComparableFields("created_on"),
-    ...utils.generateComparableFields("completed_on"),
-    ...utils.generateComparableFields("updated_on"),
-  ],
+export const postAlgorithm = {
+  requiredFieldNames: ["type", "name", "description"],
+  acceptedFieldNames: ["type", "name", "description"],
 };
 
-export const postAllocations = {
-  requiredFieldNames: ["request_by", "request"],
-  acceptedFieldNames: ["request_by", "request", "result", "created_on", "completed_on", "updated_on"],
+export const patchAlgorithm = {
+  acceptedFieldNames: ["type", "name", "description"],
 };
 
-export const patchAllocations = {
-  acceptedFieldNames: ["result"],
-};
-
-export const deleteAllocations = {
+export const deleteAlgorithm = {
   acceptedFieldNames: ["id"],
 };
