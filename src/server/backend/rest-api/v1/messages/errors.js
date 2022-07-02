@@ -304,3 +304,11 @@ export const SETTINGS_NOT_FOUND= {
     detail: "Settings with given id does not exist",
     time: new Date()
 }
+
+export const DUPLICATE_SETTINGS_NOT_ALLOWED= {
+    status: 400,
+    code: 38,
+    title: "DUPLICATE SETTINGS FILE NOT ALLOWED",
+    detail: "Settings file with given user id already exists",
+    time: new Date()
+}

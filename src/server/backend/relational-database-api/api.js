@@ -516,11 +516,101 @@ export async function getSettings(parameters) {
   return response;
 }
 
-export async function editSettings(parameters) {}
+export async function editSettings(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
 
-export async function createSettings(parameters) {}
+  let queryObject = settingsQueryGenerator.editSettings({ reqParams });
 
-export async function deleteSettings(parameters) {}
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
+
+export async function createSettings(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
+
+  let queryObject = settingsQueryGenerator.createSettings({ reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
+
+export async function deleteSettings(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
+
+  let queryObject = settingsQueryGenerator.deleteSettings({ filters: reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
 
 /**
  * ALLOCATIONS

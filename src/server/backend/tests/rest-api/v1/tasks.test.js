@@ -257,7 +257,7 @@ describe('testing PATCH /tasks endpoint', () => {
     // Response contains no data object
     expect(result.data.data.length).toBe(0);
 
-    // Response has correct task
+    // Response has correct error
     expect(result.data.errors[0].title).toBe('INVALID PARAMETER NAMES');
   });
 
@@ -284,7 +284,7 @@ describe('testing PATCH /tasks endpoint', () => {
     // Response contains no data object
     expect(result.data.data.length).toBe(0);
 
-    // Response has correct task
+    // Response has correct error
     expect(result.data.errors[0].title).toBe('INSUFFICIENT PRIVILEGES');
   });
 
@@ -345,7 +345,7 @@ describe('testing PATCH /tasks endpoint', () => {
     // Response contains no data object
     expect(result.data.data.length).toBe(0);
 
-    // Response has correct task
+    // Response has correct error
     expect(result.data.errors[0].title).toBe('INVALID PARAMETER VALUES');
   });
 });
@@ -414,7 +414,7 @@ describe('testing POST /tasks endpoint', () => {
     // Response contains no data object
     expect(result.data.data.length).toBe(0);
 
-    // Response has correct task
+    // Response has correct error
     expect(result.data.errors[0].title).toBe('INVALID PARAMETER NAMES');
   });
 
@@ -441,7 +441,7 @@ describe('testing POST /tasks endpoint', () => {
     // Response contains no data object
     expect(result.data.data.length).toBe(0);
 
-    // Response has correct task
+    // Response has correct error
     expect(result.data.errors[0].title).toBe('INVALID PARAMETER VALUES');
   });
 });
@@ -471,7 +471,7 @@ describe('testing DELETE /tasks endpoint', () => {
     // Response contains no data object
     expect(result.data.data.length).toBe(0);
 
-    // Response has correct task
+    // Response has correct error
     expect(result.data.errors[0].title).toBe('INSUFFICIENT PRIVILEGES');
   });
 

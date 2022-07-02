@@ -46,7 +46,7 @@ const template = {
     if (results.length > 0) {
       results.forEach((user) => {
         response.data.push({
-          type: "holons",
+          type: "settings",
           id: user.id,
           attributes: user,
         });

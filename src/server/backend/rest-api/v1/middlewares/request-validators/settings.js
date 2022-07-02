@@ -60,12 +60,14 @@ export function patchSettings(req, res, next) {
   });
 
   // Settings should have not more than 100 fields
-  try {
-    const settings = JSON.parse(reqParams['settings']);
-    if (Object.keys(settings).length > 99) errors.push(errorMessages.MAX_SETTINGS_SIZE_EXCEEDED);
-    else if (Object.keys(settings).length === 0) errors.push(errorMessages.MISSING_SETTINGS);
-  } catch (err) {
-    errors.push(errorMessages.INVALID_PARAMETER_VALUES);
+  if (errors.length === 0) {
+    try {
+      const settings = JSON.parse(reqParams['settings']);
+      if (Object.keys(settings).length > 99) errors.push(errorMessages.MAX_SETTINGS_SIZE_EXCEEDED);
+      else if (Object.keys(settings).length === 0) errors.push(errorMessages.MISSING_SETTINGS);
+    } catch (err) {
+      errors.push(errorMessages.INVALID_PARAMETER_VALUES);
+    }
   }
 
   // Return if error has occured
@@ -83,7 +85,7 @@ export function patchSettings(req, res, next) {
 export function postSettings(req, res, next) {
   const reqParams = JSON.parse(JSON.stringify(req.body));
   const acceptedFieldNames = requestConstraints.postSettings.acceptedFieldNames;
-  const requiredFieldNames =  requestConstraints.postSettings.requiredFieldNames;
+  const requiredFieldNames = requestConstraints.postSettings.requiredFieldNames;
 
   const errors = utils.postRequestValidationCheck({
     reqParams,
@@ -94,12 +96,14 @@ export function postSettings(req, res, next) {
   });
 
   // Settings should have not more than 100 fields
-  try {
-    const settings = JSON.parse(reqParams['settings']);
-    if (Object.keys(settings).length > 99) errors.push(errorMessages.MAX_SETTINGS_SIZE_EXCEEDED);
-    else if (Object.keys(settings).length === 0) errors.push(errorMessages.MISSING_SETTINGS);
-  } catch (err) {
-    errors.push(errorMessages.INVALID_PARAMETER_VALUES);
+  if (errors.length === 0) {
+    try {
+      const settings = JSON.parse(reqParams['settings']);
+      if (Object.keys(settings).length > 99) errors.push(errorMessages.MAX_SETTINGS_SIZE_EXCEEDED);
+      else if (Object.keys(settings).length === 0) errors.push(errorMessages.MISSING_SETTINGS);
+    } catch (err) {
+      errors.push(errorMessages.INVALID_PARAMETER_VALUES);
+    }
   }
 
   // Return if error has occured

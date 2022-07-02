@@ -12,7 +12,7 @@ export function getSettings(parameters) {
 
   // Query for retrieving settings by id
   if (isForAuth) {
-    response.query = 'SELECT * FROM settings WHERE created_by=$1';
+    response.query = 'SELECT * FROM dashboard_settings WHERE id=$1';
     response.values = [filters.id];
     return response;
   }
@@ -22,7 +22,7 @@ export function getSettings(parameters) {
     const selectResponse = queryGeneratorUtil.generateSelectQuery('dashboard_settings', '*', filters, 'AND');
 
     const query =
-      'SELECT users.id, users.role , s.id AS sid, s.settings AS ssettings, s.created_on AS screated_on, s.updated_on AS supdated_on, s.created_by AS screated_by FROM (' +
+      'SELECT users.id, users.role, s.id AS sid, s.settings AS ssettings, s.created_on AS screated_on, s.updated_on AS supdated_on, s.created_by AS screated_by FROM (' +
       selectResponse.query +
       ') AS s FULL OUTER JOIN users ON users.id = s.created_by WHERE s.settings IS NOT NULL';
     const values = selectResponse.values;
@@ -45,7 +45,10 @@ export function getSettings(parameters) {
     }
 
     const wrapper = { query, values };
-    wrapper.query = 'SELECT (sid AS id, ssettings AS settings, screated_on AS created_on, supdated_on AS updated_on, screated_by AS created_by) FROM (' + queryResponse.query + ')';
+    wrapper.query =
+      'SELECT t.sid AS id, t.ssettings AS settings, t.screated_on AS created_on, t.supdated_on AS updated_on, t.screated_by AS created_by FROM (' +
+      queryResponse.query +
+      ') AS t';
     wrapper.values = queryResponse.values;
 
     response.query = wrapper?.query;
@@ -65,7 +68,7 @@ export function editSettings(parameters) {
   const { requester, reqParams } = parameters;
   let response = { query: null, values: null };
   if (!utils.hasFieldsWithValue(reqParams, ['id']) || Object.keys(reqParams).length === 1) return response;
-  return queryGeneratorUtil.generateUpdateQuery('users', reqParams, ['id']);
+  return queryGeneratorUtil.generateUpdateQuery('dashboard_settings', reqParams, ['id']);
 }
 
 /**
@@ -76,7 +79,7 @@ export function editSettings(parameters) {
 export function deleteSettings(parameters) {
   let response = { query: null, values: null };
   if (!utils.hasFieldsWithValue(parameters.filters, ['id'])) return response;
-  response.query = 'DELETE FROM users WHERE id=$1 RETURNING id';
+  response.query = 'DELETE FROM dashboard_settings WHERE id=$1 RETURNING id';
   response.values = [parameters.filters?.id];
   return response;
 }
@@ -91,7 +94,7 @@ export function createSettings(parameters) {
   let response = { query: null, values: null };
   if (reqParams && reqParams.hasOwnProperty('id') && Object.keys(reqParams).length > 1) return response;
 
-  return queryGeneratorUtil.generateInsertQuery('users', reqParams);
+  return queryGeneratorUtil.generateInsertQuery('dashboard_settings', reqParams);
 }
 
 /**
