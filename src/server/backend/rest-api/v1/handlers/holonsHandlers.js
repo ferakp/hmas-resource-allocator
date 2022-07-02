@@ -126,7 +126,6 @@ export async function patchHolon(req, res) {
         responseDetails.errors.push(errorMessages.HOLON_NOT_FOUND);
       } else {
 
-        //console.log("Holon result ", holonResult.results[0]);
         const holon = utils.formatAndFixHolonDataFields(holonResult.results[0]);
         const editHolon = reqParams;
 

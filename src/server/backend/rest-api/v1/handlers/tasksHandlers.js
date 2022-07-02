@@ -65,7 +65,7 @@ export async function postTask(req, res) {
 
   // Format is successfull
   if (responseDetails.errors.length === 0) {
-    // Create tasks
+    // Create task
     const { errors, results } = await rDatabaseApi.createTask({ reqParams });
     responseDetails.errors = errors || [];
     responseDetails.results = results || [];
@@ -103,7 +103,7 @@ export async function patchTask(req, res) {
 
   // Format is successfull
   if (responseDetails.errors.length === 0) {
-    // Create tasks
+    // Edit task
     const { errors, results } = await rDatabaseApi.editTask({ reqParams });
     responseDetails.errors = errors || [];
     responseDetails.results = results || [];
@@ -137,7 +137,7 @@ export async function deleteTask(req, res) {
 
   // Format is successfull
   if (responseDetails.errors.length === 0) {
-    // Edit holon
+    // Delete task
     const { errors, results } = await rDatabaseApi.deleteTask({ reqParams });
     responseDetails.errors = errors || [];
     responseDetails.results = results || [];
