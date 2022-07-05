@@ -44,11 +44,11 @@ function commonResponseGenerator(parameters) {
 
   // Response for results
   if (results.length > 0) {
-    results.forEach((user) => {
+    results.forEach((data) => {
       response.data.push({
         type: "users",
-        id: user.id,
-        attributes: user,
+        id: data.id,
+        attributes: data,
       });
     });
   }

@@ -4,6 +4,7 @@ const router = express.Router();
 // Routes
 import authRoutes from './auth';
 import holonsRoutes from './holons';
+import searchRoutes from './search';
 import statusRoutes from './status';
 import allocationsRoutes from './allocations';
 import tasksRoutes from './tasks';
@@ -16,6 +17,7 @@ import messagesRoutes from './messages';
 
 router.use('/auth', authRoutes);
 router.use('/holons', holonsRoutes);
+router.use('/search', searchRoutes);
 router.use('/status', statusRoutes);
 router.use('/allocations', allocationsRoutes);
 router.use('/tasks', tasksRoutes);

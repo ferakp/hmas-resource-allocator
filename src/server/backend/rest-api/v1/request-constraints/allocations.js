@@ -17,7 +17,7 @@ import * as utils from "../utils/utils";
  *
  */
 
-export const allFieldNames = ["id", "request_by", "request", "result", "created_on", "completed_on", "updated_on"];
+export const allFieldNames = ["id", "request_by", "request", "result", "start_time", "end_time", "created_on", "completed_on", "updated_on"];
 
 export const allFieldConstraints = [
   ["string", "not null"],
@@ -27,12 +27,16 @@ export const allFieldConstraints = [
   ["date", "not null"],
   ["date"],
   ["date", "not null"],
+  ["date"],
+  ["date", "not null"],
 ];
 
 export const getAllocations = {
   acceptedFieldNames: [
     "id",
     "request_by",
+    ...utils.generateComparableFields("start_time"),
+    ...utils.generateComparableFields("end_time"),
     ...utils.generateComparableFields("created_on"),
     ...utils.generateComparableFields("completed_on"),
     ...utils.generateComparableFields("updated_on"),

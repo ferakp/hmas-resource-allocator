@@ -5,7 +5,7 @@ import * as testEnvironment from '../../utils/test-environment';
 
 // Configuring test environment
 jest.useRealTimers();
-jest.setTimeout(30000);
+jest.setTimeout(40000);
 
 beforeEach(async () => {
   // Wait server to be set up

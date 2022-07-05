@@ -40,7 +40,7 @@ export const addTestEnvironment = async (db) => {
 
   let responseHolon1 = await db.executeQuery(
     'INSERT INTO holons (type, name, gender, daily_work_hours, latest_state, availability_data, load_data, stress_data, cost_data, age, experience_years, created_by, created_on, updated_on) ' +
-      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)',
+      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
     [
       'employee',
       'demoholon1',
@@ -61,7 +61,7 @@ export const addTestEnvironment = async (db) => {
 
   let responseHolon2 = await db.executeQuery(
     'INSERT INTO holons (type, name, gender, daily_work_hours, latest_state, availability_data, load_data, stress_data, cost_data, age, experience_years, created_by, created_on, updated_on) ' +
-      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)',
+      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
     [
       'employee',
       'demoholon2',
@@ -82,7 +82,7 @@ export const addTestEnvironment = async (db) => {
 
   let responseHolon3 = await db.executeQuery(
     'INSERT INTO holons (type, name, gender, daily_work_hours, latest_state, availability_data, load_data, stress_data, cost_data, age, experience_years, created_by, created_on, updated_on) ' +
-      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)',
+      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *',
     [
       'employee',
       'demoholon3',
@@ -104,48 +104,68 @@ export const addTestEnvironment = async (db) => {
   // CREATE TASKS
   const knowledgeTags = JSON.stringify({ tags: ['sql'] });
   const resourceDemand = JSON.stringify({ demands: [['ordinary', 5, ['sql']]] });
+  const assignedTo = JSON.stringify({ ids: [] });
 
   let responseTask1 = await db.executeQuery(
-    'INSERT INTO tasks (type, name, description, estimated_time, knowledge_tags, resource_demand, priority, created_by, created_on, updated_on) ' +
-      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-    ['ordinary', 'demotask1', 'This is a task', 8, knowledgeTags, resourceDemand, 4, responseUser.results[0].id, new Date(), new Date()]
+    'INSERT INTO tasks (assigned_to, type, name, description, estimated_time, knowledge_tags, resource_demand, priority, created_by, created_on, updated_on) ' +
+      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
+    [assignedTo, 'ordinary', 'demotask1', 'This is a task', 8, knowledgeTags, resourceDemand, 4, responseUser.results[0].id, new Date(), new Date()]
   );
 
   let responseTask2 = await db.executeQuery(
-    'INSERT INTO tasks (type, name, description, estimated_time, knowledge_tags, resource_demand, priority, created_by, created_on, updated_on) ' +
-      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-    ['ordinary', 'demotask2', 'This is a task', 8, knowledgeTags, resourceDemand, 4, responseModerator.results[0].id, new Date(), new Date()]
+    'INSERT INTO tasks (assigned_to, type, name, description, estimated_time, knowledge_tags, resource_demand, priority, created_by, created_on, updated_on) ' +
+      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
+    [assignedTo, 'ordinary', 'demotask2', 'This is a task', 8, knowledgeTags, resourceDemand, 4, responseModerator.results[0].id, new Date(), new Date()]
   );
 
   let responseTask3 = await db.executeQuery(
-    'INSERT INTO tasks (type, name, description, estimated_time, knowledge_tags, resource_demand, priority, created_by, created_on, updated_on) ' +
-      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-    ['ordinary1', 'demotask3', 'This is a task', 8, knowledgeTags, resourceDemand, 4, responseAdmin.results[0].id, new Date(), new Date()]
+    'INSERT INTO tasks (assigned_to, type, name, description, estimated_time, knowledge_tags, resource_demand, priority, created_by, created_on, updated_on) ' +
+      'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
+    [assignedTo, 'ordinary1', 'demotask3', 'This is a task', 8, knowledgeTags, resourceDemand, 4, responseAdmin.results[0].id, new Date(), new Date()]
   );
 
   // CREATE SETTINGS
   const settingsTemplate = JSON.stringify({ holonsUpdate: 5, tasksUpdate: 5 });
 
-  let responseSettings1 = await db.executeQuery('INSERT INTO dashboard_settings (settings, created_by, created_on, updated_on) ' + 'VALUES ($1, $2, $3, $4)', [
+  let responseSettings1 = await db.executeQuery('INSERT INTO dashboard_settings (settings, created_by, created_on, updated_on) ' + 'VALUES ($1, $2, $3, $4) RETURNING *', [
     settingsTemplate,
     responseUser.results[0].id,
     new Date(),
     new Date(),
   ]);
 
-  let responseSettings2 = await db.executeQuery('INSERT INTO dashboard_settings (settings, created_by, created_on, updated_on) ' + 'VALUES ($1, $2, $3, $4)', [
+  let responseSettings2 = await db.executeQuery('INSERT INTO dashboard_settings (settings, created_by, created_on, updated_on) ' + 'VALUES ($1, $2, $3, $4) RETURNING *', [
     settingsTemplate,
     responseModerator.results[0].id,
     new Date(),
     new Date(),
   ]);
 
-  let responseSettings3 = await db.executeQuery('INSERT INTO dashboard_settings (settings, created_by, created_on, updated_on) ' + 'VALUES ($1, $2, $3, $4)', [
+  let responseSettings3 = await db.executeQuery('INSERT INTO dashboard_settings (settings, created_by, created_on, updated_on) ' + 'VALUES ($1, $2, $3, $4) RETURNING *', [
     settingsTemplate,
     responseAdmin.results[0].id,
     new Date(),
     new Date(),
   ]);
+
+  // CREATE ALLOCATIONS
+  const requestTemplate = JSON.stringify({
+    holonIds: [responseHolon1.results[0].id, responseHolon2.results[0].id, responseHolon3.results[0].id],
+    taskIds: [responseTask1.results[0].id, responseTask2.results[0].id, responseTask3.results[0].id],
+  });
+
+  let responseAllocation1 = await db.executeQuery('INSERT INTO allocations (request, created_on, start_time, updated_on, request_by) ' + 'VALUES ($1, $2, $3, $4, $5)', [
+    requestTemplate,
+    new Date(),
+    new Date(),
+    new Date(),
+    responseAdmin.results[0].id
+  ]);
+
+  let responseApp = await db.executeQuery(
+    'INSERT INTO users (role, username, password, email, firstname, lastname, created_on, updated_on) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+    ['app', 'app', await restUtils.encryptPassword('password'), 'app@demo.com', 'appFName', 'appLName', new Date('2022-06-10T18:24:21.381Z'), new Date('2022-06-10T18:24:21.381Z')]
+  );
 
   let allResponseErrors = responseAlg.errors
     .concat(responseAll.errors)
@@ -164,7 +184,9 @@ export const addTestEnvironment = async (db) => {
     .concat(responseTask3.errors)
     .concat(responseSettings1.errors)
     .concat(responseSettings2.errors)
-    .concat(responseSettings3.errors);
+    .concat(responseSettings3.errors)
+    .concat(responseAllocation1.errors)
+    .concat(responseApp.errors);
 
   if (allResponseErrors.length > 0) throw new Error('Initialization of test environment failed');
 };

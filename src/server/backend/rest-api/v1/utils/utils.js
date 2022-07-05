@@ -82,6 +82,7 @@ export function isObjectFieldValuesValid(object = {}, allFieldNames = [], allFie
     if (allFieldNames.indexOf(fieldName) === -1) return false;
     let constraints = allFieldConstraints[allFieldNames.indexOf(fieldName)];
     if (constraints.includes('not null') && !fieldValue) return false;
+    if (constraints.includes('array') && !Array.isArray(fieldValue)) return false;
     if (constraints.includes('string') && typeof fieldValue !== 'string') return false;
     if (constraints.includes('number') && !isFieldNumber(fieldValue)) return false;
     if (constraints.includes('date') && !isDate(new Date(fieldValue))) return false;
@@ -208,6 +209,7 @@ export function formatRequestQuery(query = {}, allFieldNames = [], allFieldConst
       if (constraints.includes('string')) query[Object.keys(query)[i]] = tempQuery[key].toString();
       else if (constraints.includes('number')) query[Object.keys(query)[i]] = Number(tempQuery[key]);
       else if (constraints.includes('date')) query[Object.keys(query)[i]] = new Date(tempQuery[key]);
+      else if (constraints.includes('array') && !Array.isArray(query[Object.keys(query)[i]])) throw new Error();
     });
     response.formattedQuery = query;
   } catch (err) {
@@ -406,6 +408,7 @@ export function hasPermissionToEdit(parameters) {
     if (requester.role === 'admin' && resourceOwner.role === 'admin') errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
     else if (requester.role === 'moderator' && ['moderator', 'admin'].includes(resourceOwner.role)) errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
     else if (requester.role === 'user') errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
+    else if(!["user", "admin", "moderator"].includes(requester.role)) errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
     return errors;
   } else {
     errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
@@ -418,19 +421,19 @@ export function hasPermissionToEdit(parameters) {
  */
 
 export function formatAndFixHolonDataFields(holon) {
-  const temp = {currentValue: 0, latestUpdate: new Date(), records: []};
+  const temp = { currentValue: 0, latestUpdate: new Date(), records: [] };
 
-  if(!isHolonDataFieldCorrect(holon, "cost_data")) holon["cost_data"] = JSON.parse(JSON.stringify(temp));
-  else holon["cost_data"] = JSON.parse(holon["cost_data"]);
+  if (!isHolonDataFieldCorrect(holon, 'cost_data')) holon['cost_data'] = JSON.parse(JSON.stringify(temp));
+  else holon['cost_data'] = JSON.parse(holon['cost_data']);
 
-  if(!isHolonDataFieldCorrect(holon, "availability_data")) holon["availability_data"] = JSON.parse(JSON.stringify(temp));
-  else holon["availability_data"] = JSON.parse(holon["availability_data"]);
+  if (!isHolonDataFieldCorrect(holon, 'availability_data')) holon['availability_data'] = JSON.parse(JSON.stringify(temp));
+  else holon['availability_data'] = JSON.parse(holon['availability_data']);
 
-  if(!isHolonDataFieldCorrect(holon, "stress_data")) holon["stress_data"] = JSON.parse(JSON.stringify(temp));
-  else holon["stress_data"] = JSON.parse(holon["stress_data"]);
+  if (!isHolonDataFieldCorrect(holon, 'stress_data')) holon['stress_data'] = JSON.parse(JSON.stringify(temp));
+  else holon['stress_data'] = JSON.parse(holon['stress_data']);
 
-  if(!isHolonDataFieldCorrect(holon, "load_data")) holon["load_data"] = JSON.parse(JSON.stringify(temp));
-  else holon["load_data"] = JSON.parse(holon["load_data"]);
+  if (!isHolonDataFieldCorrect(holon, 'load_data')) holon['load_data'] = JSON.parse(JSON.stringify(temp));
+  else holon['load_data'] = JSON.parse(holon['load_data']);
 
   return holon;
 }
@@ -440,10 +443,44 @@ function isHolonDataFieldCorrect(holonTemp, fieldName) {
     const holon = JSON.parse(JSON.stringify(holonTemp));
     if (!holon[fieldName]) return false;
     holon[fieldName] = JSON.parse(holon[fieldName]);
-    if (!holon[fieldName] || !isFieldNumber(holon[fieldName].currentValue) || !isDate(new Date(holon[fieldName].latestUpdate)) || !Array.isArray(holon[fieldName].records)) return false;
+    if (!holon[fieldName] || !isFieldNumber(holon[fieldName].currentValue) || !isDate(new Date(holon[fieldName].latestUpdate)) || !Array.isArray(holon[fieldName].records))
+      return false;
     return true;
-  } catch(err) {
+  } catch (err) {
     return false;
   }
-  
+}
+
+/**
+ * SEARCH
+ */
+
+export function getDeleteIds(requestedIds, receivedIds) {
+  const deletedIds = [];
+
+  if (!Array.isArray(requestedIds) || !Array.isArray(receivedIds)) return [];
+  else {
+    requestedIds.forEach((e) => {
+      if (!receivedIds.includes(e)) deletedIds.push(e);
+    });
+  }
+
+  return deletedIds;
+}
+
+export function getUpdatedResources(requestedIds, receivedResources, latestUpdateTime) {
+  const updatedResources = [];
+
+  if (!Array.isArray(requestedIds) || !Array.isArray(receivedResources)) return [];
+  else {
+    receivedResources.forEach((e) => {
+      if (isDate(new Date(latestUpdateTime)) && new Date(latestUpdateTime) < new Date(e.updated_on)) {
+        updatedResources.push(e);
+      } else if (!isDate(latestUpdateTime)) {
+        updatedResources.push(e);
+      }
+    });
+  }
+
+  return updatedResources;
 }

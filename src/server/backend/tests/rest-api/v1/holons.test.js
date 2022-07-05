@@ -5,7 +5,7 @@ import * as testEnvironment from '../../utils/test-environment';
 
 // Configuring test environment
 jest.useRealTimers();
-jest.setTimeout(30000);
+jest.setTimeout(40000);
 
 beforeEach(async () => {
   // Wait server to be set up
@@ -560,7 +560,7 @@ describe('testing DELETE /holons endpoint', () => {
     const token = result.data.data[0].attributes.token;
     result = await testUtils.get('holons', '', token);
 
-    const randomHolonId = result.data.data[0].attributes.id;
+    const randomHolonId = result.data.data[1].attributes.id;
     result = await testUtils.del('holons/' + randomHolonId, token);
 
     // Response has correct link
@@ -596,7 +596,7 @@ describe('testing DELETE /holons endpoint', () => {
     const token = result.data.data[0].attributes.token;
     result = await testUtils.get('holons', '', token);
 
-    const randomHolonId = result.data.data[0].attributes.id;
+    const randomHolonId = result.data.data[2].attributes.id;
     result = await testUtils.del('holons/' + randomHolonId, token);
 
     // Response has correct link

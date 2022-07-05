@@ -44,11 +44,11 @@ const template = {
   
     // Response for results
     if (results.length > 0) {
-      results.forEach((user) => {
+      results.forEach((data) => {
         response.data.push({
           type: "holons",
-          id: user.id,
-          attributes: user,
+          id: data.id,
+          attributes: data,
         });
       });
     }

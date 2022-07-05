@@ -1,7 +1,7 @@
 import * as utils from '../../utils/utils';
 import * as errorMessages from '../../messages/errors';
 import * as responseGenerators from '../../response-generators/tasks';
-import * as rDatabaseApi from "../../../../relational-database-api/api";
+import * as rDatabaseApi from '../../../../relational-database-api/api';
 
 export async function getTasks(req, res, next) {
   // Pass
@@ -62,6 +62,7 @@ export async function patchTask(req, res, next) {
       isForAuth: true,
       filters: { id: Number(taskResponse.results[0].created_by) },
     });
+
     // Check if permission validator returns errors
     validationErrors = validationErrors.concat(utils.hasPermissionToEdit({ requester, resourceOwner: userResponse.results[0] }));
   }

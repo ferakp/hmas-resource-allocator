@@ -5,7 +5,7 @@ import * as testEnvironment from '../../utils/test-environment';
 
 // Configuring test environment
 jest.useRealTimers();
-jest.setTimeout(30000);
+jest.setTimeout(40000);
 
 beforeEach(async () => {
   // Wait server to be set up
@@ -293,7 +293,7 @@ describe('testing PATCH /tasks endpoint', () => {
     const token = result.data.data[0].attributes.token;
     result = await testUtils.get('tasks', '', token);
 
-    const randomTaskId = result.data.data[1].attributes.id;
+    const randomTaskId = result.data.data[0].attributes.id;
     const reqParams = { type: 'demotype', name: 'demoname1', priority: 5, estimated_time: 9};
     result = await testUtils.patch('tasks/' + randomTaskId, token, reqParams);
 

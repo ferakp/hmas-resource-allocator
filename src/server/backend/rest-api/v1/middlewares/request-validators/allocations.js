@@ -1,22 +1,31 @@
-import * as utils from "../../utils/utils";
-import * as errorMessages from "../../messages/errors";
-import * as responseGenerators from "../../response-generators/allocations";
-import * as requestConstraints from "../../request-constraints/allocations";
+import * as utils from '../../utils/utils';
+import * as errorMessages from '../../messages/errors';
+import * as responseGenerators from '../../response-generators/allocations';
+import * as requestConstraints from '../../request-constraints/allocations';
 
 const allFieldNames = requestConstraints.allFieldNames;
 const allFieldConstraints = requestConstraints.allFieldConstraints;
 
 export function getAllocations(req, res, next) {
-  const errors = [];
   const query = JSON.parse(JSON.stringify(req.query));
-  // If path is users/:id
-  if (utils.hasFieldWithValue(req.params, "id")) query.id = req.params.id;
+  // If path is allocations/:id
+  if (utils.hasFieldWithValue(req.params, 'id')) query.id = req.params.id;
   const acceptedFieldNames = requestConstraints.getAllocations.acceptedFieldNames;
 
-  // Validator responses
-  let hasDuplicateQueryKeys = false;
-  let hasCorrectQueryKeys = false;
-  let hasCorrectQueryValues = false;
+  const errors = utils.getRequestValidationCheck({
+    query: query || {},
+    acceptedFieldNames: acceptedFieldNames || [],
+    allFieldNames: allFieldNames || {},
+    allFieldConstraints: allFieldConstraints || [],
+  });
+
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.getAllocations({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
+  }
 
   // Pass
   next();
@@ -26,7 +35,7 @@ export function deleteAllocation(req, res, next) {
   const errors = [];
   const query = JSON.parse(JSON.stringify(req.query));
   // If path is users/:id
-  if (utils.hasFieldWithValue(req.params, "id")) query.id = req.params.id;
+  if (utils.hasFieldWithValue(req.params, 'id')) query.id = req.params.id;
   const acceptedFieldNames = requestConstraints.deleteUser.acceptedFieldNames;
 
   // Validator responses

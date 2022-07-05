@@ -7,9 +7,10 @@ import * as checkPrivValid from '../middlewares/privilege-validators/allocations
 const router = express.Router();
 
 router.get('/', checkAuth, checkReqValid.getAllocations, checkPrivValid.getAllocations, handlers.getAllocations);
+router.get('/:id', checkAuth, checkReqValid.getAllocations, checkPrivValid.getAllocations, handlers.getAllocations);
+
 router.post('/', checkAuth, checkReqValid.postAllocation, checkPrivValid.postAllocation, handlers.postAllocation);
 
-router.get('/:id', checkAuth, checkReqValid.getAllocations, checkPrivValid.getAllocations, handlers.getAllocations);
 router.delete('/:id', checkAuth, checkReqValid.deleteAllocation, checkPrivValid.deleteAllocation, handlers.deleteAllocation);
 router.patch('/:id', checkAuth, checkReqValid.patchAllocation, checkPrivValid.patchAllocation, handlers.patchAllocation);
 

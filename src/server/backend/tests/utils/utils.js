@@ -120,12 +120,11 @@ export function hasError(result, errorTitle) {
   }
 }
 
-
 /**
  * DATE
  */
 
- export function isDate(param) {
+export function isDate(param) {
   if (param instanceof Date && !isNaN(param)) {
     return true;
   } else return false;

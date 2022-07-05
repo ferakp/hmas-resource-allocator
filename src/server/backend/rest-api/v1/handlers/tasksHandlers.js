@@ -54,6 +54,7 @@ export async function postTask(req, res) {
   // Fill missing fields
   if (!reqParams.hasOwnProperty('knowledge_tags')) reqParams['knowledge_tags'] = JSON.stringify({ tags: [] });
   if (!reqParams.hasOwnProperty('resource_demand')) reqParams['resource_demand'] = JSON.stringify({ demands: [] });
+  if (!reqParams.hasOwnProperty('assigned_to')) reqParams['assigned_to'] = JSON.stringify({ ids: [] });
   reqParams['created_on'] = new Date();
   reqParams['updated_on'] = new Date();
   reqParams['created_by'] = requester.id;
