@@ -142,7 +142,7 @@ export async function deleteSettings(req, res) {
   }
 
   // Generate response
-  const response = responseGenerator.patchSettings(responseDetails);
+  const response = responseGenerator.deleteSettings(responseDetails);
 
   // Return response
   if (response.errors.length > 0) {
