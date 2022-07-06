@@ -43,15 +43,15 @@ export const getAllocations = {
   ],
 };
 
-export const postAllocations = {
-  requiredFieldNames: ["request_by", "request"],
-  acceptedFieldNames: ["request_by", "request", "result", "created_on", "completed_on", "updated_on"],
+export const postAllocation = {
+  requiredFieldNames: ["request"],
+  acceptedFieldNames: ["request"],
 };
 
-export const patchAllocations = {
-  acceptedFieldNames: ["result"],
+export const patchAllocation = {
+  acceptedFieldNames: ["start_time", "end_time", "result", "completed_on"],
 };
 
-export const deleteAllocations = {
+export const deleteAllocation = {
   acceptedFieldNames: ["id"],
 };

@@ -25,7 +25,15 @@ const template = {
   export function postAllocation(parameters) {
     return commonResponseGenerator(parameters);
   }
-  
+
+  export function postAllocationCompleteRequests(parameters) {
+    return commonResponseGenerator(parameters);
+  }
+
+  export function postReallocateRequests(parameters) {
+    return commonResponseGenerator(parameters);
+  }
+
   function commonResponseGenerator(parameters) {
     const { req, res, errors = [], actions = [], results = [] } = parameters;
     let response = JSON.parse(JSON.stringify(template));
