@@ -353,3 +353,12 @@ export const ALLOCATION_NOT_FOUND = {
     detail: "Allocation with given id doesn't exist",
     time: new Date()
 }
+
+
+export const ALGORITHM_NOT_FOUND = {
+    status: 404,
+    code: 4,
+    title: "ALGORITHM NOT FOUND",
+    detail: "Algorithm with given id doesn't exist",
+    time: new Date()
+}

@@ -25,6 +25,11 @@ export async function getHolons(req, res) {
     responseDetails.results = results || [];
   }
 
+  // Return error if search was conducted on :id which doesn't exist
+  if (utils.hasFieldWithValue(req.params, 'id') && responseDetails.errors.length === 0 && responseDetails.results.length === 0) {
+    responseDetails.errors.push(errorMessages.HOLON_NOT_FOUND);
+  }
+
   // Generate response
   const response = responseGenerator.getHolons(responseDetails);
 
@@ -125,7 +130,6 @@ export async function patchHolon(req, res) {
       if (holonResult.results.length !== 1) {
         responseDetails.errors.push(errorMessages.HOLON_NOT_FOUND);
       } else {
-
         const holon = utils.formatAndFixHolonDataFields(holonResult.results[0]);
         const editHolon = reqParams;
 

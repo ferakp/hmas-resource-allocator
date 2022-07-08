@@ -7,7 +7,7 @@ const allFieldConstraints = requestConstraints.allFieldConstraints;
 
 export function getAlgorithms(req, res, next) {
   const query = JSON.parse(JSON.stringify(req.query));
-  // If path is algorithm/:id
+  // If path is algorithms/:id
   if (utils.hasFieldWithValue(req.params, 'id')) query.id = req.params.id;
   const acceptedFieldNames = requestConstraints.getAlgorithms.acceptedFieldNames;
 
