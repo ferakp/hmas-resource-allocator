@@ -639,7 +639,7 @@ describe('testing POST /allocations/:id/reallocate-requests endpoint', () => {
     expect(result.data.data[0].attributes.reallocate).toBe(false)
 
     // Send a reallocate request
-    result = await testUtils.patch('allocations/' + randomAllocationId + 'reallocate-requests', token, reqParams);
+    result = await testUtils.post('allocations/' + randomAllocationId + '/reallocate-requests', token, reqParams);
 
     // Response has correct link
     expect(result.data).toEqual(
