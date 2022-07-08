@@ -8,17 +8,17 @@ jest.useRealTimers();
 jest.setTimeout(40000);
 
 beforeEach(async () => {
-  // Wait server to be set up
+  // Waiting server to start
   await utils.wait(5);
 
   // Empty all tables
-  let responseAlg = await db.executeQuery("TRUNCATE algorithms CASCADE");
-  let responseAll = await db.executeQuery("TRUNCATE allocations CASCADE");
-  let responseDas = await db.executeQuery("TRUNCATE dashboard_settings CASCADE");
-  let responseHol = await db.executeQuery("TRUNCATE holons CASCADE");
-  let responseTas = await db.executeQuery("TRUNCATE tasks CASCADE");
-  let responseUse = await db.executeQuery("TRUNCATE users CASCADE");
-
+  let responseAlg = await db.executeQuery('TRUNCATE algorithms CASCADE');
+  let responseAll = await db.executeQuery('TRUNCATE allocations CASCADE');
+  let responseDas = await db.executeQuery('TRUNCATE dashboard_settings CASCADE');
+  let responseTas = await db.executeQuery('TRUNCATE tasks CASCADE');
+  let responseUse = await db.executeQuery('TRUNCATE users CASCADE');
+  let responseHol = await db.executeQuery('TRUNCATE holons CASCADE');
+  
   // Add three test users with roles of user, admin and moderator
   let responseUser = await db.executeQuery(
     "INSERT INTO users (role, username, password, email, firstname, lastname, created_on, updated_on) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
@@ -75,12 +75,13 @@ beforeEach(async () => {
 
 afterAll(async () => {
   jest.setTimeout(20000);
-  let responseAlg = await db.executeQuery("TRUNCATE algorithms");
-  let responseAll = await db.executeQuery("TRUNCATE allocations");
-  let responseDas = await db.executeQuery("TRUNCATE dashboard_settings");
-  let responseHol = await db.executeQuery("TRUNCATE holons");
-  let responseTas = await db.executeQuery("TRUNCATE tasks");
-  let responseUse = await db.executeQuery("TRUNCATE users");
+  let responseAlg = await db.executeQuery('TRUNCATE algorithms CASCADE');
+  let responseAll = await db.executeQuery('TRUNCATE allocations CASCADE');
+  let responseDas = await db.executeQuery('TRUNCATE dashboard_settings CASCADE');
+  let responseTas = await db.executeQuery('TRUNCATE tasks CASCADE');
+  let responseSet = await db.executeQuery('TRUNCATE settings CASCADE');
+  let responseUse = await db.executeQuery('TRUNCATE users CASCADE');
+  let responseHol = await db.executeQuery('TRUNCATE holons CASCADE');
 
   db.endConnection();
   app.stopServer();

@@ -1,12 +1,30 @@
-import * as utils from "../../utils/utils";
-import * as errorMessages from "../../messages/errors";
-import * as responseGenerators from "../../response-generators/algorithms";
-import * as requestConstraints from "../../request-constraints/algorithms";
+import * as utils from '../../utils/utils';
+import * as responseGenerators from '../../response-generators/algorithms';
+import * as requestConstraints from '../../request-constraints/algorithms';
 
 const allFieldNames = requestConstraints.allFieldNames;
 const allFieldConstraints = requestConstraints.allFieldConstraints;
 
 export function getAlgorithms(req, res, next) {
+  const query = JSON.parse(JSON.stringify(req.query));
+  // If path is algorithm/:id
+  if (utils.hasFieldWithValue(req.params, 'id')) query.id = req.params.id;
+  const acceptedFieldNames = requestConstraints.getAlgorithms.acceptedFieldNames;
+
+  const errors = utils.getRequestValidationCheck({
+    query: query || {},
+    acceptedFieldNames: acceptedFieldNames || [],
+    allFieldNames: allFieldNames || {},
+    allFieldConstraints: allFieldConstraints || [],
+  });
+
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.getAlgorithms({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
+  }
   // Pass
   next();
 }
@@ -22,56 +40,56 @@ export function deleteAlgorithm(req, res, next) {
     res.json(response);
     return;
   }
-  
-    // Pass
-    next();
+
+  // Pass
+  next();
+}
+
+export function patchAlgorithm(req, res, next) {
+  const reqParams = JSON.parse(JSON.stringify(req.body));
+  const acceptedFieldNames = requestConstraints.patchAlgorithm.acceptedFieldNames;
+
+  const errors = utils.patchRequestValidationCheck({
+    reqParams,
+    acceptedFieldNames,
+    allFieldConstraints,
+    allFieldNames,
+    id: req.params.id,
+  });
+
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.patchAlgorithm({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
   }
 
-  export function patchAlgorithm(req, res, next) {
-    const reqParams = JSON.parse(JSON.stringify(req.body));
-    const acceptedFieldNames = requestConstraints.patchTask.acceptedFieldNames;
-  
-    const errors = utils.patchRequestValidationCheck({
-      reqParams,
-      acceptedFieldNames,
-      allFieldConstraints,
-      allFieldNames,
-      id: req.params.id,
-    });
-  
-    // Return if error has occured
-    if (errors.length > 0) {
-      const response = responseGenerators.patchTask({ req, res, errors });
-      res.status(response.errors[0].status);
-      res.json(response);
-      return;
-    }
+  // Pass
+  next();
+}
 
-    // Pass
-    next();
+export function postAlgorithm(req, res, next) {
+  const reqParams = JSON.parse(JSON.stringify(req.body));
+  const acceptedFieldNames = requestConstraints.postAlgorithm.acceptedFieldNames;
+  const requiredFieldNames = requestConstraints.postAlgorithm.requiredFieldNames;
+
+  const errors = utils.postRequestValidationCheck({
+    reqParams,
+    acceptedFieldNames,
+    allFieldConstraints,
+    allFieldNames,
+    requiredFieldNames,
+  });
+
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.postAlgorithm({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
   }
 
-  export function postAlgorithm(req, res, next) {
-    const reqParams = JSON.parse(JSON.stringify(req.body));
-    const acceptedFieldNames = requestConstraints.postTask.acceptedFieldNames;
-    const requiredFieldNames =  requestConstraints.postTask.requiredFieldNames;
-  
-    const errors = utils.postRequestValidationCheck({
-      reqParams,
-      acceptedFieldNames,
-      allFieldConstraints,
-      allFieldNames,
-      requiredFieldNames,
-    });
-  
-    // Return if error has occured
-    if (errors.length > 0) {
-      const response = responseGenerators.postTask({ req, res, errors });
-      res.status(response.errors[0].status);
-      res.json(response);
-      return;
-    }
-
-    // Pass
-    next();
-  }
+  // Pass
+  next();
+}

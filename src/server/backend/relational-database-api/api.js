@@ -2,7 +2,7 @@ import * as database from './database';
 import * as holonsQueryGenerator from './query-generators/holons';
 import * as searchQueryGenerator from './query-generators/search';
 import * as usersQueryGenerator from './query-generators/users';
-import * as allocationssQueryGenerator from './query-generators/allocations';
+import * as allocationsQueryGenerator from './query-generators/allocations';
 import * as tasksQueryGenerator from './query-generators/tasks';
 import * as settingsQueryGenerator from './query-generators/settings';
 import * as errorMessages from './messages/errors';
@@ -49,8 +49,6 @@ export async function search(parameters) {
   response.results = results;
   return response;
 }
-
-
 
 /**
  * AUTH
@@ -623,7 +621,7 @@ export async function deleteSettings(parameters) {
   const { reqParams } = parameters;
   let response = { errors: [], results: null };
 
-  let queryObject = settingsQueryGenerator.deleteSettings({ filters: reqParams });
+  let queryObject = settingsQueryGenerator.deleteSettings({ reqParams });
 
   // Failure to generate query
   if (!queryObject.query) {
@@ -659,7 +657,7 @@ export async function getAllocations(parameters) {
   const { filters } = parameters;
   let response = { errors: [], results: null };
 
-  let queryObject = allocationssQueryGenerator.getAllocations({ filters });
+  let queryObject = allocationsQueryGenerator.getAllocations({ filters });
 
   // Failure to generate query
   if (!queryObject.query) {
@@ -687,6 +685,98 @@ export async function getAllocations(parameters) {
   return response;
 }
 
-export async function editAllocation(parameters) {}
+export async function createAllocation(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
 
-export async function deleteAllocation(parameters) {}
+  let queryObject = allocationsQueryGenerator.createAllocation({ reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
+
+export async function editAllocation(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
+
+  let queryObject = allocationsQueryGenerator.editAllocation({ reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}
+
+export async function deleteAllocation(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
+
+  let queryObject = allocationsQueryGenerator.deleteAllocation({ reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}

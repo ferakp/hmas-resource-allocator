@@ -32,20 +32,14 @@ export function getAllocations(req, res, next) {
 }
 
 export function deleteAllocation(req, res, next) {
-  const errors = [];
-  const query = JSON.parse(JSON.stringify(req.query));
-  // If path is users/:id
-  if (utils.hasFieldWithValue(req.params, 'id')) query.id = req.params.id;
-  const acceptedFieldNames = requestConstraints.deleteUser.acceptedFieldNames;
+  const query = {};
+  const errors = utils.deleteRequestValidationCheck({ id: req.params.id, allFieldNames, allFieldConstraints });
 
-  // Validator responses
-  let hasCorrectQueryValues = false;
-
-  // Validate query values
-  hasCorrectQueryValues = utils.isObjectFieldValuesValid(query, allFieldNames, allFieldConstraints);
-
-  if (!hasCorrectQueryValues) {
-    res.sendStatus(204);
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.deleteAllocation({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
     return;
   }
 
@@ -54,46 +48,105 @@ export function deleteAllocation(req, res, next) {
 }
 
 export function patchAllocation(req, res, next) {
-  const errors = [];
-  const parameters = JSON.parse(JSON.stringify(req.body));
-  const acceptedFieldNames = requestConstraints.patchUser.acceptedFieldNames;
+  const reqParams = JSON.parse(JSON.stringify(req.body));
+  const acceptedFieldNames = requestConstraints.patchAllocation.acceptedFieldNames;
 
-  // Validator responses
-  let hasRequiredParameters = true;
-  let hasDuplicateParameters = false;
-  let hasCorrectParameterNames = false;
-  let hasCorrectParameterValues = false;
+  const errors = utils.patchRequestValidationCheck({
+    reqParams,
+    acceptedFieldNames,
+    allFieldConstraints,
+    allFieldNames,
+    id: req.params.id,
+  });
+
+  // Validate result parameter
+  if (errors.length === 0 && reqParams.result) {
+    try {
+      const result = JSON.parse(reqParams.result);
+      if (!result.allocations || !Array.isArray(result.allocations)) throw new Error();
+      result.allocations.forEach((alloc) => {
+        if (!utils.isNumber(alloc.taskId)) throw new Error();
+        if (!Array.isArray(alloc.holonIds) || alloc.holonIds.length === 0) throw new Error();
+      });
+    } catch (err) {
+      errors.push(errorMessages.INVALID_PARAMETER_VALUES);
+    }
+  }
+
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.patchAllocation({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
+  }
 
   // Pass
   next();
 }
 
 export function postAllocation(req, res, next) {
-  const errors = [];
-  const parameters = JSON.parse(JSON.stringify(req.body));
-  const acceptedFieldNames = requestConstraints.postUser.acceptedFieldNames;
+  const reqParams = JSON.parse(JSON.stringify(req.body));
+  const acceptedFieldNames = requestConstraints.postAllocation.acceptedFieldNames;
+  const requiredFieldNames = requestConstraints.postAllocation.requiredFieldNames;
 
-  // Validator responses
-  let hasRequiredParameters = true;
-  let hasDuplicateParameters = false;
-  let hasCorrectParameterNames = false;
-  let hasCorrectParameterValues = false;
+  const errors = utils.postRequestValidationCheck({
+    reqParams,
+    acceptedFieldNames,
+    allFieldConstraints,
+    allFieldNames,
+    requiredFieldNames,
+  });
+
+  // Check whether request field is correct (deep check)
+  if (errors.length === 0) {
+    try {
+      const request = JSON.parse(reqParams.request);
+      if (!request.holonIds || !Array.isArray(request.holonIds) || request.holonIds.length === 0) throw new Error();
+      if (!request.taskIds || !Array.isArray(request.taskIds) || request.taskIds.length === 0) throw new Error();
+    } catch (err) {
+      errors.push(errorMessages.INVALID_PARAMETER_VALUES);
+    }
+  }
+
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.postAllocation({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
+  }
 
   // Pass
   next();
 }
 
 export function postAllocationCompleteRequests(req, res, next) {
-  const errors = [];
-  const parameters = JSON.parse(JSON.stringify(req.body));
-  const acceptedFieldNames = requestConstraints.postAllocations.acceptedFieldNames;
+  const query = {};
+  const errors = utils.deleteRequestValidationCheck({ id: req.params.id, allFieldNames, allFieldConstraints });
 
-  // Validator responses
-  let hasRequiredParameters = true;
-  let hasDuplicateParameters = false;
-  let hasCorrectParameterNames = false;
-  let hasCorrectParameterValues = false;
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.postAllocationCompleteRequests({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
+  }
+  // Pass
+  next();
+}
 
+export function postReallocateRequests(req, res, next) {
+  const query = {};
+  const errors = utils.deleteRequestValidationCheck({ id: req.params.id, allFieldNames, allFieldConstraints });
+
+  // Return if error has occured
+  if (errors.length > 0) {
+    const response = responseGenerators.postReallocateRequests({ req, res, errors });
+    res.status(response.errors[0].status);
+    res.json(response);
+    return;
+  }
   // Pass
   next();
 }

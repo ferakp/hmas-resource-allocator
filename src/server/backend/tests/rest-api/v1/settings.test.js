@@ -8,7 +8,7 @@ jest.useRealTimers();
 jest.setTimeout(40000);
 
 beforeEach(async () => {
-  // Wait server to be set up
+  // Waiting server to start
   await testUtils.wait(3);
 
   // Set up test environment
@@ -17,12 +17,12 @@ beforeEach(async () => {
 
 afterAll(async () => {
   jest.setTimeout(20000);
-  let responseAlg = await db.executeQuery('TRUNCATE algorithms');
-  let responseAll = await db.executeQuery('TRUNCATE allocations');
-  let responseDas = await db.executeQuery('TRUNCATE dashboard_settings');
-  let responseHol = await db.executeQuery('TRUNCATE tasks');
-  let responseTas = await db.executeQuery('TRUNCATE tasks');
-  let responseUse = await db.executeQuery('TRUNCATE users');
+  let responseAlg = await db.executeQuery('TRUNCATE algorithms CASCADE');
+  let responseAll = await db.executeQuery('TRUNCATE allocations CASCADE');
+  let responseDas = await db.executeQuery('TRUNCATE dashboard_settings CASCADE');
+  let responseTas = await db.executeQuery('TRUNCATE tasks CASCADE');
+  let responseUse = await db.executeQuery('TRUNCATE users CASCADE');
+  let responseHol = await db.executeQuery('TRUNCATE holons CASCADE');
 
   db.endConnection();
   app.stopServer();

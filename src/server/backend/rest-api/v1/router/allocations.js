@@ -14,6 +14,7 @@ router.post('/', checkAuth, checkReqValid.postAllocation, checkPrivValid.postAll
 router.delete('/:id', checkAuth, checkReqValid.deleteAllocation, checkPrivValid.deleteAllocation, handlers.deleteAllocation);
 router.patch('/:id', checkAuth, checkReqValid.patchAllocation, checkPrivValid.patchAllocation, handlers.patchAllocation);
 
-router.post('/:id/complete-request', checkAuth, checkReqValid.postAllocationCompleteRequests, checkPrivValid.postAllocationCompleteRequests, handlers.postAllocationCompleteRequests);
+router.post('/:id/complete-requests', checkAuth, checkReqValid.postAllocationCompleteRequests, checkPrivValid.postAllocationCompleteRequests, handlers.postAllocationCompleteRequests);
+router.post('/:id/reallocate-requests', checkAuth, checkReqValid.postReallocateRequests, checkPrivValid.postReallocateRequests, handlers.postReallocateRequests);
 
 export default router;

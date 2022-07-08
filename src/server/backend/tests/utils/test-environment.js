@@ -6,9 +6,9 @@ export const addTestEnvironment = async (db) => {
   let responseAlg = await db.executeQuery('TRUNCATE algorithms CASCADE');
   let responseAll = await db.executeQuery('TRUNCATE allocations CASCADE');
   let responseDas = await db.executeQuery('TRUNCATE dashboard_settings CASCADE');
-  let responseHol = await db.executeQuery('TRUNCATE holons CASCADE');
   let responseTas = await db.executeQuery('TRUNCATE tasks CASCADE');
   let responseUse = await db.executeQuery('TRUNCATE users CASCADE');
+  let responseHol = await db.executeQuery('TRUNCATE holons CASCADE');
 
   // USERS
   // Add three test users with roles of user, admin and moderator
@@ -156,8 +156,15 @@ export const addTestEnvironment = async (db) => {
 
   let responseAllocation1 = await db.executeQuery('INSERT INTO allocations (request, created_on, start_time, updated_on, request_by) ' + 'VALUES ($1, $2, $3, $4, $5)', [
     requestTemplate,
+    new Date('2022-06-10T18:24:21.381Z'),
     new Date(),
     new Date(),
+    responseAdmin.results[0].id
+  ]);
+
+  let responseAllocation2 = await db.executeQuery('INSERT INTO allocations (request, created_on, updated_on, request_by) ' + 'VALUES ($1, $2, $3, $4)', [
+    requestTemplate,
+    new Date('2022-06-10T18:24:21.381Z'),
     new Date(),
     responseAdmin.results[0].id
   ]);
@@ -186,6 +193,7 @@ export const addTestEnvironment = async (db) => {
     .concat(responseSettings2.errors)
     .concat(responseSettings3.errors)
     .concat(responseAllocation1.errors)
+    .concat(responseAllocation2.errors)
     .concat(responseApp.errors);
 
   if (allResponseErrors.length > 0) throw new Error('Initialization of test environment failed');

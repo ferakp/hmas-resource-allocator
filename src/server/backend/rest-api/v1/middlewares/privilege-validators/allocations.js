@@ -26,3 +26,10 @@ export async function postAllocationCompleteRequests(req, res, next) {
   // Pass
   next();
 }
+
+
+export function postReallocateRequests(req, res, next) {
+  // Pass
+  next();
+}
+

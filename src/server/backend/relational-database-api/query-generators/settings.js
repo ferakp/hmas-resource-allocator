@@ -73,14 +73,14 @@ export function editSettings(parameters) {
 
 /**
  * Query generator for deleting settings
- * @param {object} parameters has properties requester and filters
+ * @param {object} parameters has properties requester and reqParams
  * @returns {object} {query, values}
  */
 export function deleteSettings(parameters) {
   let response = { query: null, values: null };
-  if (!utils.hasFieldsWithValue(parameters.filters, ['id'])) return response;
+  if (!utils.hasFieldsWithValue(parameters.reqParams, ['id'])) return response;
   response.query = 'DELETE FROM dashboard_settings WHERE id=$1 RETURNING id';
-  response.values = [parameters.filters?.id];
+  response.values = [parameters.reqParams?.id];
   return response;
 }
 
