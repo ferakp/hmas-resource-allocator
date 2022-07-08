@@ -10,7 +10,7 @@ export const addTestEnvironment = async (db) => {
   let responseUse = await db.executeQuery('TRUNCATE users CASCADE');
   let responseHol = await db.executeQuery('TRUNCATE holons CASCADE');
 
-  // USERS
+  // CREATE USERS
   // Add three test users with roles of user, admin and moderator
   let responseUser = await db.executeQuery(
     'INSERT INTO users (role, username, password, email, firstname, lastname, created_on, updated_on) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
@@ -174,6 +174,25 @@ export const addTestEnvironment = async (db) => {
     ['app', 'app', await restUtils.encryptPassword('password'), 'app@demo.com', 'appFName', 'appLName', new Date('2022-06-10T18:24:21.381Z'), new Date('2022-06-10T18:24:21.381Z')]
   );
 
+  // CREATE ALGORITHMS
+  let responseAlgorithm = await db.executeQuery('INSERT INTO algorithms (type, name, description, created_on, updated_on, created_by) ' + 'VALUES ($1, $2, $3, $4, $5, $6)', [
+    "general",
+    "AlgorithmName",
+    "AlgorithmDescription",
+    new Date(),
+    new Date(),
+    responseAdmin.results[0].id
+  ]);
+
+  let responseAlgorithm2 = await db.executeQuery('INSERT INTO algorithms (type, name, description, created_on, updated_on, created_by) ' + 'VALUES ($1, $2, $3, $4, $5, $6)', [
+    "general2",
+    "AlgorithmName2",
+    "AlgorithmDescription2",
+    new Date(),
+    new Date(),
+    responseAdmin.results[0].id
+  ]);
+
   let allResponseErrors = responseAlg.errors
     .concat(responseAll.errors)
     .concat(responseDas.errors)
@@ -194,7 +213,9 @@ export const addTestEnvironment = async (db) => {
     .concat(responseSettings3.errors)
     .concat(responseAllocation1.errors)
     .concat(responseAllocation2.errors)
-    .concat(responseApp.errors);
+    .concat(responseApp.errors)
+    .concat(responseAlgorithm.errors)
+    .concat(responseAlgorithm2.errors);
 
   if (allResponseErrors.length > 0) throw new Error('Initialization of test environment failed');
 };

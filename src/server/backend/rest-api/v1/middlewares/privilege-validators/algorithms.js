@@ -1,6 +1,7 @@
-import * as utils from "../../utils/utils";
-import * as errorMessages from "../../messages/errors";
-import * as responseGenerators from "../../response-generators/algorithms";
+import * as utils from '../../utils/utils';
+import * as errorMessages from '../../messages/errors';
+import * as responseGenerators from '../../response-generators/algorithms';
+import * as handler from '../../handlers/algorithmsHandlers';
 
 export async function getAlgorithms(req, res, next) {
   // Pass

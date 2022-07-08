@@ -30,6 +30,11 @@ export async function getTasks(req, res) {
     responseDetails.results = results || [];
   }
 
+  // Return error if search was conducted on :id which doesn't exist
+  if (utils.hasFieldWithValue(req.params, 'id') && responseDetails.errors.length === 0 && responseDetails.results.length === 0) {
+    responseDetails.errors.push(errorMessages.TASK_NOT_FOUND);
+  }
+
   // Generate response
   const response = responseGenerator.getTasks(responseDetails);
 

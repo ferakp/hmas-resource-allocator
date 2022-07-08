@@ -29,6 +29,17 @@ export const allFieldConstraints = [
   ["number", "not null"],
 ];
 
+export const getAlgorithms = {
+  acceptedFieldNames: [
+    "id",
+    "created_by",
+    "type",
+    "name",
+    ...utils.generateComparableFields("created_on"),
+    ...utils.generateComparableFields("updated_on"),
+  ],
+};
+
 export const postAlgorithm = {
   requiredFieldNames: ["type", "name", "description"],
   acceptedFieldNames: ["type", "name", "description"],
