@@ -131,8 +131,13 @@ describe('testing GET /algorithms endpoint with queries', () => {
 
   test('get algorithm with all query string keys: id, type, name, updated_on.elt, created_on.elt, created_by', async () => {
     let result = await testUtils.login('user', 'password');
-    const userId = result.data.data[0].attributes.id;
     const token = result.data.data[0].attributes.token;
+
+    // Get the id of first algorithm
+    result = await testUtils.get("algorithms", "", token);
+    const userId = result.data.data[0].attributes.created_by;
+
+    // Send search query using the first algorithm's details
     result = await testUtils.get('algorithms', '', token);
     const randomAlgorithmId = result.data.data[0].attributes.id;
     result = await testUtils.get(
@@ -142,7 +147,9 @@ describe('testing GET /algorithms endpoint with queries', () => {
         '&created_on.elt=' +
         new Date('2200-06-10T18:24:21.381Z') +
         '&type=general&name=AlgorithmName&id=' +
-        randomAlgorithmId+"&created_by="+userId,
+        randomAlgorithmId +
+        '&created_by=' +
+        userId,
       token
     );
 
