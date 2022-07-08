@@ -59,6 +59,20 @@ export function patchAllocation(req, res, next) {
     id: req.params.id,
   });
 
+  // Validate result parameter
+  if (errors.length === 0 && reqParams.result) {
+    try {
+      const result = JSON.parse(reqParams.result);
+      if (!result.allocations || !Array.isArray(result.allocations)) throw new Error();
+      result.allocations.forEach((alloc) => {
+        if (!utils.isNumber(alloc.taskId)) throw new Error();
+        if (!Array.isArray(alloc.holonIds) || alloc.holonIds.length === 0) throw new Error();
+      });
+    } catch (err) {
+      errors.push(errorMessages.INVALID_PARAMETER_VALUES);
+    }
+  }
+
   // Return if error has occured
   if (errors.length > 0) {
     const response = responseGenerators.patchAllocation({ req, res, errors });

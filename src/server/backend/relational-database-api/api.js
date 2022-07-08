@@ -621,7 +621,7 @@ export async function deleteSettings(parameters) {
   const { reqParams } = parameters;
   let response = { errors: [], results: null };
 
-  let queryObject = settingsQueryGenerator.deleteSettings({ filters: reqParams });
+  let queryObject = settingsQueryGenerator.deleteSettings({ reqParams });
 
   // Failure to generate query
   if (!queryObject.query) {
@@ -691,8 +691,6 @@ export async function createAllocation(parameters) {
 
   let queryObject = allocationsQueryGenerator.createAllocation({ reqParams });
 
-  console.log('createAllocation queryObject ', queryObject);
-
   // Failure to generate query
   if (!queryObject.query) {
     response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
@@ -701,8 +699,6 @@ export async function createAllocation(parameters) {
 
   // Execute query
   const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
-
-  console.log('createAllocation ', errors, databaseError, results);
 
   // Error occured
   if (errors.length > 0) {
@@ -753,4 +749,34 @@ export async function editAllocation(parameters) {
   return response;
 }
 
-export async function deleteAllocation(parameters) {}
+export async function deleteAllocation(parameters) {
+  const { reqParams } = parameters;
+  let response = { errors: [], results: null };
+
+  let queryObject = allocationsQueryGenerator.deleteAllocation({ reqParams });
+
+  // Failure to generate query
+  if (!queryObject.query) {
+    response.errors.push(errorMessages.UNABLE_TO_GENERATE_QUERY);
+    return response;
+  }
+
+  // Execute query
+  const { errors, databaseError, results } = await database.executeQuery(queryObject.query, queryObject.values);
+
+  // Error occured
+  if (errors.length > 0) {
+    response.errors = errors;
+    return response;
+  }
+
+  // Database returned error
+  if (databaseError) {
+    response.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    return response;
+  }
+
+  // Successfull query
+  response.results = results;
+  return response;
+}

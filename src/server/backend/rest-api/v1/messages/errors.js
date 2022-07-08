@@ -312,3 +312,44 @@ export const DUPLICATE_SETTINGS_NOT_ALLOWED= {
     detail: "Settings file with given user id already exists",
     time: new Date()
 }
+
+export const BROKEN_ALLOCATION= {
+    status: 500,
+    code: 39,
+    title: "UNABLE TO COMPLETE THE REQUEST",
+    detail: "Database returned broken, invalid or corrupt allocation",
+    time: new Date()
+}
+
+export const ALLOCATION_COMPLETE_REQUEST_NOT_ALLOWED = {
+    status: 400,
+    code: 40,
+    title: "COMPLETING UNFINISHED ALLOCATION IS NOT PERMITTED",
+    detail: "Unable to complete the request due to unfinished allocation",
+    time: new Date()
+}
+
+export const INVALID_ALLOCATION_RESULT = {
+    status: 500,
+    code: 41,
+    title: "INVALID ALLOCATION REQUEST RESULT",
+    detail: "Database returned invalid allocation result",
+    time: new Date()
+}
+
+
+export const FAILED_TO_COMPLETE_ALLOCATION = {
+    status: 500,
+    code: 42,
+    title: "FAILED TO COMPLETE ALLOCATION",
+    detail: "Database returned error while trying to complete the allocation",
+    time: new Date()
+}
+
+export const ALLOCATION_NOT_FOUND = {
+    status: 404,
+    code: 43,
+    title: "ALLOCATION NOT FOUND",
+    detail: "Allocation with given id doesn't exist",
+    time: new Date()
+}

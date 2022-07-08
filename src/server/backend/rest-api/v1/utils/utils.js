@@ -81,13 +81,24 @@ export function isObjectFieldValuesValid(object = {}, allFieldNames = [], allFie
     let fieldValue = object[fieldName];
     if (allFieldNames.indexOf(fieldName) === -1) return false;
     let constraints = allFieldConstraints[allFieldNames.indexOf(fieldName)];
-    if (constraints.includes('not null') && !fieldValue) return false;
+    if (constraints.includes('not null') && !isNotNull(fieldValue)) return false;
     if (constraints.includes('array') && !Array.isArray(fieldValue)) return false;
     if (constraints.includes('string') && typeof fieldValue !== 'string') return false;
     if (constraints.includes('number') && !isFieldNumber(fieldValue)) return false;
     if (constraints.includes('date') && !isDate(new Date(fieldValue))) return false;
+    if (constraints.includes('boolean') && !isBoolean(convertToBoolean(fieldValue))) return false;
     return true;
   });
+}
+
+export function isNotNull(param) {
+  if (param === null || param === undefined || param === '') return false;
+  else return true;
+}
+
+export function isBoolean(param) {
+  if (typeof param === 'boolean') return true;
+  else return false;
 }
 
 export function isDate(param) {
@@ -117,6 +128,10 @@ export function isArrayElementsNumber(array) {
 }
 
 export function isFieldNumber(field) {
+  return isNumber(field);
+}
+
+export function isNumber(field) {
   return !isNaN(Number(field));
 }
 
@@ -189,6 +204,15 @@ export function userHasPrivileges(requester, requestedUser) {
  * CONVERTERS
  */
 
+export function removeDuplicateElements(array) {
+  if (!Array.isArray(array)) return [];
+  const tempArray = [];
+  array.forEach((e) => {
+    if (!tempArray.includes(e)) tempArray.push(e);
+  });
+  return tempArray;
+}
+
 export function removeOperatorFromObjectFieldNames(object) {
   let tempQuery = {};
 
@@ -209,6 +233,7 @@ export function formatRequestQuery(query = {}, allFieldNames = [], allFieldConst
       if (constraints.includes('string')) query[Object.keys(query)[i]] = tempQuery[key].toString();
       else if (constraints.includes('number')) query[Object.keys(query)[i]] = Number(tempQuery[key]);
       else if (constraints.includes('date')) query[Object.keys(query)[i]] = new Date(tempQuery[key]);
+      else if (constraints.includes('boolean')) query[Object.keys(query)[i]] = convertToBoolean(tempQuery[key]);
       else if (constraints.includes('array') && !Array.isArray(query[Object.keys(query)[i]])) throw new Error();
     });
     response.formattedQuery = query;
@@ -216,6 +241,48 @@ export function formatRequestQuery(query = {}, allFieldNames = [], allFieldConst
     response.errors.push(errorMessages.UNABLE_TO_FORMAT_QUERY);
   }
   return response;
+}
+
+export function convertToBoolean(result) {
+  if (typeof result === 'string' && result === 'true') return true;
+  else if (typeof result === 'string' && result === 'false') return true;
+  else if (typeof result === 'boolean') return result;
+  else return null;
+}
+
+export function formatAllocationForCompleteRequest(allocation) {
+  let responseDetails = { errors: [], allocation: null };
+  try {
+    allocation.id = Number(allocation.id);
+    allocation.request_by = Number(allocation.request_by);
+    allocation.request = JSON.parse(allocation.request);
+    allocation.result = allocation.result ? JSON.parse(allocation.result) : null;
+    allocation.start_time = allocation.start_time ? new Date(allocation.start_time) : null;
+    allocation.end_time = allocation.end_time ? new Date(allocation.end_time) : null;
+    allocation.created_on = new Date(allocation.created_on);
+    allocation.completed_on = allocation.completed_on ? new Date(allocation.completed_on) : null;
+    allocation.updated_on = allocation.updated_on ? new Date(allocation.updated_on) : null;
+
+    if (allocation.result) {
+      if (!allocation.result.allocations || allocation.result.allocations.length === 0) {
+        throw new Error();
+      }
+
+      const response = allocation.result.allocations.every((alloc) => {
+        if (!isNumber(alloc.taskId)) return false;
+        else if (!Array.isArray(alloc.holonIds)) return false;
+        else return true;
+      });
+
+      if (!response) throw new Error();
+    }
+
+    responseDetails.allocation = allocation;
+  } catch (err) {
+    responseDetails.errors.push(errorMessages.BROKEN_ALLOCATION);
+  }
+
+  return responseDetails;
 }
 
 /**
@@ -408,7 +475,7 @@ export function hasPermissionToEdit(parameters) {
     if (requester.role === 'admin' && resourceOwner.role === 'admin') errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
     else if (requester.role === 'moderator' && ['moderator', 'admin'].includes(resourceOwner.role)) errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
     else if (requester.role === 'user') errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
-    else if(!["user", "admin", "moderator"].includes(requester.role)) errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
+    else if (!['user', 'admin', 'moderator'].includes(requester.role)) errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
     return errors;
   } else {
     errors.push(errorMessages.INSUFFICIENT_PRIVILEGES);
@@ -455,6 +522,7 @@ function isHolonDataFieldCorrect(holonTemp, fieldName) {
  * SEARCH
  */
 
+// Return empty array on error
 export function getDeleteIds(requestedIds, receivedIds) {
   const deletedIds = [];
 
@@ -468,6 +536,7 @@ export function getDeleteIds(requestedIds, receivedIds) {
   return deletedIds;
 }
 
+// Return empty array on error
 export function getUpdatedResources(requestedIds, receivedResources, latestUpdateTime) {
   const updatedResources = [];
 
