@@ -54,7 +54,10 @@ export class Pie extends React.Component {
 
     // Data
     let data = this.props.data;
-    if (data.every((e) => e.value === 0)) data = [{ name: 'NO DATA', value: 100 }];
+    if (data.every((e) => e.value === 0)){
+        data = [{ name: 'NO DATA', value: 100 }];
+        colors = ['grey'];
+    } 
 
     const svgContainer = d3.select(this.chRef.current).node();
     const width = svgContainer.getBoundingClientRect().width;
