@@ -51,7 +51,7 @@ export class LeftSidebar extends React.Component {
           </div>
           <div className={styles.linkContainer}>
             <div
-              className={styles.link}
+              className={`${styles.link} ${this.props.activeLink === 'Dashboard' ? styles.activeLink : ''}`}
               onClick={() => this.linkClick("Dashboard")}
             >
               <Icon
@@ -63,7 +63,7 @@ export class LeftSidebar extends React.Component {
               <p className={styles.linkName}>Dashboard</p>
             </div>
             <div
-              className={styles.link}
+              className={`${styles.link} ${this.props.activeLink === 'Holons' ? styles.activeLink : ''}`}
               onClick={() => this.linkClick("Holons")}
             >
               <Icon
@@ -74,7 +74,7 @@ export class LeftSidebar extends React.Component {
               />
               <p className={styles.linkName}>Holons</p>
             </div>
-            <div className={styles.link} onClick={() => this.linkClick("Help")}>
+            <div className={`${styles.link} ${this.props.activeLink === 'Help' ? styles.activeLink : ''}`} onClick={() => this.linkClick("Help")}>
               <Icon
                 path={mdiHelpCircle}
                 size={1}
@@ -84,7 +84,7 @@ export class LeftSidebar extends React.Component {
               <p className={styles.linkName}>Help</p>
             </div>
             <div
-              className={styles.link}
+              className={`${styles.link} ${this.props.activeLink === 'Settings' ? styles.activeLink : ''}`}
               onClick={() => this.linkClick("Settings")}
             >
               <Icon
@@ -119,7 +119,7 @@ export class LeftSidebar extends React.Component {
               </div>
               {this.props.state.auth.user?.username ? (
                 <div
-                  className={styles.link}
+                  className={`${styles.link} ${this.props.activeLink === 'Account' ? styles.activeLink : ''}`}
                   onClick={() => this.linkClick("Account")}
                 >
                   <Icon

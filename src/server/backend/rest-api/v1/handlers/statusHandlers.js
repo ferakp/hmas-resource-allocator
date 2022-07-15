@@ -4,8 +4,8 @@ import * as statusResponseGenerators from "../response-generators/status";
 /**
  * Handler for /status request
  * Returns status of REST API and Database API
- * @param {*} req 
- * @param {*} res 
+ * @param {*} req Express request object
+ * @param {*} res Express respons ebject
  */
 export async function status(req, res) {
   const responseDetails = { req, res, errors: [], responses: { "REST API": "active", "Database API": "inactive" } };

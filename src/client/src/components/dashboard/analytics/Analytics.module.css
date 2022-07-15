@@ -1,0 +1,13 @@
+.container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    margin-left: 35px;
+}
+
+.sectionTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
