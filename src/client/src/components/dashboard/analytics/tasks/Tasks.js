@@ -13,8 +13,8 @@ export class Tasks extends React.Component {
 
   render() {
     return (
-      <div className={styles.sectionContainer}>
-        <p className={styles.sectionContainerTitle}>
+      <div className={styles.container}>
+        <p className={styles.containerTitle}>
           {this.props.title} ({this.props.data.tasks.length})
         </p>
         <div className={styles.progressContainer}>

@@ -1,0 +1,36 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.icon {
+    opacity: 0.8;
+}
+
+.item {
+    display: flex;
+    flex-direction: row;
+    width: 230px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.153);
+    margin-bottom: 8px;
+    padding-bottom: 10px;
+}
+
+.itemLabel {
+    padding: 0px;
+    margin: 0px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.itemCount {
+    padding: 0px;
+    margin: 0px;
+    font-size: 13px;
+    margin-left: auto;
+    opacity: 0.8;
+}
+
+.fadeItem {
+    opacity: 0.3;
+}

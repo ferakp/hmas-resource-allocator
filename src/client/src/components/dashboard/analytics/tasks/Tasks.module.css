@@ -3,11 +3,12 @@
     flex-direction: column;
 }
 
-.sectionContainer {
+.container {
     display: flex;
     flex-direction: column;
-    border-bottom: 4px solid rgba(0, 0, 0, 0.109);
     max-width: 350px;
+    padding-right: 15px;
+    border-right: 1px solid rgba(0, 0, 0, 0.031);
 }
 
 .progressList {
@@ -18,7 +19,7 @@
     margin-right: 45px;
 }
 
-.sectionContainerTitle {
+.containerTitle {
     opacity: 0.6;
     margin: 0px;
 }
@@ -26,6 +27,7 @@
 .progressContainer {
     display: flex;
     flex-direction: row;
+    border-bottom: 4px solid rgba(0, 0, 0, 0.109);
 }
 
 .progressListItem {
