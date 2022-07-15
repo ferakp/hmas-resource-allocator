@@ -38,13 +38,11 @@ export class Pie extends React.Component {
     this.chRef = React.createRef();
   }
 
-  // Chart load after component Mount
   componentDidMount() {
     this.chRef.current.innerHTML = '';
     this.drawChart();
   }
 
-  // DrawChart
   drawChart() {
     // Colors
     let colors = this.colorsTemplate;
@@ -54,23 +52,22 @@ export class Pie extends React.Component {
 
     // Data
     let data = this.props.data;
-    if (data.every((e) => e.value === 0)){
-        data = [{ name: 'NO DATA', value: 100 }];
-        colors = ['grey'];
-    } 
+    if (data.every((e) => e.value === 0)) {
+      data = [{ name: 'NO DATA', value: 100 }];
+      colors = ['grey'];
+    }
 
     const svgContainer = d3.select(this.chRef.current).node();
     const width = svgContainer.getBoundingClientRect().width;
     const height = width;
     const margin = 5;
     let radius = Math.min(width, height) / 2 - margin;
-    // legend Position
     let legendPosition = d3
       .arc()
       .innerRadius(radius / 1.75)
       .outerRadius(radius);
 
-    // Create SVG
+    // Creating SVG
     const svg = d3
       .select(this.chRef.current)
       .append('svg')
@@ -84,7 +81,7 @@ export class Pie extends React.Component {
     let pie = d3.pie().value((d) => d.value);
     let data_ready = pie(data);
 
-    // Donut partition
+    // Partition
     svg
       .selectAll('whatever')
       .data(data_ready)
@@ -104,10 +101,6 @@ export class Pie extends React.Component {
   }
 
   render() {
-    return (
-      <>
-        <div ref={this.chRef}></div>
-      </>
-    );
+    return <div ref={this.chRef}></div>;
   }
 }
