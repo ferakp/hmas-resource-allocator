@@ -102,6 +102,7 @@ export function postAllocation(req, res, next) {
   if (errors.length === 0) {
     try {
       const request = JSON.parse(reqParams.request);
+      if (!request.algorithm) throw new Error();
       if (!request.holonIds || !Array.isArray(request.holonIds) || request.holonIds.length === 0) throw new Error();
       if (!request.taskIds || !Array.isArray(request.taskIds) || request.taskIds.length === 0) throw new Error();
     } catch (err) {

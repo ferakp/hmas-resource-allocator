@@ -92,12 +92,13 @@ export async function updateHolons(holonIds) {
 
 /**
  * Updates holon's latest_state field
+ * @param {number} holonId
  * @param {object} holonState
  * @returns resource object or null
  */
-export async function updateHolonState(holonState) {
+export async function updateHolonState(holonId, holonState) {
   try {
-    const holonResponse = await utils.patch('holons', token, { latest_state: JSON.stringify(holonState) });
+    const holonResponse = await utils.patch('holons/'+holonId, token, { latest_state: JSON.stringify(holonState) });
     const response = holonResponse.data.data[0].attributes;
     return response;
   } catch (err) {

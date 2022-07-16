@@ -1,27 +1,43 @@
 import * as core from '../core/core';
 import { Holon } from '../generic/holon';
+import * as logger from '../logger/logger';
 
 // PROPERTIES
 export let isContainerActive = false;
-export const holons = [];
-export const perceptions = [];
 export const superHolon = null;
-
-
-initialize();
+export const holons = [];
 
 
 /**
- * FUNCTIONS
- * 
+ * PERCEPTION 
+ * Each perception is an object with following properties: name, content
  */
+export const perceptions = [];
 
+
+try {
+  initialize();
+  isContainerActive = true;
+  logger.createLog('Success', 'Initialization process was successfull');
+} catch (err) {
+  logger.createLog('Error', 'Unable to initialize container');
+  isContainerActive = false;
+}
+
+/**
+ * FUNCTIONS
+ *
+ */
 
 /**
  * Function for initialization process
  * PHASE 1 - Create a super holon
  * PHASE 2 - Import and create all holons from database
  * PHASE 3 - Create holarchy
+ * Set parent holon
+ * Add layer holons
+ * PHASE 4 - Update status, type and position of holons
+ * PHASE 5 - Create algorithm holon
  */
 function initialize() {
   // PHASE 1
@@ -31,9 +47,10 @@ function initialize() {
     name: 'Super Holon',
     created_on: new Date(),
     updated_on: new Date(),
-    created_by: 0.66666,
+    created_by: 0.666662111,
   });
   superHolon.latest_state.position = 'SUPER';
+  superHolon.latest_state.status = 'RUNNING';
   superHolon.isArtificialHolon = true;
 
   // PHASE 2
@@ -41,8 +58,30 @@ function initialize() {
 
   // PHASE 3
   superHolon.latest_state.childHolons = holons;
+  superHolon.latest_state.childHolons.forEach((holon) => {
+    holon.latest_state.parentHolon = superHolon;
+  });
+  superHolon.latest_state.childHolons.forEach((holon) => {
+    holon.latest_state.layerHolons = holons;
+  });
 
-  // TODO
+  // PHASE 4
+  superHolon.latest_state.childHolons.forEach((holon) => {
+    holon.latest_state.status = 'RUNNING';
+    holon.latest_state.type = 'UTILITY';
+    holon.latest_state.position = 'SINGLEPART';
+  });
+
+  // PHASE 5
+  const algorithmHolon = new Holon({
+    id: 0.66666611,
+    type: 'UTILITY',
+    name: 'Algorithm Holon',
+    created_on: new Date(),
+    updated_on: new Date(),
+    created_by: 0.66666221,
+  });
+
 
 }
 

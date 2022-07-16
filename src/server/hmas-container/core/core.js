@@ -13,6 +13,7 @@ export const serverStatus = {
 export let holons = [];
 export let tasks = [];
 export let allocations = [];
+export let allocationInProgress = [];
 export let completedAllocations = [];
 
 
