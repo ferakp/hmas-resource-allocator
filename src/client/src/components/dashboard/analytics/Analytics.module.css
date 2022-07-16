@@ -1,0 +1,42 @@
+.container {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    margin-left: 15px;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
+}
+
+.sideBarContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    margin-right: 25px;
+}
+
+.sideBarLine {
+    width: 1px;
+    height: 90%;
+    background-color: black;
+    opacity: 0.1;
+}
+
+.sectionTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.sectionContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.sectionContainer > div:not(:last-of-type) {
+    margin-right: 15px;
+}
