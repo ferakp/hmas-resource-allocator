@@ -16,10 +16,8 @@ export let allocations = [];
 export let allocationInProgress = [];
 export let completedAllocations = [];
 
-
-
 /**
- * INTERVALS 
+ * INTERVALS
  */
 
 // Update data storage
@@ -35,7 +33,7 @@ const allocationsUpdaterInterval = setInterval(async () => {
 
 // Update status object
 const statusUpdaterInterval = setInterval(() => {
-    serverStatus.latestUpdate = new Date();
-    serverStatus.restApi = backendApi.isRestApiActive;
-    serverStatus.holonContainer = superHolon.isContainerActive;
-  }, 10000);
+  serverStatus.latestUpdate = new Date();
+  serverStatus.restApi = backendApi.isRestApiActive;
+  serverStatus.holonContainer = superHolon.isContainerActive;
+}, 10000);

@@ -1,6 +1,7 @@
 const axios = require('axios').default;
 import jsonwebtoken from 'jsonwebtoken';
 import * as backendApi from '../api/backend-api';
+import * as logger from '../logger/logger';
 
 /**
  * AJAX CALLS
@@ -232,4 +233,13 @@ export function isDate(param) {
   if (param instanceof Date && !isNaN(param)) {
     return true;
   } else return false;
+}
+
+
+/**
+ * LOGGER
+ */
+
+export function log(type, message) {
+  logger.createLog(type, message);
 }
