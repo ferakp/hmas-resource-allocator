@@ -32,6 +32,7 @@ export const allFieldNames = [
   "due_date",
   "assigned_to",
   "updated_on",
+  "completed_on"
 ];
 
 export const allFieldConstraints = [
@@ -49,6 +50,7 @@ export const allFieldConstraints = [
   ["date"],
   ["string"],
   ["date", "not null"],
+  ["number"],
 ];
 
 export const getTasks = {
@@ -64,6 +66,7 @@ export const getTasks = {
     ...utils.generateComparableFields("due_date"),
     "assigned_to",
     ...utils.generateComparableFields("updated_on"),
+    ...utils.generateComparableFields("completed_on"),
   ],
 };
 
@@ -83,6 +86,7 @@ export const patchTask = {
     "start_date",
     "due_date",
     "assigned_to",
+    "completed_on"
   ],
 };
 
