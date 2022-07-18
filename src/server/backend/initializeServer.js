@@ -32,6 +32,7 @@ export default function initializeServer(router) {
   const isProduction = process.env.NODE_ENV === 'production';
   const origin = { origin: isProduction ? false : '*' };
 
+  app.options('*', cors());
   app.use(limiter);
   app.use(express.json());
   app.use(cookieParser());
