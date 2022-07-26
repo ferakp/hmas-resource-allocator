@@ -35,6 +35,16 @@ export function debounce(func) {
   };
 }
 
+export function debounceLong(func) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, 500);
+  };
+}
+
 /**
  * Formats data retrieved from database
  * @param {object} data could have following properties: algorithms, allocations, holons, settings, tasks, users

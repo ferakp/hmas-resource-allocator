@@ -16,7 +16,7 @@ import { mdiPlusThick } from '@mdi/js';
 export class Tasks extends React.Component {
   /**
    * orderCriteria - [field name (string), isAscendant (boolean)]
-   * mode: Add or Default
+   * mode: Add, Default or Filter
    */
   state = {
     orderCriteria: ['created_on', true],
@@ -28,6 +28,7 @@ export class Tasks extends React.Component {
     myTasks: [],
     displayTasks: [],
     mode: 'Default',
+    searchFilter: '',
   };
   updateInterval = null;
 
@@ -75,13 +76,31 @@ export class Tasks extends React.Component {
     this.setState({
       allTasks: allTasks,
       myTasks: myTasks,
-      displayTasks: this.state.taskDisplayerCategory === 'All tasks' ? allTasks : myTasks,
+      displayTasks: this.state.taskDisplayerCategory === 'All tasks' ? this.filterTasks(allTasks, this.state.searchFilter) : this.filterTasks(myTasks, this.state.searchFilter),
     });
     this.setState({ loading: false });
   }
 
-  search = utils.debounce((event) => {
-    console.log(event.target.value);
+  filterTasks = (tasks, searchFilter) => {
+    if (!searchFilter || !Array.isArray(tasks) || tasks.length === 0) return tasks;
+    else {
+      const response = [];
+      tasks.forEach((task) => {
+        const jsonTask = JSON.stringify(task).toLowerCase();
+        const filter = searchFilter.toLowerCase();
+        if (jsonTask.indexOf(filter) > 0) response.push(task);
+      });
+      return response;
+    }
+  };
+
+  search = utils.debounceLong((event) => {
+    const filter = event.target.value.toLowerCase();
+    const displayTasks =
+      this.state.taskDisplayerCategory === 'All tasks'
+        ? this.filterTasks(this.state.allTasks, filter)
+        : this.filterTasks(this.state.myTasks, filter);
+    this.setState({ searchFilter: filter, displayTasks: displayTasks });
   });
 
   taskDisplayChanged(event, choice) {
@@ -91,12 +110,10 @@ export class Tasks extends React.Component {
   }
 
   openAddTaskMode = () => {
-    console.log("called");
     this.setState({ mode: 'Add' });
   };
 
   closeAddTaskMode = () => {
-    console.log("close add task mode called");
     this.setState({ mode: 'Default' });
   };
 
@@ -112,7 +129,7 @@ export class Tasks extends React.Component {
             <div className={styles.header}>
               <p className={styles.headerTitle}>Tasks</p>
               <div className={styles.headerFunctionalities}>
-                <Icon path={mdiFilterVariant} size={1.2} color="black" className={styles.filterIcon} />
+                <Icon path={mdiFilterVariant} size={1.2} color={this.state.searchFilter ? 'green' : 'black'} className={styles.filterIcon} />
                 <TextField className={styles.searchElement} label="Search" multiline variant="standard" onChange={(event) => this.search(event)} />
                 <div className={styles.taskAssignedSwitchContainer}>
                   <ToggleButtonGroup value={this.state.taskDisplayerCategory} exclusive onChange={(v, c) => this.taskDisplayChanged(v, c)} aria-label="Task filter switch">
