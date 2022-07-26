@@ -1,0 +1,361 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  max-width: 1000px;
+  padding-left: 8px;
+  border-left: 2px solid rgba(0, 0, 0, 0.163);
+}
+
+.taskNameContainer {
+  margin-top: 0px;
+}
+
+.taskName {
+  font-size: 14px !important;
+}
+
+.activeTab {
+  background-color: rgb(245, 247, 250);
+}
+
+.tabTitlesContainer {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.tabTitlesContainer p {
+  margin: 0px;
+  opacity: 0.7;
+  color: black;
+  font-size: 14px;
+}
+
+.tabTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: center;
+  padding: 12px 10px 12px 10px;
+  box-sizing: border-box;
+}
+
+.tabTitle:not(:first-child) {
+  margin-left: 11px;
+}
+
+.tabTitle:hover {
+  cursor: pointer;
+}
+
+.tabTitle:hover * {
+  opacity: 1;
+}
+
+.tabTitleIcon {
+  opacity: 0.7;
+}
+
+.tabTitleText {
+  margin: 0px 0px 0px 4px !important;
+  opacity: 0.7;
+  color: black;
+  font-size: 14px;
+}
+
+.tabContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 20px 10px 20px 10px;
+  background-color: rgb(245, 247, 250);
+}
+
+.assignedToContainer {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+.assignedToLabel {
+  opacity: 0.6;
+  margin: 0px;
+  color: black;
+  font-size: 14px;
+}
+
+.assignedToCombobox {
+  margin-top: 10px;
+  width: 220px;
+  max-height: 35px;
+}
+
+.startDateContainer {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+  margin-top: 10px;
+  width: 220px;
+}
+
+.dueDateContainer {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+  margin-top: 10px;
+  width: 220px;
+}
+
+.datePickerContainer {
+  margin-top: 10px;
+  max-height: 35px;
+}
+
+.datePickerContainer > div > div {
+  max-height: 35px;
+}
+
+.datePickerContainer input {
+  font-size: 14px !important;
+}
+
+.startDateLabel {
+  opacity: 0.6;
+  margin: 0px;
+  color: black;
+  font-size: 14px;
+}
+
+.dueDateLabel {
+  opacity: 0.6;
+  margin: 0px;
+  color: black;
+  font-size: 14px;
+}
+
+.startDatePicker {
+  height: 25px;
+}
+
+.typeContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  margin-top: 10px;
+  border-radius: 3px;
+  width: 220px;
+  margin-right: 10px;
+}
+
+.typeLabel {
+  opacity: 0.6;
+  margin: 0px;
+  color: black;
+  font-size: 14px;
+}
+
+.taskTypeField {
+  margin-top: 10px !important;
+}
+
+.descriptionContainer {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-top: 20px;
+  min-width: 350px;
+}
+
+.taskDescriptionField {
+  margin-top: 10px !important;
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+
+.descriptionLabel {
+  opacity: 0.6;
+  margin: 0px;
+  color: black;
+  font-size: 14px;
+}
+
+.editorButtonsContainer {
+  margin-top: 10px;
+}
+
+.editorButtonsSection {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.orLabel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0.5;
+  margin: 0 0 0 10px;
+}
+
+.editorHr {
+  border-top: 1px solid rgba(0, 0, 0, 0.189);
+  width: 100%;
+}
+
+.cancelButton {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0.8;
+  margin: 0 0 0 10px;
+  color: blue;
+  font-size: 14px;
+}
+
+.cancelButton:hover {
+  cursor: pointer;
+}
+
+.priorityContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.priorityLabel {
+  max-width: 550px;
+  text-align: justify;
+  opacity: 0.6;
+  line-height: 1.2rem;
+  font-size: 14px;
+  margin: 0px;
+}
+
+.prioritySwitch * {
+  font-size: 14px !important;
+}
+
+.priorityFormControl {
+  margin-top: 20px !important;
+}
+
+.estimatedTimeContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.estimatedTimeLabel {
+  text-align: justify;
+  font-size: 14px;
+  opacity: 0.6;
+  line-height: 1.2rem;
+  max-width: 550px;
+  margin: 0px;
+}
+
+.estimatedTimeField {
+  margin-top: 15px !important;
+}
+
+.knowledgeTagsContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.knowledgeTagsLabel {
+  text-align: justify;
+  font-size: 14px;
+  opacity: 0.6;
+  line-height: 1.2rem;
+  max-width: 550px;
+  margin: 0px;
+}
+
+.knowledgeTagsInputContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  margin-top: 15px;
+}
+
+.addKnowledgeTagButton {
+  margin-left: 10px !important;
+}
+
+.tagsContainer {
+  margin-top: 25px;
+  border: 1px rgba(0, 0, 0, 0.183) solid;
+  padding: 15px 5px 15px 5px;
+}
+
+.resourceDemandContainer {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.resourceDemandLabel {
+  text-align: justify;
+  font-size: 14px;
+  opacity: 0.6;
+  line-height: 1.2rem;
+  max-width: 550px;
+  margin: 0px;
+}
+
+.resourceDemandDisplayerAndAdder {
+    margin-top: 15px;
+}
+
+.resourceDemandAdder {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+}
+
+.taskResourceDemandExperienceYearsField {
+    margin-left: 10px !important;
+}
+
+.taskResourceDemandKnowledgeTagsField {
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+}
+
+.resourceDemandDisplayer {
+  display: flex;
+  flex-direction: column;
+  max-width: 550px;
+  margin-top: 25px;
+}
+
+.resourceDemandDisplayerLabel {
+  opacity: 0.6;
+  margin: 0px;
+  color: black;
+  font-size: 14px;
+}
+
+.demandContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.resourceDemandDisplayerTable {
+  margin-top: 10px;
+}
+
+.resourceDemandDisplayerTable th,td {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.deleteResourceDemandButton {
+  font-size: 14px;
+  opacity: 1 !important;
+}

@@ -101,11 +101,15 @@ export async function patchTask(req, res) {
 
   // Fill missing fields
   reqParams['updated_on'] = new Date();
-
+  
   // Formatting
   const formatResponse = utils.formatRequestQuery(reqParams, requestConstraints.allFieldNames, requestConstraints.allFieldConstraints);
   if (formatResponse.errors) responseDetails.errors = formatResponse.errors;
   else reqParams = formatResponse.formattedQuery;
+
+  // Fill missing fields - skip formatting
+  if(reqParams['is_completed'] !== undefined && reqParams['is_completed']) reqParams['completed_on'] = new Date();
+  if(reqParams['is_completed'] !== undefined && !reqParams['is_completed']) reqParams['completed_on'] = null;
 
   // Format is successfull
   if (responseDetails.errors.length === 0) {

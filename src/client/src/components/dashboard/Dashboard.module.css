@@ -1,84 +1,104 @@
-
-
 .container {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    overflow: hidden;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .header {
-    padding: 25px;
-    padding-left: 35px;
+  padding: 25px;
+  padding-left: 35px;
 }
 
 .tabs {
-    display: flex;
-    flex-direction: row;
-    margin-top: 50px;
+  display: flex;
+  flex-direction: row;
+  margin-top: 50px;
 }
 
 .tabHr {
-    width: 100%;
-    max-height: 1px !important;
-    background-color: #6c5a5a10 !important;
-    margin: 0;
+  width: 100%;
+  max-height: 1px !important;
+  background-color: #6c5a5a10 !important;
+  margin: 0;
 }
 
 .tab {
-    margin: 0;
-    color: #6d6f80;
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 14px;
-
+  margin: 0;
+  color: #6d6f80;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
 }
 
 .activeTab {
-    border-bottom: 1px #2d2e30ab solid;
+  border-bottom: 1px #2d2e30ab solid;
 }
 
 .activeTab:hover {
-    border-bottom: 0px #2d2e30ab solid;
+  border-bottom: 0px #2d2e30ab solid;
 }
 
 .tab:hover {
-    color:#2d2e30;
+  color: #2d2e30;
 }
 
 .tabLinkContainer {
-    box-sizing: border-box;
-    display: flex;
-    min-height: 30px;
+  box-sizing: border-box;
+  display: flex;
+  min-height: 30px;
 }
 
 .tabLinkContainer:hover {
-    border-bottom: 1px #2d2e30ab solid;
+  border-bottom: 1px #2d2e30ab solid;
 }
 
 .tabLinkContainer:first-child {
-    margin-left: 35px;
+  margin-left: 35px;
 }
 
 .tabLinkContainer:not(:first-child) {
-    margin-left: 25px;
+  margin-left: 25px;
 }
 
 .header {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .header p {
-    color: #333;
-    margin: 0px;
-    font-size: 24px;
-    font-weight: 600;
+  color: #333;
+  margin: 0px;
+  font-size: 24px;
+  font-weight: 600;
 }
 
-
 .tabContainer {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.tabErrorContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-height: 25px;
+  justify-content: center;
+  align-items: center;
+  background-color: red;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.errorMessage {
+  margin: 0px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.686);
+}
+
+.displayError {
+  transition: opacity 1s ease-in-out;
+  opacity: 1;
 }

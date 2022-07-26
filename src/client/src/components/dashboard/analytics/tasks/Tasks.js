@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Tasks.module.css';
-import * as utils from '../../../libs/utilities';
+import * as utils from '../../../../utils/utils';
 import { Pie } from '../pie/Pie';
 
 export class Tasks extends React.Component {
@@ -25,7 +25,7 @@ export class Tasks extends React.Component {
                   className={`${styles.progressListItem} ${
                     (progressTitle === 'No Date' ? this.props.data.noDate.length : this.props.data[progressTitle.toLowerCase()].length) === 0 ? styles.progressListItemFade : ''
                   }`}
-                  key={utils.generateRandomKey()}
+                  key={"prgli"+i}
                 >
                   <div className={styles.progressListItemColor} style={{ backgroundColor: this.props.colors[i] }}>
                     &nbsp;&nbsp;&nbsp;&nbsp;

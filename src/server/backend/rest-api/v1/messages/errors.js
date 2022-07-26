@@ -267,7 +267,7 @@ export const HOLON_NOT_FOUND= {
 export const MISSING_TOKEN = {
     status: 401,
     code: 33,
-    title: "INVALID AUTHENTICATION CREDENTIALS ",
+    title: "INVALID AUTHENTICATION CREDENTIALS",
     detail: "Request has invalid authentication token",
     time: new Date()
 }

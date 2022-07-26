@@ -39,14 +39,7 @@ export function setDispatch(f) {
 
 async function updateData() {
   if (!isRestApiActive) return;
-  const data = {
-    algorithms: [],
-    allocations: [],
-    holons: [],
-    settings: null,
-    tasks: [],
-    users: [],
-  };
+  const data = {};
   try {
     const algorithmsResponse = await getAllAlgorithms();
     const allocationsResponse = await getAllAllocations();
@@ -385,6 +378,57 @@ export async function markTaskUncompleted(taskId) {
     return response;
   } catch (err) {
     return generateErrorTemplate('Error occured while marking task as uncompleted', err);
+  }
+}
+
+/**
+ * Updates task with given parameters
+ * @param {object} params task fields to be updated
+ * @returns standard JSON:API response
+ */
+export async function updateTask(taskId, params) {
+  try {
+    checkConnection();
+    const taskResponse = await utils.patch('tasks/' + taskId, token, params);
+    const response = taskResponse.data || taskResponse.response.data;
+    handleErrorResponse(response);
+    return response;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while updating the task', err);
+  }
+}
+
+/**
+ * Delete the task with given id
+ * @param {number} taskId task ID
+ * @returns standard JSON:API response
+ */
+export async function deleteTask(taskId) {
+  try {
+    checkConnection();
+    const taskResponse = await utils.del('tasks/' + taskId, token);
+    const response = taskResponse.data || taskResponse.response.data;
+    handleErrorResponse(response);
+    return response;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while deleting the task', err);
+  }
+}
+
+/**
+ * Add task with given parameters
+ * @param {object} parameters new task details
+ * @returns standard JSON:API response
+ */
+export async function addTask(params) {
+  try {
+    checkConnection();
+    const taskResponse = await utils.post('tasks/', token, params);
+    const response = taskResponse.data || taskResponse.response.data;
+    handleErrorResponse(response);
+    return response;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while deleting the task', err);
   }
 }
 

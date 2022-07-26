@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from './Analytics.module.css';
 import { ProgressBar } from '../../progress-bar/ProgressBar';
-import * as utils from '../../libs/utilities';
 import { Tasks } from './tasks/Tasks';
 import { Overview } from './overview/Overview';
 
@@ -14,7 +13,7 @@ import { Overview } from './overview/Overview';
 export class Analytics extends React.Component {
   state = {
     loading: false,
-    allTasks: { tasks: [1], started: [], late: [], noDate: [], assignedToMe: [], completed: [], highestPriority: [], incomplete: [] },
+    allTasks: { tasks: [], started: [], late: [], noDate: [], assignedToMe: [], completed: [], highestPriority: [], incomplete: [] },
     myTasks: { tasks: [], started: [], late: [], noDate: [] },
   };
 

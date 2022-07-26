@@ -1,6 +1,293 @@
+.centeredContainer p {
+  margin: 0px;
+  color: rgba(0, 0, 0, 0.716);
+}
+
+.centeredContainer p:hover {
+  cursor: pointer;
+}
+
 .container {
-    display: flex;
-    flex: 1;
-    flex-direction: row;
-    margin-left: 15px;
+  display: flex;
+  flex-direction: column;
+  min-height: 45px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+
+.taskUpdated {
+  animation: greenHighlight 1.1s 1 ease-in-out;
+}
+
+@keyframes greenHighlight {
+  0% {
+    background-color: white;
+  }
+  50% {
+    background-color: rgba(0, 128, 0, 0.193);
+  }
+  100% {
+    background-color: white;
+  }
+}
+
+.centeredContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 1px rgba(0, 0, 0, 0.078) solid;
+  height: 45px;
+}
+
+.container:hover .centeredContainer {
+  border-bottom: 1px rgba(0, 0, 0, 0) solid;
+}
+
+.editMode {
+    background-color: white !important;
+}
+
+.container:hover {
+  background-color: rgba(128, 128, 128, 0.072);
+}
+
+.taskCompletedContainer {
+  overflow: hidden;
+}
+
+.rowCompletedIcon:hover {
+  cursor: pointer;
+}
+
+.taskCreatorContainer {
+  margin-left: 10px;
+}
+
+.rowCreator {
+  font-size: 14px;
+  background-color: rgba(0, 0, 0, 0.64);
+  color: white !important;
+  padding: 8px;
+  border-radius: 19px;
+  width: 20px;
+  justify-content: center;
+}
+
+.rowCreator:hover {
+  cursor: pointer;
+}
+
+.taskNameContainer {
+  margin-left: 1.2rem;
+  margin-right: 1.2rem;
+  min-width: 80px;
+  max-width: 130px;
+}
+
+.rowName {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.716) !important;
+  opacity: 0.85;
+  text-overflow: ellipsis;
+}
+
+.rowName:hover {
+  opacity: 1;
+}
+
+.rowId {
+  display: flex;
+  background-color: rgba(0, 132, 255, 0.838) !important;
+  color: white !important;
+  font-size: 13px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 4px;
+  min-width: 80px;
+  justify-content: center;
+  opacity: 0.85;
+}
+
+.rowId:hover {
+  opacity: 1;
+}
+
+.taskStartDueContainer {
+  display: flex;
+  flex-direction: row;
+  margin-left: 0.8rem;
+  min-width: 160px;
+}
+
+.taskStartDueContainer p {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.taskStartDueContainer p:hover {
+  opacity: 1;
+}
+
+.taskCompleteStatusContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  margin-left: 0.8rem;
+}
+
+.rowCompleteStatus {
+  display: flex;
+  justify-content: center;
+  font-size: 13px;
+  color: white !important;
+  padding: 3px 8px 3px 8px;
+  border-radius: 15px;
+  min-width: 165px;
+  opacity: 0.85;
+}
+
+.rowCompleteStatus:hover {
+  opacity: 1;
+}
+
+.taskCompleted {
+  background-color: rgba(0, 128, 0, 0.615);
+}
+
+.taskUncompleted {
+  background-color: rgba(255, 0, 0, 0.642);
+}
+
+@keyframes fadeInShow {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.taskPriorityContainer {
+  display: flex;
+  justify-content: center;
+  border-radius: 25px;
+  width: 0px;
+}
+
+.container:hover .taskPriorityContainer {
+  border: 1px solid rgba(0, 0, 0, 0.096);
+  margin-left: 2.3rem;
+  padding: 2px;
+  display: flex;
+  width: auto;
+  animation: fadeInShow 0.6s;
+}
+
+.rowPriority {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.rowPriority:hover {
+  opacity: 0.7;
+}
+
+.taskEstimatedTimeContainer {
+  display: flex;
+  justify-content: center;
+  border-radius: 25px;
+  width: 0px;
+}
+
+.container:hover .taskEstimatedTimeContainer {
+  margin-left: 0.7rem;
+  padding: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.096);
+  display: flex;
+  width: auto;
+  animation: fadeInShow 0.6s;
+}
+
+.rowEstimatedTime {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.rowEstimatedTime:hover {
+  opacity: 0.7;
+}
+
+.taskTypeContainer {
+  display: flex;
+  justify-content: center;
+  border-radius: 25px;
+  width: 0px;
+}
+
+.container:hover .taskTypeContainer {
+  display: flex;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.096);
+  border-radius: 25px;
+  padding: 2px;
+  margin-left: 0.7rem;
+  width: auto;
+  animation: fadeInShow 0.6s;
+}
+
+.rowType {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.rowType:hover {
+  opacity: 0.7;
+}
+
+.taskUpdateContainer {
+  display: flex;
+  justify-content: center;
+  border-radius: 25px;
+  width: 0px;
+}
+
+.container:hover .taskUpdateContainer {
+  display: flex;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.096);
+  border-radius: 25px;
+  padding: 2px;
+  margin-left: 0.7rem;
+  width: auto;
+  animation: fadeInShow 0.6s;
+}
+
+.rowUpdate {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.rowUpdate:hover {
+  opacity: 0.7;
+}
+
+.rowOptionsContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  border-radius: 25px;
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.editTaskTooltip {
+  margin-right: 10px;
+}
+
+.editTaskIcon:hover, .deleteTaskIcon:hover {
+  cursor: pointer;
 }

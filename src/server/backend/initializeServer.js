@@ -20,7 +20,7 @@ export default function initializeServer(router) {
   // Rate limit configuration
   const limiter = rateLimit({
     windowMs: 1 * 60 * 1000,
-    max: 60,
+    max: 100,
     standardHeaders: true,
     legacyHeaders: false,
   });
@@ -29,16 +29,15 @@ export default function initializeServer(router) {
   dotenv.config({ path: path.join(__dirname + '/.env') });
 
   const app = express();
-  const isProduction = process.env.NODE_ENV === 'production';
-  const origin = { origin: isProduction ? false : '*' };
-
   app.options('*', cors());
+  app.use(cors('*'));
+  const isProduction = process.env.NODE_ENV === 'production';
   app.use(limiter);
   app.use(express.json());
   app.use(cookieParser());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
-  app.use(cors(origin));
+  
   app.use(helmet());
   app.use(compression());
 
