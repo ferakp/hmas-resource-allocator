@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './Overview.module.css';
-import * as utils from '../../../libs/utilities';
+import * as utils from '../../../../utils/utils';
 import Icon from '@mdi/react';
 import { mdiPlusCircle } from '@mdi/js';
 import { mdiCheckboxMarkedCircle } from '@mdi/js';

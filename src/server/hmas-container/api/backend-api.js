@@ -13,7 +13,6 @@ const refreshInterval = setInterval(async () => {
 // Status
 export const isRestApiActive = false;
 
-
 /**
  * AUTH
  */
@@ -98,7 +97,7 @@ export async function updateHolons(holonIds) {
  */
 export async function updateHolonState(holonId, holonState) {
   try {
-    const holonResponse = await utils.patch('holons/'+holonId, token, { latest_state: JSON.stringify(holonState) });
+    const holonResponse = await utils.patch('holons/' + holonId, token, { latest_state: JSON.stringify(holonState) });
     const response = holonResponse.data.data[0].attributes;
     return response;
   } catch (err) {
@@ -199,5 +198,43 @@ export async function updateAllocationResult(result) {
     return response.data.data[0].attributes;
   } catch (err) {
     return null;
+  }
+}
+
+/**
+ * ALGORITHMS
+ */
+
+/**
+ * Registers algorithms to database
+ * @param {array} algorithms elements are objects with properties: name and run
+ * @returns false or true
+ */
+export async function registerAlgorithms(algorithms) {
+  try {
+    // Get algorithms
+    const algRes = await utils.get('algorithms', '', token);
+    const algorithmIds = algRes.data.data.map((alg) => alg.attributes.id);
+
+    if (algorithmIds.length === 0) return true;
+
+    // Delete algorithms
+    const algorithmDeleteResponse = algorithmIds.every(async (id) => {
+      const res = await utils.del('algorithms/' + id, token);
+      if (res.data.data[0].attributes.id) return true;
+      else throw new Error('Unable to delete algorithms');
+    });
+
+    // Create algorithms
+    const algorithmCreatioResponse = algorithms.every(async (alg) => {
+      const res = await utils.post('algorithms', token, { type: alg.type, name: alg.name, description: alg.description });
+      if (res.data.data[0].attributes.id) return true;
+      else throw new Error('Unable to create algorithms');
+    });
+
+    if (algorithmDeleteResponse && algorithmCreatioResponse) return true;
+  } catch (err) {
+    utils.log('Error', err.message);
+    return false;
   }
 }

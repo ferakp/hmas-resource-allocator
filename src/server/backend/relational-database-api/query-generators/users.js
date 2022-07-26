@@ -46,26 +46,8 @@ export function getUsers(parameters) {
       filters,
       "AND"
     );
-
-    let queryResponse;
-
-    // Query constraint for user
-    if (requester.role === "user") {
-      queryResponse = addUserConstraint(query, values, requester);
-    }
-
-    // Query constraint for moderator
-    if (requester.role === "moderator") {
-      queryResponse = addModeratorConstraint(query, values, requester);
-    }
-
-    // Query constraint for admin
-    if (requester.role === "admin") {
-      queryResponse = addAdminConstraint(query, values, requester);
-    }
-
-    response.query = queryResponse?.query;
-    response.values = queryResponse?.values;
+    response.query = query;
+    response.values = values;
     return response;
   }
 

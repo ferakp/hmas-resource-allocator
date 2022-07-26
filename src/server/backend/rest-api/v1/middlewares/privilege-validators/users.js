@@ -4,41 +4,7 @@ import * as responseGenerators from "../../response-generators/users";
 import * as rDatabaseApi from "../../../../relational-database-api/api";
 
 export async function getUsers(req, res, next) {
-  let validationErrors = [];
-  const requester = req.requester;
-  const query = { id: req.params.id };
-
-  // If requester is requesting own user
-  if (Number(req.params.id) === Number(requester.id)) {
-    next();
-    return;
-  }
-
-  const { errors, results } = await rDatabaseApi.getUsers({ isForAuth: true, filters: query });
-  validationErrors = errors;
-
-  // Path /users/:id doesn't exist
-  if (errors.length === 0 && results.length === 0) {
-    validationErrors.push(errorMessages.USER_NOT_FOUND);
-  }
-
-  // If there are multiple resources
-  if (errors.length === 0 && results.length > 1) {
-    validationErrors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
-  }
-
-  // If user has no privileges
-  if (errors.length === 0 && !utils.userHasPrivileges(requester, results[0]))
-    validationErrors.push(errorMessages.UNAUTHORIZED_API_CALL);
-
-  // User has no privileges or errors occured
-  if (validationErrors.length > 0) {
-    const response = responseGenerators.getUsers({ req, res, errors: validationErrors });
-    res.status(response.errors[0].status);
-    res.json(response);
-    return;
-  }
-
+  // Pass
   next();
 }
 

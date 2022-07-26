@@ -1,8 +1,9 @@
-import { messages } from "../messages/messages";
+import { messages } from '../messages/messages';
+import * as utils from '../utils/utils';
 
 export let initialState = {
   version: {
-    number: "v1.0.0"
+    number: 'v1.0.0',
   },
   auth: {
     loginTime: null,
@@ -13,10 +14,10 @@ export let initialState = {
     algorithms: [],
     allocations: [],
     holons: [],
-    settings: null,
+    settings: [],
     tasks: [],
     users: [],
-  }
+  },
 };
 
 export const reducer = (state, action) => {
@@ -24,16 +25,28 @@ export const reducer = (state, action) => {
   switch (action.type) {
     case 'REFRESHTOKEN':
       newState.auth.token = action.payload.token;
-    case "LOGGEDIN":
+    case 'LOGGEDIN':
       newState.auth.loginTime = action.payload.loginTime;
       newState.auth.user = action.payload.user;
       break;
-    case "LOGOUT":
+    case 'LOGOUT':
       newState.auth = JSON.parse(JSON.stringify(initialState.auth));
       break;
     case 'READ_NOTIFICATIONS':
       break;
-    case "FORGOT_PASSWORD":
+    case 'FORGOT_PASSWORD':
+      break;
+    case 'DATA_UPDATED':
+      utils.debounceUpdateData(newState, action.payload.data);
+      break;
+    case 'UPDATE_TASK':
+      utils.updateTask(newState, action.payload.task);
+      break;
+    case 'DELETE_TASK':
+      utils.deleteTask(newState, action.payload.id);
+      break;
+    case 'ADD_TASK':
+      utils.addTask(newState, action.payload.task);
       break;
     default:
       throw new Error();

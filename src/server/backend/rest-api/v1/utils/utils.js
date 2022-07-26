@@ -82,11 +82,11 @@ export function isObjectFieldValuesValid(object = {}, allFieldNames = [], allFie
     if (allFieldNames.indexOf(fieldName) === -1) return false;
     let constraints = allFieldConstraints[allFieldNames.indexOf(fieldName)];
     if (constraints.includes('not null') && !isNotNull(fieldValue)) return false;
-    if (constraints.includes('array') && !Array.isArray(fieldValue)) return false;
-    if (constraints.includes('string') && typeof fieldValue !== 'string') return false;
-    if (constraints.includes('number') && !isFieldNumber(fieldValue)) return false;
-    if (constraints.includes('date') && !isDate(new Date(fieldValue))) return false;
-    if (constraints.includes('boolean') && !isBoolean(convertToBoolean(fieldValue))) return false;
+    if (constraints.includes('array') && fieldValue !== null && !Array.isArray(fieldValue)) return false;
+    if (constraints.includes('string') && fieldValue !== null && typeof fieldValue !== 'string') return false;
+    if (constraints.includes('number') && fieldValue !== null && !isFieldNumber(fieldValue)) return false;
+    if (constraints.includes('date') && fieldValue !== null && !isDate(new Date(fieldValue))) return false;
+    if (constraints.includes('boolean') && fieldValue !== null && !isBoolean(convertToBoolean(fieldValue))) return false;
     return true;
   });
 }
@@ -230,11 +230,11 @@ export function formatRequestQuery(query = {}, allFieldNames = [], allFieldConst
     let tempQuery = removeOperatorFromObjectFieldNames(query);
     Object.keys(tempQuery).forEach((key, i) => {
       let constraints = allFieldConstraints[allFieldNames.indexOf(key)];
-      if (constraints.includes('string')) query[Object.keys(query)[i]] = tempQuery[key].toString();
-      else if (constraints.includes('number')) query[Object.keys(query)[i]] = Number(tempQuery[key]);
-      else if (constraints.includes('date')) query[Object.keys(query)[i]] = new Date(tempQuery[key]);
-      else if (constraints.includes('boolean')) query[Object.keys(query)[i]] = convertToBoolean(tempQuery[key]);
-      else if (constraints.includes('array') && !Array.isArray(query[Object.keys(query)[i]])) throw new Error();
+      if (constraints.includes('string') && query[Object.keys(query)[i]] !== null) query[Object.keys(query)[i]] = tempQuery[key].toString();
+      else if (constraints.includes('number') && query[Object.keys(query)[i]] !== null)  query[Object.keys(query)[i]] = Number(tempQuery[key]);
+      else if (constraints.includes('date') && query[Object.keys(query)[i]] !== null) query[Object.keys(query)[i]] = new Date(tempQuery[key]);
+      else if (constraints.includes('boolean') && query[Object.keys(query)[i]] !== null) query[Object.keys(query)[i]] = convertToBoolean(tempQuery[key]);
+      else if (constraints.includes('array') && query[Object.keys(query)[i]] !== null && !Array.isArray(query[Object.keys(query)[i]])) throw new Error();
     });
     response.formattedQuery = query;
   } catch (err) {

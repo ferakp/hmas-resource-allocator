@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from './Pie.module.css';
-import * as utils from '../../../libs/utilities';
 import * as d3 from 'd3';
 
 export class Pie extends React.Component {

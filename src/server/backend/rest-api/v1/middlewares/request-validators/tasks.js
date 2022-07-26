@@ -69,31 +69,34 @@ export function patchTask(req, res, next) {
 
       if (reqParams.hasOwnProperty('assigned_to')) {
         const assignedTo = JSON.parse(reqParams['assigned_to']).ids;
-        if (!utils.isArrayElementsNumber(assignedTo)) throw new Error();
+        if (assignedTo.length !== 0 && !utils.isArrayElementsNumber(assignedTo)) throw new Error();
       }
 
       if (reqParams.hasOwnProperty('knowledge_tags')) {
         const tags = JSON.parse(reqParams['knowledge_tags']).tags;
-        if (!utils.isArrayElementsString(tags)) throw new Error();
+        if (tags.length !== 0 && !utils.isArrayElementsString(tags)) throw new Error();
       }
 
+      // resource_demand.demands is an array in which every element is an array as well
+      // each element consist of type (string), experience_years(number), knowledge_tags (array)
       if (reqParams.hasOwnProperty('resource_demand')) {
         const demands = JSON.parse(reqParams['resource_demand']).demands;
-        demands.forEach((e) => {
-          if (
-            !e ||
-            !Array.isArray(e) ||
-            e.length !== 3 ||
-            !e[0] ||
-            typeof e[0] !== 'string' ||
-            !utils.isFieldNumber(e[1]) ||
-            !e[2] ||
-            !Array.isArray(e[2]) ||
-            !utils.isArrayElementsString(e[2])
-          ) {
-            throw new Error();
-          }
-        });
+        if (demands.length !== 0)
+          demands.forEach((e) => {
+            if (
+              !e ||
+              !Array.isArray(e) ||
+              e.length !== 3 ||
+              !e[0] ||
+              typeof e[0] !== 'string' ||
+              !utils.isFieldNumber(e[1]) ||
+              !e[2] ||
+              !Array.isArray(e[2]) ||
+              !utils.isArrayElementsString(e[2])
+            ) {
+              throw new Error();
+            }
+          });
       }
     } catch (err) {
       errors.push(errorMessages.INVALID_PARAMETER_VALUES);
@@ -122,7 +125,7 @@ export function postTask(req, res, next) {
     acceptedFieldNames,
     allFieldConstraints,
     allFieldNames,
-    requiredFieldNames
+    requiredFieldNames,
   });
 
   // Validate content of knowledge tags and resource demand

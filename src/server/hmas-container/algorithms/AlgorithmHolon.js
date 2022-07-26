@@ -1,6 +1,7 @@
 import * as utils from '../utils/utils';
 import * as log from '../logger/logger';
-import * as Algorithms from '../algorithms/Algorithms';
+import * as algorithms from '../algorithms/Algorithms';
+import * as backendApi from '../api/backend-api';
 
 export class AlgorithmHolon {
   // ID
@@ -109,32 +110,6 @@ class InterfaceHolon {
   numberOfPerceptions = 0;
 }
 
-class SwitchHolon {
-  // ID
-  id = 0.12;
-  // Name
-  name = 'SwitchHolon';
-  // Perception is an object with following properties: type, content
-  perceptions = [];
-  // Unread messages
-  // Message is an object with following properties: sender, type, content, ontology, receiver and conversation ID
-  messages = [];
-  // Messages that have been read
-  readMessages = [];
-  // Data
-  data = {};
-
-  status = holonStatus.na;
-  type = holonTypes.na;
-  position = holonPosition.na;
-  representativeHolon = null;
-  parentHolon = null;
-  childHolons = [];
-  layerHolons = [];
-  numberOfReadMessages = 0;
-  numberOfPerceptions = 0;
-}
-
 class CoreHolon {
   // ID
   id = 0.13;
@@ -142,6 +117,7 @@ class CoreHolon {
   name = 'CoreHolon';
   // Perception is an object with following properties: type, content
   perceptions = [];
+  handledPerceptions = [];
   // Unread messages
   // Message is an object with following properties: sender, type, content, ontology, receiver and conversation ID
   messages = [];
@@ -159,6 +135,105 @@ class CoreHolon {
   layerHolons = [];
   numberOfReadMessages = 0;
   numberOfPerceptions = 0;
+
+  receiveMessage(message) {
+    this.messages.push(message);
+    this.readMessages();
+  }
+
+  receivePerception(perception) {
+    this.perceptions.push(perception);
+    this.handlePerceptions();
+  }
+
+  handlePerceptions() {
+    const perceptions = this.perceptions;
+    this.perceptions = [];
+    this.handledPerceptions = this.handledPerceptions.concat(perceptions);
+  }
+
+  readMessages() {
+    const messages = this.messages;
+    this.messages = [];
+    messages.forEach((message) => {
+      switch (message.type) {
+        case 'request':
+          // message.content.allocationRequest has following properties: tasks, holons, allocation
+          if (message.ontology === 'allocations' && message.content.allocationRequest) {
+            utils.log('Info', 'Core holon received an allocation request');
+            const result = this.allocate(message.content.allocationRequest);
+            this.sendMessage(message, 'requestResponse', { result }, 'allocations');
+            utils.log('Info', 'Core holon has completed the allocation request');
+          }
+          break;
+        case 'algorithms':
+          if (message.ontology === 'algorithms' && message.content.algorithms) {
+            this.data.algorithms = message.content.algorithms;
+            utils.log(
+              'Info',
+              'Core holon has received ' + this.data.algorithms.length + ' algorithms with following names: ' + this.data.algorithms.map((alg) => alg.name).join(', ')
+            );
+          }
+          break;
+      }
+    });
+    this.readMessages = this.readMessages.concat(messages);
+  }
+
+  /**
+   * Allocates resources
+   * @param {object} allocationRequest has properties allHolons, allTasks and allocation
+   * @returns {object} result - has two properties: error and allocations
+   */
+  allocate(allocationRequest) {
+    try {
+      const allHolons = JSON.parse(JSON.stringify(allocationRequest.allHolons));
+      const allTasks = JSON.parse(JSON.stringify(allocationRequest.allTasks));
+      const algorithmName = allocationRequest.allocation.request.algorithm;
+
+      const holons = [];
+      const tasks = [];
+      let algorithm = null;
+
+      allHolons.forEach((holon) => {
+        if (allocationRequest.allocation.request.holonIds.includes(holon.id)) {
+          holons.push(holon);
+        }
+      });
+
+      allTasks.forEach((task) => {
+        if (allocationRequest.allocation.request.taskIds.includes(task.id)) {
+          tasks.push(task);
+        }
+      });
+
+      this.data.algorithms.forEach((alg) => {
+        if (alg.name === algorithmName) {
+          algorithm = alg;
+        }
+      });
+
+      if (algorithm) return algorithm.run(tasks, holons);
+      else throw new Error();
+    } catch (err) {
+      utils.log('Error', 'Core holon was unable to allocate resources');
+      return { error: 'Server was unable to handle this allocation request' };
+    }
+  }
+
+  sendMessage(receivedMessage, type, content, ontology) {
+    const message = {};
+    message.sender = this.id;
+    message.type = type;
+    message.content = content;
+    message.ontology = ontology;
+    message.receiver = receivedMessage.sender;
+    message.conversationId = receivedMessage.conversationId;
+
+    this.layerHolons.forEach((holon) => {
+      if (holon.id === message.receiver) holon.receiveMessage(message);
+    });
+  }
 }
 
 class AllocationHolon {
@@ -168,12 +243,14 @@ class AllocationHolon {
   name = 'AllocationHolon';
   // Perception is an object with following properties: type, content
   perceptions = [];
+  handledPerceptions = [];
   // Unread messages
   // Message is an object with following properties: sender, type, content, ontology, receiver and conversation ID
   messages = [];
   // Messages that have been read
   readMessages = [];
   // Data
+  // data.algorithms has following properties: type, name, description, run
   data = {};
 
   status = holonStatus.na;
@@ -186,16 +263,13 @@ class AllocationHolon {
   numberOfReadMessages = 0;
   numberOfPerceptions = 0;
 
-
-  constructor(){
-
+  constructor() {
+    this.loadAlgorithms();
   }
 
-  /**
-   * Load algorithms with getAlgorithms call
-   */
-  loadAlgorithms(){
-
+  loadAlgorithms() {
+    this.data.algorithms = algorithms.getAlgorithms();
+    this.registerAlgorithms();
   }
 
   receiveMessage(message) {
@@ -211,8 +285,7 @@ class AllocationHolon {
   handlePerceptions() {
     const perceptions = this.perceptions;
     this.perceptions = [];
-
-    this.handlePerceptions = this.handlePerceptions.concat(perceptions);
+    this.handledPerceptions = this.handledPerceptions.concat(perceptions);
   }
 
   readMessages() {
@@ -241,9 +314,19 @@ class AllocationHolon {
     message.receiver = receivedMessage.sender;
     message.conversationId = receivedMessage.conversationId;
 
-    this.layerHolons.forEach(holon => {
-        if(holon.id === message.receiver) holon.receiveMessage(message);
+    this.layerHolons.forEach((holon) => {
+      if (holon.id === message.receiver) holon.receiveMessage(message);
     });
+  }
+
+  /**
+   * Register algorithms
+   * this.data.algorithms is an array with objects with properties type, name, run, description
+   */
+  async registerAlgorithms() {
+    const response = await backendApi.registerAlgorithms(this.data.algorithms);
+    if (response) utils.log('Success', 'Algorithms have been registered');
+    else throw new Error('Error', 'Failed to register algorithms');
   }
 }
 
@@ -324,8 +407,8 @@ class PipeHolon {
     message.receiver = receivedMessage.sender;
     message.conversationId = receivedMessage.conversationId;
 
-    this.layerHolons.forEach(holon => {
-        if(holon.id === message.receiver) holon.receiveMessage(message);
+    this.layerHolons.forEach((holon) => {
+      if (holon.id === message.receiver) holon.receiveMessage(message);
     });
   }
 }

@@ -8,7 +8,7 @@ export const ALGORITHMS =
   "CREATE TABLE IF NOT EXISTS algorithms ( id SERIAL PRIMARY KEY, type VARCHAR NOT NULL, description VARCHAR NOT NULL, name VARCHAR NOT NULL, created_on timestamp NOT NULL, updated_on timestamp NOT NULL, created_by BIGINT NOT NULL REFERENCES users (id) ON DELETE CASCADE)";
 
 export const TASKS =
-  "CREATE TABLE IF NOT EXISTS tasks ( id SERIAL PRIMARY KEY, type VARCHAR, name VARCHAR NOT NULL, description VARCHAR, estimated_time DECIMAL, knowledge_tags VARCHAR, resource_demand VARCHAR, priority BIGINT DEFAULT 0, created_on timestamp NOT NULL, created_by bigint NOT NULL REFERENCES users (id) ON DELETE CASCADE, start_date timestamp, due_date timestamp, assigned_to VARCHAR, updated_on timestamp NOT NULL)";
+  "CREATE TABLE IF NOT EXISTS tasks ( id SERIAL PRIMARY KEY, type VARCHAR, is_completed BOOLEAN DEFAULT FALSE, completed_on timestamp, name VARCHAR NOT NULL, description VARCHAR, estimated_time DECIMAL, knowledge_tags VARCHAR, resource_demand VARCHAR, priority BIGINT DEFAULT 0, created_on timestamp NOT NULL, created_by bigint NOT NULL REFERENCES users (id) ON DELETE CASCADE, start_date timestamp, due_date timestamp, assigned_to VARCHAR, updated_on timestamp NOT NULL)";
 
 export const DASHBOARD_SETTINGS =
   "CREATE TABLE IF NOT EXISTS dashboard_settings ( id SERIAL PRIMARY KEY, settings VARCHAR NOT NULL, created_on timestamp NOT NULL, updated_on timestamp NOT NULL, created_by BIGINT UNIQUE REFERENCES users (id) ON DELETE CASCADE)";
