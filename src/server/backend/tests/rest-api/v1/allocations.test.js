@@ -7,7 +7,7 @@ import * as testEnvironment from '../../utils/test-environment';
 jest.useRealTimers();
 jest.setTimeout(40000);
 
-beforeEach(async () => {
+beforeAll(async () => {
   // Waiting server to start
   await testUtils.wait(5);
 
@@ -218,31 +218,32 @@ describe('testing POST /allocations endpoint with parameters', () => {
   test('post allocation with required parameters: request', async () => {
     let result = await testUtils.login('user', 'password');
     const token = result.data.data[0].attributes.token;
-    const reqParams = { request: JSON.stringify({ taskIds: [1, 2, 3], holonIds: [1, 2, 3] }) };
+    const reqParams = { request: JSON.stringify({ algorithm: 'FindOptimal', taskIds: [1, 2, 3], holonIds: [1, 2, 3] }) };
     result = await testUtils.post('allocations/', token, reqParams);
+    result = result.data || result.response.data;
 
     // Response has correct link
-    expect(result.data).toEqual(
+    expect(result).toEqual(
       expect.objectContaining({
         links: expect.objectContaining({ self: expect.stringContaining('/api/v1/allocations') }),
       })
     );
 
     // Response has no errors
-    expect(result.data.errors.length).toBe(0);
+    expect(result.errors.length).toBe(0);
 
     // Response contains correct amount of data objects
-    expect(result.data.data.length).toBe(1);
+    expect(result.data.length).toBe(1);
 
     // Response's data object is type of holons
-    expect(result.data.data[0]).toEqual(
+    expect(result.data[0]).toEqual(
       expect.objectContaining({
         type: 'allocations',
       })
     );
 
     // Response has correct resource
-    expect(result.data.data[0].attributes.request).not.toBe(null);
+    expect(result.data[0].attributes.request).not.toBe(null);
   });
 
   test('post allocation with no parameters', async () => {
@@ -507,120 +508,168 @@ describe('testing DELETE /allocations endpoint', () => {
 });
 
 describe('testing POST /allocations/:id/complete-requests endpoint', () => {
-  test('complete request', async () => {
-    // Choose random allocation id
+  test('completing an allocation with result which contains error message', async () => {
+    // Set up test environment again
+    await testEnvironment.addTestEnvironment(db);
+    // Choose a random allocation id
     let result = await testUtils.login('user', 'password');
     const token = result.data.data[0].attributes.token;
     result = await testUtils.get('allocations', '', token);
     const randomAllocationId = result.data.data[0].attributes.id;
 
-    // Choose two random tasks
-    result = await testUtils.get('tasks', '', token);
-    const randomTaskId1 = result.data.data[0].attributes.id;
-    const randomTaskId2 = result.data.data[1].attributes.id;
-
-    // Prepare random allocation for complete request
+    // Create a random result and assing it to the random allocation
     const reqParams = {
       start_time: new Date(),
       end_time: new Date(),
       completed_on: new Date(),
       reallocate: false,
       result: JSON.stringify({
-        allocations: [
-          { taskId: randomTaskId1, holonIds: [1, 2, 3] },
-          { taskId: randomTaskId2, holonIds: [4, 5, 6] },
-        ],
+        error: 'Error message',
       }),
     };
-    result = await testUtils.patch('allocations/' + randomAllocationId, token, reqParams);
+    let allocationUpdateResult = await testUtils.patch('allocations/' + randomAllocationId, token, reqParams);
+    allocationUpdateResult = allocationUpdateResult.data || allocationUpdateResult.response.data;
+    expect(allocationUpdateResult.errors.length).toBe(0);
 
-    // Complete request
+    // Attempt to complete the allocation
     let allocationCompleteRequest = await testUtils.post('allocations/' + randomAllocationId + '/complete-requests', token);
-
-    // Get allocation which was completed
-    let allocationResult = await testUtils.get('allocations/' + randomAllocationId, '', token);
-
-    // After complete request
-    const completeRequestResult = allocationCompleteRequest;
-    const randomAllocationResult = allocationResult;
+    allocationCompleteRequest = allocationCompleteRequest.data || allocationCompleteRequest.response.data;
 
     // Responses have corrent JSON:API link
-    expect(completeRequestResult.data).toEqual(
-      expect.objectContaining({
-        links: expect.objectContaining({ self: expect.stringContaining('/api/v1/allocations') }),
-      })
-    );
-    expect(randomAllocationResult.data).toEqual(
+    expect(allocationCompleteRequest).toEqual(
       expect.objectContaining({
         links: expect.objectContaining({ self: expect.stringContaining('/api/v1/allocations') }),
       })
     );
 
-    // Responses have correct amount of errors
-    expect(completeRequestResult.data.errors.length).toBe(0);
-    expect(randomAllocationResult.data.errors.length).toBe(0);
-
-    // Responses contain correct amount of data objects
-    expect(completeRequestResult.data.data.length).toBe(2);
-    expect(randomAllocationResult.data.data.length).toBe(1);
-
-    // Responses have correct data types
-    expect(completeRequestResult.data.data[0]).toEqual(
-      expect.objectContaining({
-        type: 'tasks',
-      })
-    );
-    expect(randomAllocationResult.data.data[0]).toEqual(
-      expect.objectContaining({
-        type: 'allocations',
-      })
-    );
-
-    // Response has correct allocation
-    expect(JSON.parse(completeRequestResult.data.data[0].attributes.assigned_to).ids.length).toBe(3);
-    expect(JSON.parse(completeRequestResult.data.data[1].attributes.assigned_to).ids.length).toBe(3);
-
-    expect(JSON.parse(completeRequestResult.data.data[0].attributes.assigned_to).ids).toEqual(expect.arrayContaining([1, 2, 3]));
-    expect(JSON.parse(completeRequestResult.data.data[1].attributes.assigned_to).ids).toEqual(expect.arrayContaining([4, 5, 6]));
-
-    expect(randomAllocationResult.data.data[0].attributes.completed_on).not.toBe(null);
+    expect(allocationCompleteRequest.errors[0].title).toBe('NO ALLOCABLE RESULT');
   });
 
-  test('complete unfinished allocation', async () => {
-    // Choose random allocation id
+  test('completing an allocation with result which contains invalid task id', async () => {
+    // Set up test environment again
+    await testEnvironment.addTestEnvironment(db);
+    // Choose a random allocation id
     let result = await testUtils.login('user', 'password');
     const token = result.data.data[0].attributes.token;
+    result = await testUtils.get('allocations', '', token);
+    const randomAllocationId = result.data.data[0].attributes.id;
 
-    // Choose two random tasks
-    result = await testUtils.get('tasks', '', token);
-    const randomTaskId1 = result.data.data[0].attributes.id;
-    const randomTaskId2 = result.data.data[1].attributes.id;
+    // Create a random result and assing it to the random allocation
+    const reqParams = {
+      start_time: new Date(),
+      end_time: new Date(),
+      completed_on: new Date(),
+      reallocate: false,
+      result: JSON.stringify({
+        allocations: [{ taskId: 11, holonIds: [] }],
+      }),
+    };
+    let allocationUpdateResult = await testUtils.patch('allocations/' + randomAllocationId, token, reqParams);
+    allocationUpdateResult = allocationUpdateResult.data || allocationUpdateResult.response.data;
+    expect(allocationUpdateResult.errors.length).toBe(0);
 
-    // Post a new unfinished allocation
-    const newAllocationResult = await testUtils.post('allocations', token, { request: JSON.stringify({ taskIds: [randomTaskId1, randomTaskId2], holonIds: [1, 2, 3] }) });
-    const randomAllocationId = newAllocationResult.data.data[0].attributes.id;
-
-    // Complete request
+    // Attempt to complete the allocation
     let allocationCompleteRequest = await testUtils.post('allocations/' + randomAllocationId + '/complete-requests', token);
-
-    // After complete request
-    const completeRequestResult = allocationCompleteRequest.response;
+    allocationCompleteRequest = allocationCompleteRequest.data || allocationCompleteRequest.response.data;
 
     // Responses have corrent JSON:API link
-    expect(completeRequestResult.data).toEqual(
+    expect(allocationCompleteRequest).toEqual(
       expect.objectContaining({
         links: expect.objectContaining({ self: expect.stringContaining('/api/v1/allocations') }),
       })
     );
 
-    // Responses have correct amount of errors
-    expect(completeRequestResult.data.errors.length).toBe(1);
+    expect(allocationCompleteRequest.errors[0].title).toBe('NO ALLOCABLE RESULT');
+  });
 
-    // Responses contain correct amount of data objects
-    expect(completeRequestResult.data.data.length).toBe(0);
+  test('completing an allocation with result which contains correct result', async () => {
+    // Set up test environment again
+    await testEnvironment.addTestEnvironment(db);
+    // Choose a random allocation id
+    let result = await testUtils.login('user', 'password');
+    const token = result.data.data[0].attributes.token;
+    result = await testUtils.get('allocations', '', token);
+    const randomAllocationId = result.data.data[0].attributes.id;
 
-    // Response has correct allocation
-    expect(completeRequestResult.data.errors[0].title).toBe('COMPLETING UNFINISHED ALLOCATION IS NOT PERMITTED');
+    // Get all tasks
+    let taskResults = await testUtils.get('tasks', '', token);
+    taskResults = taskResults.data || taskResults.response.data;
+    expect(taskResults.errors.length).toBe(0);
+    expect(taskResults.data.length > 0).toBe(true);
+    let taskIds = taskResults.data.map((data) => data.attributes.id);
+
+    // Get all holons
+    let holonResults = await testUtils.get('holons', '', token);
+    holonResults = holonResults.data || holonResults.response.data;
+    expect(holonResults.errors.length).toBe(0);
+    expect(holonResults.data.length > 0).toBe(true);
+    let holonIds = holonResults.data.map((data) => data.attributes.id);
+
+    // Generate random allocations
+    const allocations = [];
+    taskIds.forEach((taskId) => {
+      allocations.push({ taskId, holonIds: [holonIds.pop(), holonIds.pop()] });
+    });
+
+    // Create a random result and assing it to the random allocation
+    const reqParams = {
+      start_time: new Date(),
+      end_time: new Date(),
+      completed_on: new Date(),
+      reallocate: false,
+      result: JSON.stringify({
+        allocations,
+      }),
+    };
+    let allocationUpdateResult = await testUtils.patch('allocations/' + randomAllocationId, token, reqParams);
+    allocationUpdateResult = allocationUpdateResult.data || allocationUpdateResult.response.data;
+    expect(allocationUpdateResult.errors.length).toBe(0);
+
+    // Attempt to complete the allocation
+    let allocationCompleteRequest = await testUtils.post('allocations/' + randomAllocationId + '/complete-requests', token);
+    allocationCompleteRequest = allocationCompleteRequest.data || allocationCompleteRequest.response.data;
+
+    // Responses have corrent JSON:API link
+    expect(allocationCompleteRequest).toEqual(
+      expect.objectContaining({
+        links: expect.objectContaining({ self: expect.stringContaining('/api/v1/allocations') }),
+      })
+    );
+
+    expect(allocationCompleteRequest.errors.length).toBe(0);
+    expect(testUtils.isDate(new Date(allocationCompleteRequest.data[0].attributes.completed_on))).toBe(true);
+
+    // Get all tasks
+    taskResults = await testUtils.get('tasks', '', token);
+    taskResults = taskResults.data || taskResults.response.data;
+    expect(taskResults.errors.length).toBe(0);
+    expect(taskResults.data.length > 0).toBe(true);
+    taskIds = taskResults.data.map((data) => data.attributes.id);
+
+    // Get all holons
+    holonResults = await testUtils.get('holons', '', token);
+    holonResults = holonResults.data || holonResults.response.data;
+    expect(holonResults.errors.length).toBe(0);
+    expect(holonResults.data.length > 0).toBe(true);
+    holonIds = holonResults.data.map((data) => data.attributes.id);
+
+    // Get rid of undefined holon IDs
+    allocations.forEach((allocation) => {
+      allocation.holonIds = allocation.holonIds.filter((i) => typeof i === 'number');
+    });
+
+    // Check the tasks are updated
+    allocations.forEach((allocation) => {
+      expect(taskIds.includes(allocation.taskId)).toBe(true);
+      const task = taskResults.data.filter((data) => data.attributes.id === allocation.taskId)[0].attributes;
+      JSON.parse(task.assigned_to).ids.forEach((id) => {
+        expect(allocation.holonIds.includes(id));
+      });
+      allocation.holonIds.forEach((holonId) => {
+        const holon = ((holonResults.data.filter(i => i.attributes.id === holonId))[0]).attributes;
+        expect(JSON.parse(holon.availability_data).currentValue).toBe(1);
+      });
+    });
   });
 });
 
@@ -636,7 +685,7 @@ describe('testing POST /allocations/:id/reallocate-requests endpoint', () => {
       reallocate: false,
     };
     result = await testUtils.patch('allocations/' + randomAllocationId, token, reqParams);
-    expect(result.data.data[0].attributes.reallocate).toBe(false)
+    expect(result.data.data[0].attributes.reallocate).toBe(false);
 
     // Send a reallocate request
     result = await testUtils.post('allocations/' + randomAllocationId + '/reallocate-requests', token, reqParams);
@@ -664,4 +713,8 @@ describe('testing POST /allocations/:id/reallocate-requests endpoint', () => {
     // Response has correct allocation
     expect(result.data.data[0].attributes.reallocate).toBe(true);
   });
+});
+
+describe("", () => {
+
 });

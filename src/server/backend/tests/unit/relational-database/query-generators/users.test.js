@@ -203,8 +203,8 @@ const case1 = {
     },
   },
   query:
-    "SELECT * FROM (SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users WHERE id=$1) users WHERE id=$2",
-  values: [1, 1],
+    "SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users WHERE id=$1",
+  values: [1],
 };
 
 const case2 = {
@@ -228,8 +228,8 @@ const case3 = {
     },
   },
   query:
-    "SELECT * FROM (SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users WHERE id=$1) users WHERE (id=$2 OR role=$3)",
-  values: ["23", "22", "user"],
+    "SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users WHERE id=$1",
+  values: ["23"],
 };
 
 const case4 = {
@@ -243,8 +243,8 @@ const case4 = {
     },
   },
   query:
-    "SELECT * FROM (SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users WHERE role=$1) users WHERE (id=$2 OR role=$3)",
-  values: ["user", "22", "user"],
+    "SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users WHERE role=$1",
+  values: ["user"],
 };
 
 const case5 = {
@@ -262,9 +262,9 @@ const case5 = {
     },
   },
   query:
-    "SELECT * FROM (SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users" +
-    " WHERE role=$1 AND id=$2 AND lastname=$3 AND username=$4 AND email=$5) users WHERE (id=$6 OR role=$7)",
-  values: ["user", "24", "demo", "demo", "demo@demo.com", "22", "user"],
+    "SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users" +
+    " WHERE role=$1 AND id=$2 AND lastname=$3 AND username=$4 AND email=$5",
+  values: ["user", "24", "demo", "demo", "demo@demo.com"],
 };
 
 const case6 = {
@@ -285,8 +285,8 @@ const case6 = {
     },
   },
   query:
-    "SELECT * FROM (SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users" +
-    " WHERE role=$1 AND id=$2 AND lastname=$3 AND username=$4 AND email=$5 AND created_on=$6 AND updated_on=$7 AND last_login=$8) users WHERE (id=$9 OR role=$10 OR role=$11)",
+    "SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users" +
+    " WHERE role=$1 AND id=$2 AND lastname=$3 AND username=$4 AND email=$5 AND created_on=$6 AND updated_on=$7 AND last_login=$8",
   values: [
     "user",
     "24",
@@ -296,9 +296,6 @@ const case6 = {
     "2022-06-03T10:58:25.138Z",
     "2022-06-03T10:58:25.138Z",
     "2022-06-03T10:58:25.138Z",
-    "22",
-    "user",
-    "moderator",
   ],
 };
 
@@ -320,8 +317,8 @@ const case7 = {
     },
   },
   query:
-    "SELECT * FROM (SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users" +
-    " WHERE role=$1 AND id=$2 AND lastname=$3 AND username=$4 AND email=$5 AND created_on<=$6 AND updated_on=$7 AND last_login>$8) users WHERE (id=$9 OR role=$10)",
+    "SELECT id,role,username,firstname,lastname,email,created_on,last_login,updated_on FROM users" +
+    " WHERE role=$1 AND id=$2 AND lastname=$3 AND username=$4 AND email=$5 AND created_on<=$6 AND updated_on=$7 AND last_login>$8",
   values: [
     "user",
     "24",
@@ -331,8 +328,6 @@ const case7 = {
     "2022-06-03T10:58:25.138Z",
     "2022-06-03T10:58:25.138Z",
     "2022-06-03T10:58:25.138Z",
-    "22",
-    "user",
   ],
 };
 

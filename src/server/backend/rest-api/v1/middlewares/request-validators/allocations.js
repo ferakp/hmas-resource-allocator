@@ -60,14 +60,17 @@ export function patchAllocation(req, res, next) {
   });
 
   // Validate result parameter
+  // The result parameter is JSON and is should have either error or allocations property
   if (errors.length === 0 && reqParams.result) {
     try {
       const result = JSON.parse(reqParams.result);
-      if (!result.allocations || !Array.isArray(result.allocations)) throw new Error();
-      result.allocations.forEach((alloc) => {
-        if (!utils.isNumber(alloc.taskId)) throw new Error();
-        if (!Array.isArray(alloc.holonIds) || alloc.holonIds.length === 0) throw new Error();
-      });
+      if (!result.error) {
+        if (!result.allocations || !Array.isArray(result.allocations)) throw new Error();
+        result.allocations.forEach((alloc) => {
+          if (!utils.isNumber(alloc.taskId)) throw new Error();
+          if (!Array.isArray(alloc.holonIds)) throw new Error();
+        });
+      }
     } catch (err) {
       errors.push(errorMessages.INVALID_PARAMETER_VALUES);
     }
@@ -124,6 +127,7 @@ export function postAllocation(req, res, next) {
 
 export function postAllocationCompleteRequests(req, res, next) {
   const query = {};
+  // It uses same validation criterias as delete method
   const errors = utils.deleteRequestValidationCheck({ id: req.params.id, allFieldNames, allFieldConstraints });
 
   // Return if error has occured

@@ -317,7 +317,7 @@ export const BROKEN_ALLOCATION= {
     status: 500,
     code: 39,
     title: "UNABLE TO COMPLETE THE REQUEST",
-    detail: "Database returned broken, invalid or corrupt allocation",
+    detail: "Database returned broken, invalid or corrupt allocation. Please, delete the allocation request.",
     time: new Date()
 }
 
@@ -325,18 +325,17 @@ export const ALLOCATION_COMPLETE_REQUEST_NOT_ALLOWED = {
     status: 400,
     code: 40,
     title: "COMPLETING UNFINISHED ALLOCATION IS NOT PERMITTED",
-    detail: "Unable to complete the request due to unfinished allocation",
+    detail: "The allocation is not ready for complete operation",
     time: new Date()
 }
 
 export const INVALID_ALLOCATION_RESULT = {
     status: 500,
     code: 41,
-    title: "INVALID ALLOCATION REQUEST RESULT",
-    detail: "Database returned invalid allocation result",
+    title: "INVALID ALLOCATION RESULT",
+    detail: "The allocation request has invalid allocation result. Please, delete the allocation request.",
     time: new Date()
 }
-
 
 export const FAILED_TO_COMPLETE_ALLOCATION = {
     status: 500,
@@ -357,8 +356,24 @@ export const ALLOCATION_NOT_FOUND = {
 
 export const ALGORITHM_NOT_FOUND = {
     status: 404,
-    code: 4,
+    code: 44,
     title: "ALGORITHM NOT FOUND",
     detail: "Algorithm with given id doesn't exist",
+    time: new Date()
+}
+
+export const NO_ALLOCABLE_RESULT = {
+    status: 403,
+    code: 45,
+    title: "NO ALLOCABLE RESULT",
+    detail: "The allocation request's result has either error message or can't be completed due to lack of holons or/and tasks. Please, delete the allocation request.",
+    time: new Date()
+}
+
+export const TOO_MANY_REQUESTS = {
+    status: 429,
+    code: 46,
+    title: "TOO MANY REQUESTS",
+    detail: "Server received too many requests from your IP address. Please, try again later.",
     time: new Date()
 }

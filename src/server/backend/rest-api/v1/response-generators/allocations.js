@@ -46,7 +46,7 @@ const template = {
     if (results.length > 0) {
         results.forEach((data) => {
           response.data.push({
-            type: "tasks",
+            type: "allocations",
             id: data.id,
             attributes: data,
           });

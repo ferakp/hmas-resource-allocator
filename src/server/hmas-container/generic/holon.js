@@ -1,10 +1,13 @@
 import * as utils from '../utils/utils';
 
 export class Holon {
+  // Previous holonObject
+  holonObject = null;
   // Is artificial holon
   isArtificialHolon = false;
   // Perception is an object with following properties: type, content
   perceptions = [];
+  handledPerceptions = [];
   // Unread messages
   // Message is an object with following properties: sender, type, content, ontology, receiver and conversation ID
   messages = [];
@@ -28,18 +31,19 @@ export class Holon {
   updated_on = null;
   created_by = null;
   latest_state = {
+    representativeHolon: null,
     status: holonStatus.na,
     type: holonTypes.na,
-    position: holonPosition.na,
+    position: holonPositions.na,
     parentHolon: null,
     childHolons: [],
     layerHolons: [],
-    numberOfReadMessages: 0,
-    numberOfPerceptions: 0,
   };
 
   constructor(holonObject) {
-    const formattedHolon = utils.formatHolonObject(holonObject);
+    this.holonObject = holonObject;
+    const formattedHolon = utils.formatHolonObject(holonObject, holonStatus, holonTypes, holonPositions);
+    if (!formattedHolon) throw new Error();
     this.id = formattedHolon.id;
     this.type = formattedHolon.type;
     this.name = formattedHolon.name;
@@ -57,6 +61,7 @@ export class Holon {
     this.updated_on = formattedHolon.updated_on;
     this.created_by = formattedHolon.created_by;
     this.latest_state = formattedHolon.latest_state;
+    this.is_available = formattedHolon.is_available;
   }
 
   /**
@@ -64,7 +69,8 @@ export class Holon {
    */
 
   update(holonObject) {
-    const formattedHolon = utils.formatHolonObject(holonObject);
+    if (JSON.stringify(this.holonObject) === JSON.stringify(holonObject)) return;
+    const formattedHolon = utils.formatHolonObject(holonObject, holonStatus, holonTypes, holonPositions);
     this.type = formattedHolon.type;
     this.name = formattedHolon.name;
     this.gender = formattedHolon.gender;
@@ -80,6 +86,28 @@ export class Holon {
     this.created_on = formattedHolon.created_on;
     this.updated_on = formattedHolon.updated_on;
     this.created_by = formattedHolon.created_by;
+    this.is_available = formattedHolon.is_available;
+  }
+
+  receiveMessage(message) {
+    this.messages.push(message);
+    this.readMessage();
+  }
+
+  receivePerception(perception) {
+    this.perceptions.push(perception);
+    this.handlePerceptions();
+  }
+
+  handlePerceptions() {
+    const perceptions = this.perceptions;
+    this.perceptions = [];
+    this.handledPerceptions = this.handledPerceptions.concat(perceptions);
+  }
+
+  readMessage() {
+    this.readMessages.concat(this.messages);
+    this.messages = [];
   }
 }
 
@@ -100,7 +128,7 @@ const holonTypes = {
   utility: 'UTILITY',
 };
 
-const holonPosition = {
+const holonPositions = {
   na: 'N/A',
   super: 'SUPER',
   representative: 'REPRESENTATIVE',

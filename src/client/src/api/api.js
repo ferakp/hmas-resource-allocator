@@ -91,7 +91,7 @@ async function updateData() {
  * @param {JSON:API} response
  */
 function handleErrorResponse(response) {
-  if (response.errors.length === 0) return;
+  if (response.errors?.length === 0) return;
   logger.log('API ERROR RESPONSE', response.errors[0].detail);
 
   // Error 401
@@ -181,6 +181,7 @@ export async function getAllSettings() {
   try {
     checkConnection();
     const userResponse = await utils.get('settings', '', token);
+    handleErrorResponse(userResponse.data || userResponse.response.data);
     return userResponse.data || userResponse.response.data;
   } catch (err) {
     // err has cError property which contains actual error
@@ -204,6 +205,7 @@ export async function getAllUsers() {
   try {
     checkConnection();
     const userResponse = await utils.get('users', '', token);
+    handleErrorResponse(userResponse.data || userResponse.response.data);
     return userResponse.data || userResponse.response.data;
   } catch (err) {
     // err has cError property which contains actual error
@@ -219,6 +221,7 @@ export async function getUsers(query) {
   try {
     checkConnection();
     const userResponse = await utils.get('users', query, token);
+    handleErrorResponse(userResponse.data || userResponse.response.data);
     return userResponse.data || userResponse.response.data;
   } catch (err) {
     // err has cError property which contains actual error
@@ -234,6 +237,7 @@ export async function updateUser(userId, params) {
   try {
     checkConnection();
     const userResponse = await utils.post('users/' + userId, token, params);
+    handleErrorResponse(userResponse.data || userResponse.response.data);
     return userResponse.data || userResponse.response.data;
   } catch (err) {
     // err has cError property which contains actual error
@@ -249,6 +253,7 @@ export async function deleteUser(userId) {
   try {
     checkConnection();
     const userResponse = await utils.del('users/' + userId, token);
+    handleErrorResponse(userResponse.data || userResponse.response.data);
     return userResponse.data || userResponse.response.data;
   } catch (err) {
     // err has cError property which contains actual error
@@ -272,6 +277,7 @@ export async function getAllHolons() {
   try {
     checkConnection();
     const holonResponse = await utils.get('holons', '', token);
+    handleErrorResponse(holonResponse.data || holonResponse.response.data);
     return holonResponse.data || holonResponse.response.data;
   } catch (err) {
     // err has cError property which contains actual error
@@ -288,6 +294,7 @@ export async function getHolonUpdates(holonIds) {
   try {
     checkConnection();
     const holonResponse = await utils.post('search', token, { type: 'bulk-update-check', resource: 'holons', ids: holonIds });
+    handleErrorResponse(holonResponse.data || holonResponse.response.data);
     return holonResponse.data || holonResponse.response.data;
   } catch (err) {
     // err has cError property which contains actual error
@@ -304,6 +311,7 @@ export async function updateHolon(holonId, fields) {
   try {
     checkConnection();
     const holonResponse = await utils.patch('holons/' + holonId, token, fields);
+    handleErrorResponse(holonResponse.data || holonResponse.response.data);
     return holonResponse.data || holonResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while updating holon', err);
@@ -325,8 +333,9 @@ export async function updateHolon(holonId, fields) {
 export async function getAllTasks() {
   try {
     checkConnection();
-    const holonResponse = await utils.get('tasks', '', token);
-    return holonResponse.data || holonResponse.response.data;
+    const taskResponse = await utils.get('tasks', '', token);
+    handleErrorResponse(taskResponse.data || taskResponse.response.data);
+    return taskResponse.data || taskResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while retrieving tasks', err);
   }
@@ -341,6 +350,7 @@ export async function getTaskUpdates(taskIds) {
   try {
     checkConnection();
     const taskResponse = await utils.post('search', token, { type: 'bulk-update-check', resource: 'tasks', ids: taskIds });
+    handleErrorResponse(taskResponse.data || taskResponse.response.data);
     return taskResponse.data || taskResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while checking for updated tasks', err);
@@ -356,9 +366,8 @@ export async function markTaskCompleted(taskId) {
   try {
     checkConnection();
     const taskResponse = await utils.patch('tasks/' + taskId, token, { is_completed: true });
-    const response = taskResponse.data || taskResponse.response.data;
-    handleErrorResponse(response);
-    return response;
+    handleErrorResponse(taskResponse.data || taskResponse.response.data);
+    return taskResponse.data || taskResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while marking task as completed', err);
   }
@@ -373,9 +382,8 @@ export async function markTaskUncompleted(taskId) {
   try {
     checkConnection();
     const taskResponse = await utils.patch('tasks/' + taskId, token, { is_completed: false });
-    const response = taskResponse.data || taskResponse.response.data;
-    handleErrorResponse(response);
-    return response;
+    handleErrorResponse(taskResponse.data || taskResponse.response.data);
+    return taskResponse.data || taskResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while marking task as uncompleted', err);
   }
@@ -390,9 +398,8 @@ export async function updateTask(taskId, params) {
   try {
     checkConnection();
     const taskResponse = await utils.patch('tasks/' + taskId, token, params);
-    const response = taskResponse.data || taskResponse.response.data;
-    handleErrorResponse(response);
-    return response;
+    handleErrorResponse(taskResponse.data || taskResponse.response.data);
+    return taskResponse.data || taskResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while updating the task', err);
   }
@@ -407,9 +414,8 @@ export async function deleteTask(taskId) {
   try {
     checkConnection();
     const taskResponse = await utils.del('tasks/' + taskId, token);
-    const response = taskResponse.data || taskResponse.response.data;
-    handleErrorResponse(response);
-    return response;
+    handleErrorResponse(taskResponse.data || taskResponse.response.data);
+    return taskResponse.data || taskResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while deleting the task', err);
   }
@@ -424,9 +430,8 @@ export async function addTask(params) {
   try {
     checkConnection();
     const taskResponse = await utils.post('tasks/', token, params);
-    const response = taskResponse.data || taskResponse.response.data;
-    handleErrorResponse(response);
-    return response;
+    handleErrorResponse(taskResponse.data || taskResponse.response.data);
+    return taskResponse.data || taskResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while deleting the task', err);
   }
@@ -448,6 +453,7 @@ export async function getAllAlgorithms() {
   try {
     checkConnection();
     const algorithmResponse = await utils.get('algorithms', '', token);
+    handleErrorResponse(algorithmResponse.data || algorithmResponse.response.data);
     return algorithmResponse.data || algorithmResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while retrieving algorithms', err);
@@ -470,6 +476,7 @@ export async function getAllAllocations() {
   try {
     checkConnection();
     const allocationResponse = await utils.get('allocations', '', token);
+    handleErrorResponse(allocationResponse.data || allocationResponse.response.data);
     return allocationResponse.data || allocationResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while retrieving allocations', err);
@@ -485,6 +492,7 @@ export async function getAllocationUpdates(allocationIds) {
   try {
     checkConnection();
     const allocationResponse = await utils.post('search', token, { type: 'bulk-update-check', resource: 'allocations', ids: allocationIds });
+    handleErrorResponse(allocationResponse.data || allocationResponse.response.data);
     return allocationResponse.data || allocationResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while checking for updated allocations', err);

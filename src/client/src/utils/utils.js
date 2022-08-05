@@ -121,6 +121,7 @@ function formatData(data) {
         holon.created_on = new Date(holon.created_on);
         holon.created_by = Number(holon.created_by);
         holon.updated_on = new Date(holon.updated_on);
+        holon.is_available = convertToBoolean(holon.is_available) ? true : false;
       } catch (err) {
         invalidElements.push(i);
       }
@@ -203,7 +204,7 @@ export function formatTask(task) {
   try {
     task.id = Number(task.id);
     task.type = task.type ? task.type.toString() : null;
-    task.is_completed = Boolean(task.is_completed);
+    task.is_completed = convertToBoolean(task.is_completed) ? true : false;
     task.completed_on = task.completed_on ? new Date(task.completed_on) : null;
     task.name = task.name ? task.name.toString() : null;
     task.description = task.description ? task.description.toString() : null;
@@ -304,6 +305,13 @@ export function isNumber(param) {
   else return false;
 }
 
+export function convertToBoolean(result) {
+  if (typeof result === 'string' && result === 'true') return true;
+  else if (typeof result === 'string' && result === 'false') return true;
+  else if (typeof result === 'boolean') return result;
+  else return null;
+}
+
 /**
  * ORDER
  */
@@ -348,11 +356,12 @@ export function orderArrayElements(array, fieldName, isAscendant) {
 
 const host = 'localhost';
 const port = 5000;
+const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
 
 export const login = async (username, password) => {
   try {
     return await axios({
-      url: 'http://' + host + ':' + port + '/api/v1/auth/login',
+      url: protocol + '://' + host + ':' + port + '/api/v1/auth/login',
       method: 'get',
       headers: {
         Authorization: 'Basic ' + window.btoa(username + ':' + password),
@@ -369,7 +378,7 @@ export const login = async (username, password) => {
 export const get = async (path, query, token) => {
   try {
     return await axios({
-      url: 'http://' + host + ':' + port + '/api/v1/' + path + '/' + query,
+      url: protocol + '://' + host + ':' + port + '/api/v1/' + path + '/' + query,
       method: 'get',
       headers: {
         Authorization: 'Bearer ' + token,
@@ -386,7 +395,7 @@ export const get = async (path, query, token) => {
 export const post = async (path, token, reqParams) => {
   try {
     return await axios({
-      url: 'http://' + host + ':' + port + '/api/v1/' + path,
+      url: protocol + '://' + host + ':' + port + '/api/v1/' + path,
       method: 'post',
       headers: {
         Authorization: 'Bearer ' + token,
@@ -404,7 +413,7 @@ export const post = async (path, token, reqParams) => {
 export const patch = async (path, token, reqParams) => {
   try {
     return await axios({
-      url: 'http://' + host + ':' + port + '/api/v1/' + path,
+      url: protocol + '://' + host + ':' + port + '/api/v1/' + path,
       method: 'patch',
       headers: {
         Authorization: 'Bearer ' + token,
@@ -422,7 +431,7 @@ export const patch = async (path, token, reqParams) => {
 export const del = async (path, token) => {
   try {
     return await axios({
-      url: 'http://' + host + ':' + port + '/api/v1/' + path,
+      url: protocol + '://' + host + ':' + port + '/api/v1/' + path,
       method: 'delete',
       headers: {
         Authorization: 'Bearer ' + token,

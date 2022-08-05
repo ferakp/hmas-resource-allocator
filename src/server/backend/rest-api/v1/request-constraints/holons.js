@@ -34,6 +34,7 @@ export const allFieldNames = [
   'created_on',
   'updated_on',
   'created_by',
+  'is_available'
 ];
 
 export const allFieldConstraints = [
@@ -54,6 +55,7 @@ export const allFieldConstraints = [
   ['date'],
   ['date'],
   ['number'],
+  ["boolean", "not null"]
 ];
 
 export const getHolons = {
@@ -68,6 +70,7 @@ export const getHolons = {
     ...utils.generateComparableFields('created_on'),
     ...utils.generateComparableFields('updated_on'),
     'created_by',
+    'is_available'
   ],
 };
 
@@ -90,6 +93,7 @@ export const patchHolon = {
     'cost_data',
     'age',
     'experience_years',
+    'is_available'
   ],
 };
 
@@ -109,5 +113,6 @@ export const postHolon = {
     'cost_data',
     'age',
     'experience_years',
+    'is_available'
   ],
 };

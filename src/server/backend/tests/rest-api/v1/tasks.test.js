@@ -185,7 +185,7 @@ describe('testing PATCH /tasks endpoint', () => {
   });
   
 
-  test('patch the demotask1 with type, name, estimated_time, priority, knowledge_tags and resource_demand', async () => {
+  test('patch the demotask1 with type, name, is_completed, estimated_time, priority, knowledge_tags and resource_demand', async () => {
     let result = await testUtils.login('user', 'password');
     const token = result.data.data[0].attributes.token;
     result = await testUtils.get('tasks', '', token);
@@ -194,6 +194,7 @@ describe('testing PATCH /tasks endpoint', () => {
     const reqParams = {
       type: 'demotype',
       name: 'demoname1',
+      is_completed: true,
       priority: 5,
       estimated_time: 9,
       knowledge_tags: JSON.stringify({ tags: ['sql'] }),
@@ -224,6 +225,7 @@ describe('testing PATCH /tasks endpoint', () => {
     // Response has correct task
     expect(result.data.data[0].attributes.type).toBe('demotype');
     expect(result.data.data[0].attributes.name).toBe('demoname1');
+    expect(result.data.data[0].attributes.is_completed).toBe(true);
     expect(result.data.data[0].attributes.priority).toBe('5');
     expect(result.data.data[0].attributes.estimated_time).toBe('9');
     expect(JSON.parse(result.data.data[0].attributes.knowledge_tags).tags).toContain("sql");
@@ -260,34 +262,7 @@ describe('testing PATCH /tasks endpoint', () => {
     expect(result.data.errors[0].title).toBe('INVALID PARAMETER NAMES');
   });
 
-  test('patch the demotask1 with insufficient privileges', async () => {
-    let result = await testUtils.login('user', 'password');
-    const token = result.data.data[0].attributes.token;
-    result = await testUtils.get('tasks', '', token);
-
-    const randomTaskId = result.data.data[1].attributes.id;
-    const reqParams = { type: 'demotype', name: 'demoname1', priority: 5, estimated_time: 9};
-    result = await testUtils.patch('tasks/' + randomTaskId, token, reqParams);
-    result = result.response; 
-
-    // Response has correct link
-    expect(result.data).toEqual(
-      expect.objectContaining({
-        links: expect.objectContaining({ self: expect.stringContaining('/api/v1/tasks') }),
-      })
-    );
-
-    // Response has an error
-    expect(result.data.errors.length).toBe(1);
-
-    // Response contains no data object
-    expect(result.data.data.length).toBe(0);
-
-    // Response has correct error
-    expect(result.data.errors[0].title).toBe('INSUFFICIENT PRIVILEGES');
-  });
-
-  test('patch the demotask1 with admin privileges', async () => {
+  test('patch the demotask1 using admin user', async () => {
     let result = await testUtils.login('admin', 'password');
     const token = result.data.data[0].attributes.token;
     result = await testUtils.get('tasks', '', token);
@@ -447,32 +422,6 @@ describe('testing POST /tasks endpoint', () => {
 
 
 describe('testing DELETE /tasks endpoint', () => {
-
-  test('delete a task with insufficient privileges', async () => {
-    let result = await testUtils.login('user', 'password');
-    const token = result.data.data[0].attributes.token;
-    result = await testUtils.get('tasks', '', token);
-
-    const randomTaskId = result.data.data[1].attributes.id;
-    result = await testUtils.del('tasks/'+randomTaskId, token);
-    result = result.response;
-
-    // Response has correct link
-    expect(result.data).toEqual(
-      expect.objectContaining({
-        links: expect.objectContaining({ self: expect.stringContaining('/api/v1/tasks') }),
-      })
-    );
-
-    // Response has an error
-    expect(result.data.errors.length).toBe(1);
-
-    // Response contains no data object
-    expect(result.data.data.length).toBe(0);
-
-    // Response has correct error
-    expect(result.data.errors[0].title).toBe('INSUFFICIENT PRIVILEGES');
-  });
 
   test('delete a task as an user', async () => {
     let result = await testUtils.login('user', 'password');

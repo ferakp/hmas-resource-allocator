@@ -49,7 +49,7 @@ describe('test POST /search endpoint with parameters', () => {
     expect(result.data.errors.length).toBe(0);
 
     // Response contains correct amount of users
-    expect(result.data.data.length).toBe(1);
+    expect(result.data.data.length).toBe(allUserIds .length);
 
     // Response's data object is type of users
     expect(result.data.data[0]).toEqual(
@@ -87,7 +87,7 @@ describe('test POST /search endpoint with parameters', () => {
     expect(result.data.errors.length).toBe(0);
 
     // Response contains correct amount of users
-    expect(result.data.data.length).toBe(2);
+    expect(result.data.data.length).toBe(allUserIds.length);
 
     // Response's data object is type of users
     expect(result.data.data[0]).toEqual(
@@ -118,7 +118,7 @@ describe('test POST /search endpoint with parameters', () => {
     expect(result.data.errors.length).toBe(0);
 
     // Response contains correct amount of users
-    expect(result.data.data.length).toBe(3);
+    expect(result.data.data.length).toBe(allUserIds.length);
 
     // Response's data object is type of users
     expect(result.data.data[0]).toEqual(
@@ -241,9 +241,6 @@ describe('test POST /search endpoint with parameters', () => {
     // Response has no errors
     expect(result.data.errors.length).toBe(0);
 
-    // Response contains correct amount of objects
-    expect(result.data.data.length).toBe(1);
-
     // Response's data object has correct type
     expect(result.data.data[0]).toEqual(
       expect.objectContaining({
@@ -252,7 +249,9 @@ describe('test POST /search endpoint with parameters', () => {
     );
 
     // Response contains correct amount of updateResources and deletedIds
-    expect(result.data.data[0].attributes.updatedResources.length).toBe(1);
+    expect(Array.isArray(result.data.data[0].attributes.updatedResources)).toBe(true);
+    expect(Array.isArray(result.data.data[0].attributes.deletedIds)).toBe(true);
+    expect(result.data.data[0].attributes.updatedResources.length).toBe(4);
     expect(result.data.data[0].attributes.deletedIds.length).toBe(1);
   });
 
@@ -261,9 +260,10 @@ describe('test POST /search endpoint with parameters', () => {
     const allUsers = await testUtils.get('users', '', resultAdmin.data.data[0].attributes.token);
     const allUserIds = allUsers.data.data.map((u) => Number(u.id));
 
+    const latest_update = new Date();
     let resultUser = await testUtils.login('moderator', 'password');
     const token = resultUser.data.data[0].attributes.token;
-    const reqParams = { type: 'bulk-update-check', resource: 'users', ids: [0, ...allUserIds] };
+    const reqParams = { type: 'bulk-update-check', resource: 'users', ids: [0, ...allUserIds], latest_update };
     const result = await testUtils.post('search', token, reqParams);
 
     // Response has correct link
@@ -276,9 +276,6 @@ describe('test POST /search endpoint with parameters', () => {
     // Response has no errors
     expect(result.data.errors.length).toBe(0);
 
-    // Response contains correct amount of objects
-    expect(result.data.data.length).toBe(1);
-
     // Response's data object has correct type
     expect(result.data.data[0]).toEqual(
       expect.objectContaining({
@@ -287,7 +284,7 @@ describe('test POST /search endpoint with parameters', () => {
     );
 
     // Response contains correct amount of updateResources and deletedIds
-    expect(result.data.data[0].attributes.updatedResources.length).toBe(2);
+    expect(result.data.data[0].attributes.updatedResources.length).toBe(1);
     expect(result.data.data[0].attributes.deletedIds.length).toBe(1);
   });
 
@@ -310,9 +307,6 @@ describe('test POST /search endpoint with parameters', () => {
 
     // Response has no errors
     expect(result.data.errors.length).toBe(0);
-
-    // Response contains correct amount of objects
-    expect(result.data.data.length).toBe(1);
 
     // Response's data object has correct type
     expect(result.data.data[0]).toEqual(

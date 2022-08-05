@@ -1,28 +1,28 @@
 import * as core from '../core/core';
 import { Holon } from '../generic/holon';
 import * as logger from '../logger/logger';
+import * as utils from '../utils/utils';
+import { PipeHolon } from '../algorithms/PipeHolon';
+import { CoreHolon } from '../algorithms/CoreHolon';
+import { AllocationHolon } from '../algorithms/AllocationHolon';
+import { InterfaceHolon } from '../algorithms/InterfaceHolon';
 
 // PROPERTIES
+export let isInitialized = false;
 export let isContainerActive = false;
-export const superHolon = null;
-export const holons = [];
+export let isCoreActive = false;
 
+export let superHolon = null;
+export let holons = [];
+
+let previousAllocations = null;
+let previousTasks = null;
 
 /**
- * PERCEPTION 
+ * PERCEPTION
  * Each perception is an object with following properties: name, content
  */
-export const perceptions = [];
-
-
-try {
-  initialize();
-  isContainerActive = true;
-  logger.createLog('Success', 'Initialization process was successfull');
-} catch (err) {
-  logger.createLog('Error', 'Unable to initialize container');
-  isContainerActive = false;
-}
+export let perceptions = [];
 
 /**
  * FUNCTIONS
@@ -31,84 +31,92 @@ try {
 
 /**
  * Function for initialization process
- * PHASE 1 - Create a super holon
- * PHASE 2 - Import and create all holons from database
- * PHASE 3 - Create holarchy
- * Set parent holon
- * Add layer holons
- * PHASE 4 - Update status, type and position of holons
- * PHASE 5 - Create algorithm holon
  */
 function initialize() {
-  // PHASE 1
-  superHolon = new Holon({
-    id: 0.666666,
-    type: 'UTILITY',
-    name: 'Super Holon',
-    created_on: new Date(),
-    updated_on: new Date(),
-    created_by: 0.666662111,
-  });
-  superHolon.latest_state.position = 'SUPER';
-  superHolon.latest_state.status = 'RUNNING';
-  superHolon.isArtificialHolon = true;
+  try {
+    if (!isCoreActive) {
+      isInitialized = false;
+      isContainerActive = false;
+      return;
+    }
+    // Create a super holon
+    superHolon = new Holon({
+      id: -1000000,
+      type: 'UTILITY',
+      name: 'SuperHolon',
+      created_on: new Date(),
+      updated_on: new Date(),
+      created_by: 0.666662111,
+    });
+    superHolon.latest_state.position = 'SUPER';
+    superHolon.latest_state.status = 'RUNNING';
+    superHolon.isArtificialHolon = true;
 
-  // PHASE 2
-  updateHolons();
+    // Import holons from database
+    updateHolons();
 
-  // PHASE 3
-  superHolon.latest_state.childHolons = holons;
-  superHolon.latest_state.childHolons.forEach((holon) => {
-    holon.latest_state.parentHolon = superHolon;
-  });
-  superHolon.latest_state.childHolons.forEach((holon) => {
-    holon.latest_state.layerHolons = holons;
-  });
+    // Update the latest_state of imported holons
+    holons.forEach((holon) => {
+      holon.latest_state.status = 'RUNNING';
+      holon.latest_state.type = 'UTILITY';
+      holon.latest_state.position = 'SINGLEPART';
+    });
 
-  // PHASE 4
-  superHolon.latest_state.childHolons.forEach((holon) => {
-    holon.latest_state.status = 'RUNNING';
-    holon.latest_state.type = 'UTILITY';
-    holon.latest_state.position = 'SINGLEPART';
-  });
+    // Create an allocation holon
+    const allocationHolon = new AllocationHolon();
+    allocationHolon.latest_state.status = 'RUNNING';
+    allocationHolon.latest_state.type = 'UTILITY';
+    allocationHolon.latest_state.position = 'SINGLEPART';
+    holons.push(allocationHolon);
 
-  // PHASE 5
-  const algorithmHolon = new Holon({
-    id: 0.66666611,
-    type: 'UTILITY',
-    name: 'Algorithm Holon',
-    created_on: new Date(),
-    updated_on: new Date(),
-    created_by: 0.66666221,
-  });
+    // Create a pipe holon
+    const pipeHolon = new PipeHolon();
+    pipeHolon.latest_state.status = 'RUNNING';
+    pipeHolon.latest_state.type = 'UTILITY';
+    pipeHolon.latest_state.position = 'SINGLEPART';
+    holons.push(pipeHolon);
 
+    // Create a core holon
+    const coreHolon = new CoreHolon();
+    coreHolon.latest_state.status = 'RUNNING';
+    coreHolon.latest_state.type = 'MODEL';
+    coreHolon.latest_state.position = 'SINGLEPART';
+    holons.push(coreHolon);
 
+    // Create an interface holon
+    const interfaceHolon = new InterfaceHolon();
+    interfaceHolon.latest_state.status = 'RUNNING';
+    interfaceHolon.latest_state.type = 'UTILITY';
+    interfaceHolon.latest_state.position = 'REPRESENTATIVE';
+    holons.push(interfaceHolon);
+
+    // Create a super holon
+    superHolon.latest_state.childHolons = holons;
+    superHolon.latest_state.childHolons.forEach((holon) => {
+      holon.latest_state.parentHolon = superHolon;
+      holon.latest_state.layerHolons = holons;
+      holon.latest_state.representativeHolon = interfaceHolon;
+    });
+
+    isContainerActive = true;
+    isInitialized = true;
+    logger.createLog('Status', 'Container - container has been initialized');
+  } catch (err) {
+    console.log(err);
+    logger.createLog('Error', 'Container - unable to initialize container');
+    isInitialized = false;
+    isContainerActive = false;
+  }
 }
 
 // FUNCTIONS
 
 /**
+ * UPDATERS
  *
- * @param {object} message holon-to-holon message with following properties:
- * {object} sender - author of message
- * {string} type - message type
- * {string} content - message content
- * {string} ontology - message ontology
- * {array} receivers - receivers
- * {number} conversation ID - unique conversation ID
+ *
  */
-export function deliverMessage(message) {
-  if (!Array.isArray(message.receivers) && message.receivers.length === 0) return;
 
-  message.receivers.forEach((receiverId) => {
-    for (let i = 0; i < holons.length; i++) {
-      // todo
-    }
-  });
-}
-
-// INTERVALS
-const holonsUpdaterInterval = setInterval(updateHolons, 30000);
 const updateHolons = () => {
   const allHolons = core.holons;
   try {
@@ -121,15 +129,95 @@ const updateHolons = () => {
         }
       }
       if (index !== -1) {
-        holons[i].update(holon);
+        holons[index].update(holon);
       } else {
         try {
           holons.push(new Holon(holon));
-        } catch (err) {}
+        } catch (err) {
+          utils.log('Error', 'Container - Invalid holon has been received');
+        }
       }
-      isContainerActive = true;
     });
   } catch (err) {
-    isContainerActive = false;
+    utils.log('Error', 'Error occured during initialization - importing holons failed');
+    throw new Error();
   }
+};
+
+const updateTasks = () => {
+  if (JSON.stringify(previousTasks) !== JSON.stringify(core.tasks)) {
+    const tasks = core.tasks;
+    previousTasks = tasks;
+    perceptions.push({ type: 'tasksUpdate', content: { tasks } });
+  }
+};
+
+const updateAllocations = () => {
+  if (JSON.stringify(previousAllocations) !== JSON.stringify(core.allocations)) {
+    const allocations = core.allocations;
+    previousAllocations = allocations;
+    perceptions.push({ type: 'allocationsUpdate', content: { allocations } });
+  }
+};
+
+const deliverPerceptions = () => {
+  const perceptionsTemp = perceptions;
+  perceptions = [];
+
+  perceptionsTemp.forEach((perception) => {
+    holons.forEach((holon) => {
+      holon.receivePerception(perception);
+    });
+  });
+};
+
+/**
+ * INTERVALS
+ *
+ *
+ */
+let dataUpdaterInterval = setInterval(() => {
+  updateHolons();
+  updateTasks();
+  updateAllocations();
+  deliverPerceptions();
+}, 7000);
+let initializerInterval = setInterval(() => {
+  if (isInitialized) clearInterval(initializerInterval);
+  else {
+    initialize();
+  }
+}, 1000);
+let coreActivityMonitorInterval = setInterval(() => {
+  isCoreActive = core.serverStatus.core;
+  if (!isCoreActive) {
+    isContainerActive = false;
+    utils.log('Status', 'Container - core is inactive, deactivating container');
+  }
+  if (isCoreActive && !isContainerActive) {
+    isContainerActive = true;
+    utils.log('Status', 'Container - core is active, activating container');
+  }
+}, 1000);
+let perceptionDelivererInterval = setInterval(() => {
+  deliverPerceptions();
+}, 2000);
+
+export const stop = () => {
+  clearInterval(dataUpdaterInterval);
+  clearInterval(initializerInterval);
+  clearInterval(coreActivityMonitorInterval);
+  clearInterval(perceptionDelivererInterval);
+  holons.forEach((holon) => {
+    if (['AllocationHolon', 'CoreHolon', 'InterfaceHolon'].includes(holon.name)) {
+      holon.stop();
+    }
+  });
+
+  superHolon = null;
+  holons = [];
+  previousAllocations = [];
+  previousTasks = [];
+  perceptions = [];
+  utils.log('Status', 'Container - stopped');
 };

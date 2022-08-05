@@ -27,19 +27,22 @@ export default function initializeServer(router) {
   dotenv.config({ path: path.join(__dirname + '/.env') });
 
   const app = express();
-  const isProduction = process.env.NODE_ENV === 'production';
-  const origin = { origin: isProduction ? false : '*' };
-
+  app.options('*', cors());
+  app.use(cors('*'));
   app.use(limiter);
   app.use(express.json());
   app.use(cookieParser());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
-  app.use(cors(origin));
   app.use(helmet());
   app.use(compression());
-
   app.use('/api/v1', apiRoutes);
+
+  // Shut down app if .env file doesn't have necessary variables
+  if(!process.env.NODE_ENV || !process.env.APP_USERNAME || !process.env.APP_PASSWORD || !process.env.APP_USERNAME || !process.env.REST_API_HOST || !process.env.REST_API_HOST) {
+    console.log("Failed to start HMAS Container due to missing .env variable.");
+    process.exit();
+  }
 
   return app;
 }

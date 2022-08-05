@@ -29,7 +29,7 @@ afterAll(async () => {
 });
 
 describe("testing GET /users endpoint with queries", () => {
-  test("user receives only own profile", async () => {
+  test("user receives all users", async () => {
     let result = await utils.login("user", "password");
     const token = result.data.data[0].attributes.token;
     result = await utils.getUsers(token, "");
@@ -45,7 +45,7 @@ describe("testing GET /users endpoint with queries", () => {
     expect(result.data.errors.length).toBe(0);
 
     // Response contains only one data object
-    expect(result.data.data.length).toBe(1);
+    expect(result.data.data.length).toBe(4);
 
     // Response's data object is type of users
     expect(result.data.data[0]).toEqual(
@@ -54,8 +54,12 @@ describe("testing GET /users endpoint with queries", () => {
       })
     );
 
-    // Response has correct user
-    expect(result.data.data[0].attributes).toEqual(
+    // Response contains own profile
+    let ownProfile = null;
+    result.data.data.forEach(p => {
+      if(p.attributes.role === 'user') ownProfile = p.attributes;
+    });
+    expect(ownProfile).toEqual(
       expect.objectContaining({
         role: "user",
         username: "user",
@@ -67,7 +71,7 @@ describe("testing GET /users endpoint with queries", () => {
     );
   });
 
-  test("moderator receives own profile and the user's profile", async () => {
+  test("moderator receives all users", async () => {
     let result = await utils.login("moderator", "password");
     const token = result.data.data[0].attributes.token;
     result = await utils.getUsers(token, "");
@@ -83,7 +87,7 @@ describe("testing GET /users endpoint with queries", () => {
     expect(result.data.errors.length).toBe(0);
 
     // Response contains two data objects
-    expect(result.data.data.length).toBe(2);
+    expect(result.data.data.length).toBe(4);
 
     // Response's data objects are type of users
     expect(result.data.data[0]).toEqual(
@@ -94,102 +98,6 @@ describe("testing GET /users endpoint with queries", () => {
     expect(result.data.data[1]).toEqual(
       expect.objectContaining({
         type: "users",
-      })
-    );
-
-    // Response has user
-    expect(result.data.data[0].attributes).toEqual(
-      expect.objectContaining({
-        role: "user",
-        username: "user",
-        email: "user@demo.com",
-        firstname: "demo",
-        lastname: "demo",
-        created_on: "2022-06-10T18:24:21.381Z",
-      })
-    );
-
-    // Response has moderator
-    expect(result.data.data[1].attributes).toEqual(
-      expect.objectContaining({
-        role: "moderator",
-        username: "moderator",
-        email: "moderator@demo.com",
-        firstname: "demo",
-        lastname: "demo",
-        created_on: "2022-06-10T18:24:21.381Z",
-      })
-    );
-  });
-
-  test("admin receives own profile and the profiles of the user and the moderator", async () => {
-    let result = await utils.login("admin", "password");
-    const token = result.data.data[0].attributes.token;
-    result = await utils.getUsers(token, "");
-
-    // Response has correct link
-    expect(result.data).toEqual(
-      expect.objectContaining({
-        links: expect.objectContaining({ self: expect.stringContaining("/api/v1/users") }),
-      })
-    );
-
-    // Response has no errors
-    expect(result.data.errors.length).toBe(0);
-
-    // Response contains three data objects
-    expect(result.data.data.length).toBe(3);
-
-    // Response's data objects are type of users
-    expect(result.data.data[0]).toEqual(
-      expect.objectContaining({
-        type: "users",
-      })
-    );
-    expect(result.data.data[1]).toEqual(
-      expect.objectContaining({
-        type: "users",
-      })
-    );
-    expect(result.data.data[2]).toEqual(
-      expect.objectContaining({
-        type: "users",
-      })
-    );
-
-    // Response has user
-    expect(result.data.data[0].attributes).toEqual(
-      expect.objectContaining({
-        role: "user",
-        username: "user",
-        email: "user@demo.com",
-        firstname: "demo",
-        lastname: "demo",
-        created_on: "2022-06-10T18:24:21.381Z",
-      })
-    );
-
-    // Response has moderator
-    expect(result.data.data[1].attributes).toEqual(
-      expect.objectContaining({
-        role: "moderator",
-        username: "moderator",
-        email: "moderator@demo.com",
-        firstname: "demo",
-        lastname: "demo",
-        created_on: "2022-06-10T18:24:21.381Z",
-      })
-    );
-
-    // Response has admin
-    expect(result.data.data[2].attributes).toEqual(
-      expect.objectContaining({
-        role: "admin",
-        username: "admin",
-        email: "admin@demo.com",
-        firstname: "demo",
-        lastname: "demo",
-        created_on: "2022-06-10T18:24:21.381Z",
       })
     );
   });
@@ -255,7 +163,7 @@ describe("testing GET /users endpoint with queries", () => {
     expect(result.response.data.errors[0].title).toBe("INVALID QUERY STRING KEY");
   });
 
-  test("created_on query ", async () => {
+  test("look for users using created_on query ", async () => {
     let result = await utils.login("admin", "password");
     const token = result.data.data[0].attributes.token;
     result = await utils.getUsers(token, "?created_on.elt=" + new Date());
@@ -270,11 +178,11 @@ describe("testing GET /users endpoint with queries", () => {
     // Response has no errors
     expect(result.data.errors.length).toBe(0);
 
-    // Response contains three data objects (user, moderator, admin (self))
-    expect(result.data.data.length).toBe(3);
+    // Response contains three data objects (user, moderator, admin (self) and app)
+    expect(result.data.data.length).toBe(4);
   });
 
-  test("username, role, firstname, lastname and created_on query keys", async () => {
+  test("look for users with username, role, firstname, lastname and created_on query keys", async () => {
     let result = await utils.login("admin", "password");
     const token = result.data.data[0].attributes.token;
     result = await utils.getUsers(

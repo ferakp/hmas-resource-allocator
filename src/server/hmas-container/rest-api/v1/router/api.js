@@ -3,3 +3,5 @@ import * as handlers from '../handlers/status';
 
 const router = express.Router();
 router.get("/status", handlers.getStatus);
+
+export default router;

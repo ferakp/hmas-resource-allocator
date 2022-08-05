@@ -229,36 +229,56 @@ describe('testing GET /algorithms endpoint with queries', () => {
 });
 
 describe('testing POST /algorithms endpoint with parameters', () => {
-  test('post algorithm with required parameters: type, name, description', async () => {
+  test('post algorithm with required parameters: type, name, description using non-app user', async () => {
     let result = await testUtils.login('user', 'password');
     const token = result.data.data[0].attributes.token;
     const reqParams = { type: 'test', name: 'test', description: 'test' };
     result = await testUtils.post('algorithms/', token, reqParams);
+    result = result.data || result.response.data;
 
     // Response has correct link
-    expect(result.data).toEqual(
+    expect(result).toEqual(
       expect.objectContaining({
         links: expect.objectContaining({ self: expect.stringContaining('/api/v1/algorithms') }),
       })
     );
 
     // Response has no errors
-    expect(result.data.errors.length).toBe(0);
+    expect(result.errors.length).toBe(1);
 
-    // Response contains correct amount of data objects
-    expect(result.data.data.length).toBe(1);
+    // Response has correct errpr
+    expect(result.errors[0].title).toBe('INSUFFICIENT PRIVILEGES');
+  });
 
-    // Response's data object is type of holons
-    expect(result.data.data[0]).toEqual(
+  test('post algorithm with required parameters: type, name, description using app user', async () => {
+    let result = await testUtils.login('app', 'password');
+    const token = result.data.data[0].attributes.token;
+    const reqParams = { type: 'test', name: 'test', description: 'test' };
+    result = await testUtils.post('algorithms/', token, reqParams);
+    result = result.data || result.response.data;
+
+    // Response has correct link
+    expect(result).toEqual(
+      expect.objectContaining({
+        links: expect.objectContaining({ self: expect.stringContaining('/api/v1/algorithms') }),
+      })
+    );
+
+    // Response has no errors
+    expect(result.errors.length).toBe(0);
+
+    // Response's data object is type of algorithms
+    expect(result.data[0]).toEqual(
       expect.objectContaining({
         type: 'algorithms',
       })
     );
 
-    // Response has correct resource
-    expect(result.data.data[0].attributes.type).toBe('test');
-    expect(result.data.data[0].attributes.name).toBe('test');
-    expect(result.data.data[0].attributes.description).toBe('test');
+    // Response has correct data
+    expect(result.data[0].attributes.id).not.toBe(null);
+    expect(result.data[0].attributes.type).toBe("test");
+    expect(result.data[0].attributes.name).toBe("test");
+    expect(result.data[0].attributes.description).toBe("test");
   });
 
   test('post algorithm with no parameters', async () => {
@@ -335,13 +355,13 @@ describe('testing POST /algorithms endpoint with parameters', () => {
 });
 
 describe('testing PATCH /algorithms endpoint with parameters', () => {
-  test('patch algorithm with all parameters: type, name, description', async () => {
-    let result = await testUtils.login('user', 'password');
+  test('patch algorithm with all parameters: type, name, description using app user', async () => {
+    let result = await testUtils.login('app', 'password');
     const token = result.data.data[0].attributes.token;
     result = await testUtils.get('algorithms', '', token);
 
     const randomAlgorithmId = result.data.data[0].attributes.id;
-    const reqParams = { type: 'test', name: 'test', description: 'test' };
+    const reqParams = { type: 'test1', name: 'test', description: 'test' };
     result = await testUtils.patch('algorithms/' + randomAlgorithmId, token, reqParams);
 
     // Response has correct link
@@ -365,7 +385,7 @@ describe('testing PATCH /algorithms endpoint with parameters', () => {
     );
 
     // Response has correct resource
-    expect(result.data.data[0].attributes.type).toBe('test');
+    expect(result.data.data[0].attributes.type).toBe('test1');
     expect(result.data.data[0].attributes.name).toBe('test');
     expect(result.data.data[0].attributes.description).toBe('test');
   });
@@ -453,8 +473,8 @@ describe('testing PATCH /algorithms endpoint with parameters', () => {
 });
 
 describe('testing DELETE /algorithms endpoint', () => {
-  test('delete algorithm', async () => {
-    let result = await testUtils.login('user', 'password');
+  test('delete algorithm using app user', async () => {
+    let result = await testUtils.login('app', 'password');
     const token = result.data.data[0].attributes.token;
     result = await testUtils.get('algorithms', '', token);
 
@@ -489,8 +509,32 @@ describe('testing DELETE /algorithms endpoint', () => {
     );
   });
 
-  test('delete non-exist algorithm', async () => {
+  test('delete algorithm using non-app user', async () => {
     let result = await testUtils.login('user', 'password');
+    const token = result.data.data[0].attributes.token;
+    result = await testUtils.get('algorithms', '', token);
+
+    const randomAlgorithmId = result.data.data[0].attributes.id;
+    result = await testUtils.del('algorithms/' + randomAlgorithmId, token);
+    result = result.data || result.response.data;
+
+    // Response has correct link
+    expect(result).toEqual(
+      expect.objectContaining({
+        links: expect.objectContaining({ self: expect.stringContaining('/api/v1/algorithms') }),
+      })
+    );
+
+    // Response has no errors
+    expect(result.errors.length).toBe(1);
+
+    // Response has correct error
+    expect(result.errors[0].title).toBe("INSUFFICIENT PRIVILEGES");
+    
+  });
+
+  test('delete non-exist algorithm', async () => {
+    let result = await testUtils.login('app', 'password');
     const token = result.data.data[0].attributes.token;
     result = await testUtils.del('algorithms/0', token);
     result = result.response;
@@ -511,4 +555,6 @@ describe('testing DELETE /algorithms endpoint', () => {
     // Response has correct error
     expect(result.data.errors[0].title).toBe('ALGORITHM NOT FOUND');
   });
+
+  
 });
