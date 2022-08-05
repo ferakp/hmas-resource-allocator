@@ -31,7 +31,7 @@ export async function getAllocations(req, res) {
   }
 
   // Return error if search was conducted on :id which doesn't exist
-  if(utils.hasFieldWithValue(req.params, 'id') && responseDetails.errors.length === 0 && responseDetails.results.length === 0) {
+  if (utils.hasFieldWithValue(req.params, 'id') && responseDetails.errors.length === 0 && responseDetails.results.length === 0) {
     responseDetails.errors.push(errorMessages.ALLOCATION_NOT_FOUND);
   }
 
@@ -109,11 +109,13 @@ export async function patchAllocation(req, res) {
   if (reqParams.result) {
     try {
       const result = JSON.parse(reqParams.result);
-      if (!result.allocations) throw new Error();
+      if (!result.error) {
+        if (!result.allocations) throw new Error();
 
-      result.allocations.forEach((alloc) => {
-        if (!alloc.taskId || !alloc.holonIds) throw new Error();
-      });
+        result.allocations.forEach((alloc) => {
+          if (!utils.isNumber(alloc.taskId) || !Array.isArray(alloc.holonIds) || !alloc.holonIds.every((id) => utils.isNumber(id))) throw new Error();
+        });
+      }
       reqParams['reallocate'] = false;
     } catch (err) {
       responseDetails.errors.push(errorMessages.INVALID_PARAMETER_VALUES);
@@ -163,7 +165,7 @@ export async function deleteAllocation(req, res) {
   }
 
   // Empty response means allocation didn't exist
-  if(responseDetails.errors.length === 0 && responseDetails.results.length === 0) {
+  if (responseDetails.errors.length === 0 && responseDetails.results.length === 0) {
     responseDetails.errors.push(errorMessages.ALLOCATION_NOT_FOUND);
   }
 
@@ -186,7 +188,7 @@ export async function postAllocationCompleteRequests(req, res) {
   // Parameters
   let reqParams = JSON.parse(JSON.stringify({}));
   const requester = req.requester;
-  utils.hasFieldWithValue(req.params, 'id') ? (reqParams.id = Number(req.params.id)) : '';
+  reqParams.id = Number(req.params.id);
 
   // Get allocation
   const { errors, results } = await rDatabaseApi.getAllocations({ filters: reqParams });
@@ -204,66 +206,161 @@ export async function postAllocationCompleteRequests(req, res) {
       if (!allocation.start_time || !allocation.result || !allocation.end_time) {
         responseDetails.errors.push(errorMessages.ALLOCATION_COMPLETE_REQUEST_NOT_ALLOWED);
       }
-      // Allocation is ready and the result is correct
+      // Allocation has incorrect result
+      else if (!allocation.result.error && (!Array.isArray(allocation.result.allocations) || allocation.result.allocations.length === 0)) {
+        responseDetails.errors.push(errorMessages.INVALID_ALLOCATION_RESULT);
+      }
+      // The allocation's result field contains error message
+      else if (allocation.result.error) {
+        responseDetails.errors.push(errorMessages.NO_ALLOCABLE_RESULT);
+      }
+      // Allocation is ready and the result has either the error message or the allocations array
       else {
         try {
           // Each allocation element has following fields: taskId and holonIds
-          const allocationResults = allocation.result.allocations;
-          const taskIds = allocationResults.map((e) => Number(e.taskId));
+          const allocationResults = allocation.result.allocations || [];
+          let taskIds = allocationResults.map((e) => e.taskId);
+          let holonIds = [];
+          allocationResults.forEach((i) => {
+            if (Array.isArray(i.holonIds)) holonIds.push(...i.holonIds);
+          });
+          // Remove tasks and holons whose ID is not number
+          taskIds = taskIds.filter((id) => utils.isNumber(id));
+          holonIds = holonIds.filter((id) => utils.isNumber(id));
+          // Remove duplicate IDs
+          holonIds = utils.removeDuplicateElements(holonIds);
 
-          // Get tasks from database
-          const taskResults = await rDatabaseApi.search({ requester, reqParams: { type: 'bulk-search', resource: 'tasks', ids: taskIds } });
-          responseDetails.errors = responseDetails.errors.concat(taskResults.errors);
+          if (taskIds.length > 0) {
+            // Get tasks and holons from database
+            const taskResults = await rDatabaseApi.search({ requester, reqParams: { type: 'bulk-search', resource: 'tasks', ids: taskIds } });
+            let holonResults = { errors: [], results: [] };
+            if (holonIds.length > 0) holonResults = await rDatabaseApi.search({ requester, reqParams: { type: 'bulk-search', resource: 'holons', ids: holonIds } });
+            responseDetails.errors = responseDetails.errors.concat(holonResults.errors);
+            responseDetails.errors = responseDetails.errors.concat(taskResults.errors);
 
-          // Database returned tasks with given ids
-          if (responseDetails.errors.length === 0 && results.length > 0) {
-            // Assign tasks to allocations object
-            taskResults.results.forEach((task) => {
-              for (let i = 0; i < allocationResults.length; i++) {
-                if (Number(allocationResults[i].taskId) === Number(task.id)) {
-                  allocationResults[i].task = task;
+            // Requested holons and tasks have been retrieved from the database without errors
+            if (responseDetails.errors.length === 0 && taskResults.results.length > 0) {
+              // Assign each task to its allocation result
+              taskResults.results.forEach((task) => {
+                for (let i = 0; i < allocationResults.length; i++) {
+                  if (Number(allocationResults[i].taskId) === Number(task.id)) {
+                    allocationResults[i].task = task;
+                  }
+                }
+              });
+
+              // Assign each holon to its allocation result
+              holonResults.results.forEach((holon) => {
+                for (let i = 0; i < allocationResults.length; i++) {
+                  if (allocationResults[i].holonIds.includes(Number(holon.id))) {
+                    if (!Array.isArray(allocationResults[i].holons)) allocationResults[i].holons = [];
+                    allocationResults[i].holons.push(holon);
+                  }
+                }
+              });
+
+              const updatedTasks = [];
+              const updatedHolons = [];
+
+              // Assign holons to their tasks
+              allocationResults.forEach((allocation) => {
+                try {
+                  // Make sure the task and holons have been retrieved and the task has correct assigned_to field
+                  if (!allocation.task) return;
+                  let taskAssignedToField = !allocation.task.assigned_to ? { ids: [] } : JSON.parse(allocation.task.assigned_to);
+                  if (!Array.isArray(taskAssignedToField.ids)) taskAssignedToField.ids = [];
+                  if (!Array.isArray(allocation.holons)) allocation.holons = [];
+                  taskAssignedToField.ids = allocation.holons.map((i) => Number(i.id));
+                  allocation.task.assigned_to = JSON.stringify(taskAssignedToField);
+                  updatedTasks.push(allocation.task);
+                } catch (err) {
+                  let taskAssignedToField = { ids: [] };
+                  if (!Array.isArray(allocation.holons)) allocation.holons = [];
+                  taskAssignedToField.ids = allocation.holons.map((i) => Number(i.id));
+                  allocation.task.assigned_to = JSON.stringify(taskAssignedToField);
+                  updatedTasks.push(allocation.task);
+                }
+              });
+
+              // Set the currentValue of each holons's availability_data to 1
+              allocationResults.forEach((allocation) => {
+                // Skip allocation whic has no retrieved holons
+                if (!Array.isArray(allocation.holons) || allocation.holons.length === 0) return;
+                allocation.holons.forEach((holon) => {
+                  try {
+                    let availabilityDataField = holon.availability_data ? JSON.parse(holon.availability_data) : { currentValue: 0, records: [], latestUpdate: new Date() };
+                    availabilityDataField.records.push([availabilityDataField.currentValue, availabilityDataField.latestUpdate]);
+                    availabilityDataField.currentValue = 1;
+                    availabilityDataField.latestUpdate = new Date();
+                    holon.availability_data = JSON.stringify(availabilityDataField);
+                    updatedHolons.push(holon);
+                  } catch (err) {
+                    let availabilityDataField = { currentValue: 0, records: [], latestUpdate: new Date() };
+                    availabilityDataField.records.push([availabilityDataField.currentValue, availabilityDataField.latestUpdate]);
+                    availabilityDataField.currentValue = 1;
+                    availabilityDataField.latestUpdate = new Date();
+                    holon.availability_data = JSON.stringify(availabilityDataField);
+                    updatedHolons.push(holon);
+                  }
+                });
+              });
+
+              // Update tasks to database
+              for (let i = 0; i < updatedTasks.length; i++) {
+                try {
+                  const taskResults = await rDatabaseApi.editTask({
+                    reqParams: {
+                      id: Number(updatedTasks[i].id),
+                      assigned_to: updatedTasks[i].assigned_to,
+                    },
+                  });
+                  if (taskResults.errors.length > 0) throw new Error();
+                } catch (err) {
+                  throw new Error();
                 }
               }
-            });
 
-            // Assign holon ids to assigned_to.ids fields
-            allocationResults.forEach((alloc) => {
-              try {
-                const assignedTo = JSON.parse(alloc.assigned_to);
-                assignedTo.ids = utils.removeDuplicateElements(assignedTo.ids.concat(alloc.holonIds));
-                const reqParams = { assigned_to: JSON.stringify(assignedTo), id: alloc.taskId };
-                alloc.reqParams = reqParams;
-              } catch (err) {
-                const assignedTo = { ids: [] };
-                assignedTo.ids = utils.removeDuplicateElements(assignedTo.ids.concat(alloc.holonIds));
-                const reqParams = { assigned_to: JSON.stringify(assignedTo), id: alloc.taskId };
-                alloc.reqParams = reqParams;
+              // Update holons to database
+              for (let i = 0; i < updatedHolons.length; i++) {
+                try {
+                  const holonResults = await rDatabaseApi.editHolon({
+                    reqParams: {
+                      id: Number(updatedHolons[i].id),
+                      availability_data: updatedHolons[i].availability_data,
+                    },
+                  });
+                  if (holonResults.errors.length > 0) throw new Error();
+                } catch (err) {
+                  throw new Error();
+                }
               }
-            });
 
-            // Update tasks
-            for (let i = 0; i < allocationResults.length; i++) {
-              try {
-                const taskResults = await rDatabaseApi.editTask({ reqParams: allocationResults[i].reqParams });
-                if (taskResults.errors.length > 0) throw new Error();
-                responseDetails.results.push(taskResults.results[0]);
-              } catch (err) {
-                throw new Error();
-              }
+              
+              const completedOnResults = await rDatabaseApi.editAllocation({ reqParams: { id: Number(req.params.id), completed_on: new Date() } });
+              if (completedOnResults.errors > 0) throw new Error();
+              else responseDetails.results.push(completedOnResults.results[0]);
             }
-
-            const completedOnResults = await rDatabaseApi.editAllocation({ reqParams: { id: Number(req.params.id), completed_on: new Date() } });
-            if (completedOnResults.errors > 0) throw new Error();
+            // Either database returned error OR no holons or/and tasks
+            else {
+              if (taskResults.results.length === 0) responseDetails.errors.push(errorMessages.NO_ALLOCABLE_RESULT);
+              else responseDetails.errors.push(errorMessages.FAILED_TO_COMPLETE_ALLOCATION);
+            }
+          }
+          // No valid holons or valid tasks to complete operation
+          else {
+            responseDetails.errors.push(errorMessages.NO_ALLOCABLE_RESULT);
           }
         } catch (err) {
+          console.log(err);
           // Failed to complete allocation
           responseDetails.errors.push(errorMessages.FAILED_TO_COMPLETE_ALLOCATION);
         }
       }
     }
   } else {
-    // Return error if more than one resource is returned
+    // Return error if more than one allocation is returned
     if (responseDetails.results.length > 1) responseDetails.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
+    // Allocation was not found
     if (responseDetails.results.length === 0 && responseDetails.errors.length === 0) responseDetails.errors.push(errorMessages.ALLOCATION_NOT_FOUND);
   }
 
@@ -284,7 +381,7 @@ export async function postReallocateRequests(req, res) {
   const responseDetails = { req, res, errors: [], results: [] };
 
   // Parameters
-  let reqParams = JSON.parse(JSON.stringify({ reallocate: true }));
+  let reqParams = JSON.parse(JSON.stringify({ reallocate: true, start_time: null, end_time: null, completed_on: null }));
   const requester = req.requester;
   utils.hasFieldWithValue(req.params, 'id') ? (reqParams.id = Number(req.params.id)) : '';
 

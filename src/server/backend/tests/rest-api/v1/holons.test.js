@@ -364,13 +364,13 @@ describe('testing PATCH /holons endpoint', () => {
     expect(JSON.parse(result.data.data[0].attributes.stress_data).records[0].length).toBe(2);
   });
 
-  test('patch the demoholon1 with new name, age, type, gender and daily_work_hours', async () => {
+  test('patch the demoholon1 with new name, is_available, age, type, gender and daily_work_hours', async () => {
     let result = await testUtils.login('user', 'password');
     const token = result.data.data[0].attributes.token;
     result = await testUtils.get('holons', '', token);
 
     const randomHolonId = result.data.data[0].attributes.id;
-    const reqParams = { name: 'customHolon', age: 22, type: 'customEmployee', gender: 'custom', daily_work_hours: 13 };
+    const reqParams = { name: 'customHolon', age: 22, type: 'customEmployee', gender: 'custom', daily_work_hours: 13, is_available: true };
     result = await testUtils.patch('holons/' + randomHolonId, token, reqParams);
 
     // Response has correct link
@@ -401,11 +401,12 @@ describe('testing PATCH /holons endpoint', () => {
         type: 'customEmployee',
         gender: 'custom',
         daily_work_hours: '13',
+        is_available: true
       })
     );
   });
 
-  test('patch the demoholon1 with invalid parameter', async () => {
+  test('patch the demoholon1 with invalid parameter name', async () => {
     let result = await testUtils.login('user', 'password');
     const token = result.data.data[0].attributes.token;
     result = await testUtils.get('holons', '', token);

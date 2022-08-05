@@ -262,21 +262,7 @@ export function formatAllocationForCompleteRequest(allocation) {
     allocation.created_on = new Date(allocation.created_on);
     allocation.completed_on = allocation.completed_on ? new Date(allocation.completed_on) : null;
     allocation.updated_on = allocation.updated_on ? new Date(allocation.updated_on) : null;
-
-    if (allocation.result) {
-      if (!allocation.result.allocations || allocation.result.allocations.length === 0) {
-        throw new Error();
-      }
-
-      const response = allocation.result.allocations.every((alloc) => {
-        if (!isNumber(alloc.taskId)) return false;
-        else if (!Array.isArray(alloc.holonIds)) return false;
-        else return true;
-      });
-
-      if (!response) throw new Error();
-    }
-
+    allocation.reallocate = convertToBoolean(allocation.reallocate) ? true : false;
     responseDetails.allocation = allocation;
   } catch (err) {
     responseDetails.errors.push(errorMessages.BROKEN_ALLOCATION);
@@ -523,7 +509,7 @@ function isHolonDataFieldCorrect(holonTemp, fieldName) {
  */
 
 // Return empty array on error
-export function getDeleteIds(requestedIds, receivedIds) {
+export function getDeletedIds(requestedIds, receivedIds) {
   const deletedIds = [];
 
   if (!Array.isArray(requestedIds) || !Array.isArray(receivedIds)) return [];

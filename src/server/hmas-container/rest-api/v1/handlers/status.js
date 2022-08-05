@@ -1,14 +1,7 @@
-import * as backendApi from '../../../api/backend-api';
-
-const responseTemplate = {
-  restApi: 'inactive',
-  holonContainer: 'inactive',
-};
+import * as core from '../../../core/core';
 
 export function getStatus(req, res) {
-
-    // 
-  const response = generateStatusResponse(responseTemplate);
+  const response = generateStatusResponse({req, res, object: core.serverStatus});
   res.status(200);
   res.json(response);
 }

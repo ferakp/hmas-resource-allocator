@@ -56,9 +56,9 @@ export async function login(req, res) {
 
 export async function refreshToken(req, res) {
   const responseDetails = {req, res, token: null};
-  const user = req.user;
+  const user = req.requester;
 
-  responseDetails.token = generateAccessToken({ userId: req.user.id });
+  responseDetails.token = generateAccessToken({ userId: Number(user.id) });
   const response = authResponseGenerators.refreshToken(responseDetails);
   res.status(200);
   res.json(response);

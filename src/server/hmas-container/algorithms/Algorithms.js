@@ -19,7 +19,7 @@ const findBestMatchDescription =
   'The Find Best Match algorithm is a greedy algorithm which collects best holons for each task. After finding best possible holons, the algorithm allocates holons according to their priorities';
 
 const findMaximumExecutionDescription =
-  'The Find Maximum Execution algorithm is a greedy algorithm which has a goal of maximizing task execution. It chooses short tasks and find holons for them before moving to larger tasks.';
+  'The Find Maximum Execution algorithm is a greedy algorithm with a goal of maximizing number of executed tasks. It chooses short tasks first and find holons for them before moving to larger tasks.';
 
 const findOptimalDescription =
-  'The Find Optimal algorithm is a greedy algorithm which calculates the most optimal allocation by taking into account resource demands of tasks, their priorities and fair share.';
+  'The Find Optimal algorithm is a greedy algorithm which calculates the most optimal allocation by taking into account the resource demands, their priorities and fair share principle.';

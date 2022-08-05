@@ -1,6 +1,7 @@
 import { Pool } from "pg";
 import * as errorMessages from "./messages/errors";
 import * as createTableQueries from "./queries/createTable";
+import * as testEnvironment from './queries/testEnvironment';
 
 export let connection = {
   pool: null,
@@ -35,6 +36,7 @@ export async function initializeDatabase() {
   initializeConnection();
   try {
     await createTables(connection.pool);
+    if(process.env.NODE_ENV !== 'production') await createTestEnvironemnt(connection.pool);
   } catch (e) {
     connection = {
       err: { ...errorMessages.CREATE_TABLE_ERROR, errorStack: e },
@@ -107,6 +109,33 @@ async function createTables(pool) {
     } catch (e) {
       await client.query("ROLLBACK");
       console.log("Failed to create tables ", e);
+    } finally {
+      client.release();
+    }
+  })().catch((err) => console.log(err.stack));
+}
+
+
+async function createTestEnvironemnt(pool) {
+  (async () => {
+    const client = await pool.connect();
+    try {
+      await testEnvironment.initialize();
+      await client.query("BEGIN");
+      await client.query("TRUNCATE algorithms CASCADE");
+      await client.query("TRUNCATE allocations CASCADE");
+      await client.query("TRUNCATE dashboard_settings CASCADE");
+      await client.query("TRUNCATE holons CASCADE");
+      await client.query("TRUNCATE tasks CASCADE");
+      await client.query("TRUNCATE users CASCADE");
+      await client.query(testEnvironment.userQuery, testEnvironment.userValues);
+      await client.query(testEnvironment.adminQuery, testEnvironment.adminValues);
+      await client.query(testEnvironment.moderatorQuery, testEnvironment.moderatorValues);
+      await client.query(testEnvironment.appQuery, testEnvironment.appValues);
+      await client.query("COMMIT");
+    } catch (e) {
+      await client.query("ROLLBACK");
+      console.log("Failed to create test environment ", e);
     } finally {
       client.release();
     }
