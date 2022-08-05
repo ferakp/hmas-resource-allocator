@@ -519,5 +519,13 @@ describe('test application', () => {
       const availabilityData = JSON.parse(createdHolons[i].availability_data);
       if (createdHolons[i].is_available) expect(availabilityData.currentValue).toBe(1);
     }
+
+    const assignedIds = [];
+    for(let i=0;i<createdTasks.length;i++) {
+        const assignedToIds = JSON.parse(createdTasks[i].assigned_to).ids;
+        assignedIds.push(...assignedToIds);
+    }
+
+    expect(createdHolons.filter(i => i.is_available).length).toBe(assignedIds.length);
   });
 });
