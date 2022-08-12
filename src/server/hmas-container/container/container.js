@@ -213,7 +213,6 @@ export const stop = () => {
       holon.stop();
     }
   });
-
   superHolon = null;
   holons = [];
   previousAllocations = [];

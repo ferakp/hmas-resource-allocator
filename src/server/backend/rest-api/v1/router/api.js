@@ -11,7 +11,6 @@ import tasksRoutes from './tasks';
 import usersRoutes from './users';
 import algorithmsRoutes from './algorithms';
 import nliRoutes from './nli';
-import kgRoutes from './kg';
 import settingsRoutes from './settings';
 import messagesRoutes from './messages';
 
@@ -24,7 +23,6 @@ router.use('/tasks', tasksRoutes);
 router.use('/users', usersRoutes);
 router.use('/algorithms', algorithmsRoutes);
 router.use('/nli', nliRoutes);
-router.use('/kg', kgRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/messages', messagesRoutes);
 

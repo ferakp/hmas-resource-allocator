@@ -289,7 +289,7 @@ describe('test application', () => {
     }
 
     // Wait till HMAS Container has retrieved new holons
-    await testUtils.wait(5);
+    await testUtils.wait(10);
 
     // Create allocation requests
     const allocationResponses = [];
