@@ -4,7 +4,7 @@ import * as Algorithms from '../../algorithms/Algorithms';
 import * as Logger from '../../logger/logger';
 
 /**
- * BEFORE RUNNING THIS TEST MAKE SURE THE BACKEND IS UP AND RUNNING WITH THE DEVELOPMENT NODE_ENV VARIABLES
+ * BEFORE RUNNING THIS TEST MAKE SURE THE BACKEND (REST API), NEO4J and DATABASE (POSTGRESQL) ARE UP AND RUNNING WITH THE DEVELOPMENT NODE_ENV VARIABLES
  *
  * This test assumes the backend API (REST API) is up and running with the test environment configuration
  *
@@ -289,7 +289,7 @@ describe('test application', () => {
     }
 
     // Wait till HMAS Container has retrieved new holons
-    await testUtils.wait(5);
+    await testUtils.wait(10);
 
     // Create allocation requests
     const allocationResponses = [];
@@ -417,7 +417,7 @@ describe('test application', () => {
     }
 
     // Wait till HMAS Container has retrieved new holons
-    await testUtils.wait(5);
+    await testUtils.wait(8);
 
     // Create allocation requests
     const allocationResponses = [];
@@ -440,7 +440,6 @@ describe('test application', () => {
       allocationResponse = allocationResponse.data || allocationResponse.response.data;
       expect(allocationResponse.errors.length).toBe(0);
       expect(allocationResponse.data.length === 1).toBe(true);
-      if (JSON.parse(allocationResponse.data[0].attributes.result).error) console.log(allocationResponse.data[0].attributes);
       expect(JSON.parse(allocationResponse.data[0].attributes.result).error).toBe(undefined);
       allocationResults.push(allocationResponse);
     }

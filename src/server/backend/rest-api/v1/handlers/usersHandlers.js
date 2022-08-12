@@ -1,9 +1,10 @@
-import * as rDatabaseApi from "../../../relational-database-api/api";
-import * as usersResponseGenerator from "../response-generators/users";
-import * as utils from "../utils/utils";
-import * as errorMessages from "../messages/errors";
-import * as actions from "../messages/actions";
-import * as requestConstraints from "../request-constraints/users";
+import * as rDatabaseApi from '../../../relational-database-api/api';
+import * as usersResponseGenerator from '../response-generators/users';
+import * as utils from '../utils/utils';
+import * as errorMessages from '../messages/errors';
+import * as actions from '../messages/actions';
+import * as requestConstraints from '../request-constraints/users';
+import * as graphApi from '../../../graph-database/api';
 
 /**
  * GET /users and /users/:id
@@ -15,14 +16,10 @@ export async function getUsers(req, res) {
   // Parameters
   let query = JSON.parse(JSON.stringify(req.query));
   const requester = req.requester;
-  utils.hasFieldWithValue(req.params, "id") ? (query.id = req.params.id) : "";
+  utils.hasFieldWithValue(req.params, 'id') ? (query.id = req.params.id) : '';
 
   // Formatting
-  const formatResponse = utils.formatRequestQuery(
-    query,
-    requestConstraints.allFieldNames,
-    requestConstraints.allFieldConstraints
-  );
+  const formatResponse = utils.formatRequestQuery(query, requestConstraints.allFieldNames, requestConstraints.allFieldConstraints);
   if (formatResponse.errors) responseDetails.errors = formatResponse.errors;
   else query = formatResponse.formattedQuery;
 
@@ -55,20 +52,20 @@ export async function postUser(req, res) {
   let parameters = JSON.parse(JSON.stringify(req.body));
   const requester = req.requester;
 
+  // Store username and password for graph database account registration
+  const username = parameters.username;
+  const password = parameters['password'];
+
   // Update updated_on and created_on parameter
-  parameters["updated_on"] = new Date();
-  parameters["created_on"] = new Date();
+  parameters['updated_on'] = new Date();
+  parameters['created_on'] = new Date();
 
   // Hash password
-  parameters["password"] = await utils.encryptPassword(parameters["password"]);
-  if (!parameters["password"]) responseDetails.errors.push(errorMessages.UNEXPECTED_ERROR);
+  parameters['password'] = await utils.encryptPassword(parameters['password']);
+  if (!parameters['password']) responseDetails.errors.push(errorMessages.UNEXPECTED_ERROR);
 
   // Formatting
-  const formatResponse = utils.formatRequestQuery(
-    parameters,
-    requestConstraints.allFieldNames,
-    requestConstraints.allFieldConstraints
-  );
+  const formatResponse = utils.formatRequestQuery(parameters, requestConstraints.allFieldNames, requestConstraints.allFieldConstraints);
   if (formatResponse.errors) responseDetails.errors = formatResponse.errors;
   else parameters = formatResponse.formattedQuery;
 
@@ -80,17 +77,14 @@ export async function postUser(req, res) {
   }
 
   // If username and email already exist
-  if (responseDetails.errors.length === 0 && dbResponse.results?.length > 1)
-    responseDetails.errors.push(errorMessages.USERNAME_AND_EMAIL_ALREADY_REGISTERED);
+  if (responseDetails.errors.length === 0 && dbResponse.results?.length > 1) responseDetails.errors.push(errorMessages.USERNAME_AND_EMAIL_ALREADY_REGISTERED);
 
   // If username or email already exists
   if (responseDetails.errors.length === 0 && dbResponse.results?.length > 0) {
     // If email already exists
-    if (dbResponse.results[0].email === parameters.email)
-      responseDetails.errors.push(errorMessages.EMAIL_ALREADY_REGISTERED);
-    // If usernamealready exists
-    else if (dbResponse.results[0].username === parameters.username)
-      responseDetails.errors.push(errorMessages.USERNAME_ALREADY_REGISTERED);
+    if (dbResponse.results[0].email === parameters.email) responseDetails.errors.push(errorMessages.EMAIL_ALREADY_REGISTERED);
+    // If username already exists
+    else if (dbResponse.results[0].username === parameters.username) responseDetails.errors.push(errorMessages.USERNAME_ALREADY_REGISTERED);
     // If database returns unexpected result
     else responseDetails.errors.push(errorMessages.UNEXPECTED_DATABASE_RESPONSE_ERROR);
   }
@@ -99,7 +93,10 @@ export async function postUser(req, res) {
   if (responseDetails.errors.length === 0) {
     dbResponse = await rDatabaseApi.createUser({ reqParams: parameters });
     responseDetails.errors = responseDetails.errors.concat(dbResponse.errors || []);
-    if (responseDetails.errors.length === 0) responseDetails.results = dbResponse.results;
+    if (responseDetails.errors.length === 0) {
+      responseDetails.results = dbResponse.results;
+      graphApi.registerAccount(username, password);
+    }
   }
 
   // Generate response
@@ -122,32 +119,35 @@ export async function patchUser(req, res) {
   // Parameters
   let parameters = JSON.parse(JSON.stringify(req.body));
   const requester = req.requester;
-  utils.hasFieldWithValue(req.params, "id") ? (parameters.id = req.params.id) : "";
+  utils.hasFieldWithValue(req.params, 'id') ? (parameters.id = req.params.id) : '';
 
   // Update updated_on parameter
-  parameters["updated_on"] = new Date();
+  parameters['updated_on'] = new Date();
+
+  // Password change
+  let isPasswordChangeRequest = false;
+  let password = null;
+  let username = requester.username;
 
   // Hash password if password change is requested
-  if (parameters["password"]) {
-    parameters["password"] = await utils.encryptPassword(parameters["password"]);
-    if (!parameters["password"]) responseDetails.errors.push(errorMessages.UNEXPECTED_UPDATE_ERROR);
+  if (parameters['password']) {
+    isPasswordChangeRequest = true;
+    password = parameters['password'];
+    parameters['password'] = await utils.encryptPassword(parameters['password']);
+    if (!parameters['password']) responseDetails.errors.push(errorMessages.UNEXPECTED_UPDATE_ERROR);
   }
 
   // Formatting
-  const formatResponse = utils.formatRequestQuery(
-    parameters,
-    requestConstraints.allFieldNames,
-    requestConstraints.allFieldConstraints
-  );
+  const formatResponse = utils.formatRequestQuery(parameters, requestConstraints.allFieldNames, requestConstraints.allFieldConstraints);
   if (formatResponse.errors) responseDetails.errors = formatResponse.errors;
   else parameters = formatResponse.formattedQuery;
 
   // Check email availability if email change is requested
-  if (utils.hasFieldWithValue(parameters, "email")) {
+  if (utils.hasFieldWithValue(parameters, 'email')) {
     // Get user with given email
     const { errors, results } = await rDatabaseApi.getUsers({
       isForAuth: true,
-      filters: { email: parameters["email"] },
+      filters: { email: parameters['email'] },
     });
 
     if (errors.length > 0) responseDetails.errors.push(errorMessages.UNEXPECTED_UPDATE_ERROR);
@@ -160,6 +160,11 @@ export async function patchUser(req, res) {
     const { errors, results } = await rDatabaseApi.editUser({ requester, reqParams: parameters });
     responseDetails.errors = errors || [];
     responseDetails.results = results || [];
+  }
+
+  // Update password to Graph Database
+  if (responseDetails.errors.length === 0 && isPasswordChangeRequest) {
+    graphApi.registerAccount(username, password);
   }
 
   // Generate response
@@ -182,14 +187,10 @@ export async function deleteUser(req, res) {
   // Parameters
   let parameters = JSON.parse(JSON.stringify(req.query));
   const requester = req.requester;
-  utils.hasFieldWithValue(req.params, "id") ? (parameters.id = req.params.id) : "";
+  utils.hasFieldWithValue(req.params, 'id') ? (parameters.id = req.params.id) : '';
 
   // Formatting
-  const formatResponse = utils.formatRequestQuery(
-    parameters,
-    requestConstraints.allFieldNames,
-    requestConstraints.allFieldConstraints
-  );
+  const formatResponse = utils.formatRequestQuery(parameters, requestConstraints.allFieldNames, requestConstraints.allFieldConstraints);
   if (formatResponse.errors) responseDetails.errors = formatResponse.errors;
   else parameters = formatResponse.formattedQuery;
 

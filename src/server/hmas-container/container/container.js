@@ -1,7 +1,7 @@
 import * as core from '../core/core';
-import { Holon } from '../generic/holon';
 import * as logger from '../logger/logger';
 import * as utils from '../utils/utils';
+import { Holon } from '../generic/holon';
 import { PipeHolon } from '../algorithms/PipeHolon';
 import { CoreHolon } from '../algorithms/CoreHolon';
 import { AllocationHolon } from '../algorithms/AllocationHolon';
@@ -30,7 +30,10 @@ export let perceptions = [];
  */
 
 /**
- * Function for initialization process
+ * Initialize container 
+ * - Creates a super holon
+ * - Creates holons
+ * - Configure all holons
  */
 function initialize() {
   try {
@@ -213,7 +216,6 @@ export const stop = () => {
       holon.stop();
     }
   });
-
   superHolon = null;
   holons = [];
   previousAllocations = [];
