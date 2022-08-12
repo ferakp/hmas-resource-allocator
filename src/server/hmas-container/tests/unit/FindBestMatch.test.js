@@ -6,7 +6,7 @@ import path from 'path';
 /**
  * MAKE SURE NEO4J IS RUNNING BEFORE RUNNING THIS TEST
  *
- *
+ * This test configures the Graph API using the .env file variables
  *
  */
 
