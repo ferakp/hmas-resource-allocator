@@ -7,3 +7,7 @@ export function addEnvVariable(filePath, envName, content) {
   });
   fs.writeFileSync(filePath, data.join("\n"));
 }
+
+export const wait = async (seconds) => {
+  return new Promise(r => setTimeout(r, seconds *1000));
+}

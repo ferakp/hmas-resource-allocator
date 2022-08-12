@@ -114,9 +114,100 @@ export const sortHolons = (holons, criteria) => {
 };
 
 /**
+ * Sorts holons according to demands
+ * @param {object} task 
+ * @param {array} holons 
+ */
+export const sortByDemands = (task, holons) => {
+  holons.sort((a, b) => {
+    const aScore = getDemandScore(task, a);
+    const bScore = getDemandScore(task, b);
+    if (aScore === bScore) return 0;
+    else if (aScore > bScore) return 1;
+    else if (aScore < bScore) return -1;
+  });
+  holons.reverse();
+};
+
+/**
+ * Calculates a demand score for the holon based on the demands of the task
+ * @param {object} task
+ * @param {object} holon
+ * @returns number - 0 if calculation fails
+ */
+export const getDemandScore = (task, holon) => {
+  try {
+    let score = 0;
+    // Holon related properties
+    let knowledgeTags = [];
+    let issues = [];
+    let type = holon.type.toLowerCase();
+    let experienceYears = holon.experience_years;
+
+    // Task related properties
+    let demandedKnowledgeTags = [];
+    let demands = [];
+    if (Array.isArray(task.knowledge_tags?.tags) && task.knowledge_tags?.tags.length > 0) demandedKnowledgeTags = task.knowledge_tags.tags.map((i) => i.toLowerCase());
+    if (Array.isArray(task.resource_demand?.demands) && task.resource_demand?.demands.length > 0)
+      demands = task.resource_demand.demands.map((i) => {
+        if (i[0]) i[0] = i[0].toLowerCase();
+        if (i[2]) i[2] = i[2].map((i) => i.toLowerCase());
+        return i;
+      });
+
+    // Extract knowledge tags and issues from the holon's graphRecords
+    if (Array.isArray(holon.graphRecords)) {
+      holon.graphRecords.forEach((record) => {
+        const node = record.get(0);
+        const relations = record.get(1);
+        const target = record.get(2);
+
+        if (relations.length === 1 && relations[0].type.toLowerCase() === 'knows') {
+          if (target.properties.name) knowledgeTags.push(target.properties.name);
+        }
+
+        if (relations.length === 1 && relations[0].type.toLowerCase() === 'has' && target.labels[0].toLowerCase() === 'issue') {
+          if (target.properties.name) issues.push(target.properties.name);
+        }
+      });
+    }
+
+    // Return 0 if holon has no knowledge tags or issues OR the task has no demands
+    if ((knowledgeTags.length === 0 && issues.length === 0) || (demandedKnowledgeTags.length === 0 && demands.length === 0)) {
+      return 0;
+    }
+
+    if (demandedKnowledgeTags.length > 0) {
+      let ktScoreUnit = 1 / demandedKnowledgeTags.length;
+      demandedKnowledgeTags.forEach((i) => {
+        if (knowledgeTags.includes(i)) score += ktScoreUnit;
+      });
+    }
+
+    if (demands.length > 0) {
+      let dScoreUnit = 1;
+      demands.forEach((demand) => {
+        if (!Array.isArray(demand) || demand.length !== 3) return;
+        if (demand[0] && type && demand[0] === type) score += dScoreUnit;
+        if (typeof demand[1] === 'number' && typeof experienceYears === 'number' && demand[1] <= experienceYears) score += dScoreUnit;
+        if (Array.isArray(demand[2]) && Array.isArray(knowledgeTags) && knowledgeTags.length > 0) {
+          demand[2].forEach((tag) => {
+            if (knowledgeTags.includes(tag.toLowerCase())) score += dScoreUnit;
+          });
+        }
+      });
+    }
+
+    return score;
+  } catch (err) {
+    return 0;
+  }
+};
+
+/**
  * Finds best holon(s) for the task
  * PHASE 1 - Sort holons according to their cost_data and choose only available holons
- * PHASE 2 - Iterate over previously sorted holons and choose holons whose knowledge matches the task's resource_demand ( NOT READY )
+ * PHASE 2 - Iterate over previously sorted holons and choose holons whose knowledge matches the task's resource_demand
  * PHASE 3 - Loop in which the best holon is picked till the task has all the hours it needs
  * @param {object} task standard task
  * @param {array} holons arra of standard holons
@@ -134,11 +225,10 @@ export const findBestMatch = (task, holons) => {
       sortHolons(holons, 'cost_data');
       const availableHolons = holons.filter((i) => i.availability_data.currentValue >= 0 && i.availability_data.currentValue < 1);
       if (availableHolons.length === 0) break;
-      // PHASE 2 (NOT READY)
-
+      // PHASE 2
+      sortByDemands(task, availableHolons);
       // PHASE 3
       const bestHolon = availableHolons[0];
-
       // The task has estimated_time -  meaning it may need multiple holons
       if (typeof task.estimated_time === 'number') {
         const hoursNeeded = task.estimated_time - addedHours;

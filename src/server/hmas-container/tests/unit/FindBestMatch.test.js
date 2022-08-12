@@ -1,8 +1,55 @@
 import * as FindBestMatch from '../../algorithms/FindBestMatch';
+import * as graphApi from '../../api/graph-api';
+import dotenv from 'dotenv';
+import path from 'path';
 
-const holonSample1 = { id: 1, daily_work_hours: 8, experience_years: 10, is_available: true, availability_data: { currentValue: 0 }, cost_data: { currentValue: 0 } };
-const holonSample2 = { id: 2, daily_work_hours: 8, experience_years: 10, is_available: true, availability_data: { currentValue: 0.22 }, cost_data: { currentValue: 0.133 } };
-const holonSample3 = { id: 3, daily_work_hours: 8, experience_years: 10, is_available: true, availability_data: { currentValue: 0 }, cost_data: { currentValue: 0.2 } };
+/**
+ * MAKE SURE NEO4J IS RUNNING BEFORE RUNNING THIS TEST
+ *
+ *
+ *
+ */
+
+// Configuring test environment
+jest.useRealTimers();
+jest.setTimeout(250000);
+
+const holonSample1 = {
+  id: 1,
+  type: 'ordinary',
+  daily_work_hours: 8,
+  experience_years: 10,
+  is_available: true,
+  availability_data: { currentValue: 0 },
+  cost_data: { currentValue: 0 },
+};
+const holonSample2 = {
+  id: 2,
+  type: 'ordinary',
+  daily_work_hours: 8,
+  experience_years: 10,
+  is_available: true,
+  availability_data: { currentValue: 0.22 },
+  cost_data: { currentValue: 0.133 },
+};
+const holonSample3 = {
+  id: 3,
+  type: 'ordinary',
+  daily_work_hours: 8,
+  experience_years: 10,
+  is_available: true,
+  availability_data: { currentValue: 0 },
+  cost_data: { currentValue: 0.2 },
+};
+
+const copyHolons = (arr) => {
+  return arr.map((i) => {
+    const holon = JSON.parse(JSON.stringify(i));
+    holon.graphRecords = i.graphRecords;
+    return holon;
+  });
+};
+
 let dueDateSample1 = new Date();
 dueDateSample1 = new Date(dueDateSample1.getTime() + 1000 * 60 * 60 * 85);
 let dueDateSample2 = new Date();
@@ -12,7 +59,8 @@ const taskSample1 = {
   priority: 3,
   is_completed: false,
   estimated_time: 53,
-  resource_demand: { demands: [['ordinary', 5, ['sql']]] },
+  knowledge_tags: { tags: ['java', 'mysql'] },
+  resource_demand: { demands: [['ordinary', 5, ['mysql']]] },
   start_date: null,
   due_date: null,
 };
@@ -21,7 +69,8 @@ const taskSample2 = {
   priority: 5,
   is_completed: false,
   estimated_time: 13,
-  resource_demand: { demands: [['ordinary', 5, ['sql']]] },
+  knowledge_tags: { tags: ['javascript', 'mysql'] },
+  resource_demand: { demands: [['ordinary', 5, ['javascript']]] },
   start_date: new Date(),
   due_date: dueDateSample1,
 };
@@ -30,12 +79,47 @@ const taskSample3 = {
   priority: 0,
   is_completed: false,
   estimated_time: 103,
+  knowledge_tags: { tags: ['java', 'mysql'] },
   resource_demand: { demands: [['ordinary', 5, ['java']]] },
   start_date: new Date(),
   due_date: dueDateSample2,
 };
 
+beforeAll(async () => {
+  dotenv.config({ path: path.join(__dirname + '/../../.env') });
+  graphApi.configure(process.env.GRAPH_DB_HOST, process.env.GRAPH_DB_PORT, process.env.GRAPH_DB_USERNAME, process.env.GRAPH_DB_PASSWORD);
+  const emptyCommand = 'MATCH (n) DETACH DELETE n';
+  const holon1Command =
+    "CREATE (x:Holon {id:1, name:'Holon1'}), (y:Knowledge {name: 'mysql'}) CREATE (x)-[:knows {duration_years:4}]->(y) CREATE (x)-[:has]->(k:Issue {name:'autism'})";
+  const holon2Command =
+    "CREATE (x:Holon {id:2, name:'Holon2'}), (y:Knowledge {name: 'java'}) CREATE (x)-[:knows {duration_years:6}]->(y) CREATE (x)-[:has]->(k:Issue {name:'headache'})";
+  const holon3Command =
+    "CREATE (x:Holon {id:3, name:'Holon3'}), (y:Knowledge {name: 'javascript'}) CREATE (x)-[:knows {duration_years:2}]->(y) CREATE (x)-[:has]->(k:Issue {name:'color blind'})";
+  await graphApi.executeCommand(emptyCommand);
+  await graphApi.executeCommand(holon1Command);
+  await graphApi.executeCommand(holon2Command);
+  await graphApi.executeCommand(holon3Command);
+  holonSample1.graphRecords = await graphApi.getGraph('Holon', 1);
+  holonSample2.graphRecords = await graphApi.getGraph('Holon', 2);
+  holonSample3.graphRecords = await graphApi.getGraph('Holon', 3);
+});
+
+afterAll(() => {
+  graphApi.stop();
+});
+
 describe('Test FindBestMatch module', () => {
+  test('sortByDemands function', async () => {
+    const holons = [holonSample1, holonSample2, holonSample3];
+    const tasks = [taskSample1, taskSample2, taskSample3];
+
+    FindBestMatch.sortByDemands(tasks[1], holons);
+    expect(holons[0].id).toBe(3);
+
+    FindBestMatch.sortByDemands(tasks[0], holons);
+    expect(holons[0].id).toBe(1);
+  });
+
   test('sort function returns tasks in descending order', () => {
     // Test tasks
     const tasks = [];
@@ -80,6 +164,7 @@ describe('Test FindBestMatch module', () => {
           numberOfReadMessages: 0,
           numberOfPerceptions: 0,
         },
+        graphRecords: [],
       });
     }
 
@@ -102,6 +187,7 @@ describe('Test FindBestMatch module', () => {
       'updated_on',
       'created_by',
       'is_available',
+      'graphRecords',
     ];
 
     for (let i = 0; i < 5; i++) {
@@ -163,7 +249,7 @@ describe('Test FindBestMatch module', () => {
     FindBestMatch.sortTasksPriority(tasks);
 
     // Full allocation request
-    const copiedHolons = holons.map((i) => JSON.parse(JSON.stringify(i)));
+    const copiedHolons = copyHolons(holons);
     let allocations = [];
     for (let i = tasks.length - 1; i >= 0; i--) {
       const allocation = FindBestMatch.findBestMatch(tasks[i], copiedHolons);
@@ -173,26 +259,26 @@ describe('Test FindBestMatch module', () => {
     for (let i = 0; i < allocations.length; i++) {
       if (i === 0) {
         expect(allocations[i].taskId).toBe(3);
-        expect(allocations[i].holonIds[0]).toBe(holonSample1.id);
+        expect(allocations[i].holonIds[0]).toBe(holonSample3.id);
         expect(allocations[i].holonIds.length).toBe(1);
       }
 
       if (i === 1) {
         expect(allocations[i].taskId).toBe(1);
-        expect(allocations[i].holonIds[0]).toBe(holonSample2.id);
+        expect(allocations[i].holonIds[0]).toBe(holonSample1.id);
         expect(allocations[i].holonIds.length).toBe(1);
       }
 
       if (i === 2) {
         expect(allocations[i].taskId).toBe(8);
-        expect(allocations[i].holonIds[0]).toBe(holonSample3.id);
+        expect(allocations[i].holonIds[0]).toBe(holonSample2.id);
         expect(allocations[i].holonIds.length).toBe(1);
       }
     }
 
     // Allocation request with only 1 holon
     allocations = [];
-    const copiedHolons2 = holons.map((i) => JSON.parse(JSON.stringify(i)));
+    const copiedHolons2 = copyHolons(holons);
     for (let i = tasks.length - 1; i >= 0; i--) {
       const allocation = FindBestMatch.findBestMatch(tasks[i], [copiedHolons2[0]]);
       allocations.push(allocation);
@@ -221,7 +307,7 @@ describe('Test FindBestMatch module', () => {
     const holons = [holonSample1, holonSample2, holonSample3];
     const tasks = [taskSample1, taskSample2, taskSample3];
 
-    const copiedHolons = holons.map((i) => JSON.parse(JSON.stringify(i)));
+    const copiedHolons = copyHolons(holons);
     copiedHolons.forEach((i) => (i.availability_data.currentValue = 1));
 
     const response = FindBestMatch.run(tasks, copiedHolons);
@@ -232,7 +318,7 @@ describe('Test FindBestMatch module', () => {
     const holons = [holonSample1, holonSample2, holonSample3];
     const tasks = [taskSample1, taskSample2, taskSample3];
 
-    const copiedHolons = holons.map((i) => JSON.parse(JSON.stringify(i)));
+    const copiedHolons = copyHolons(holons);
     copiedHolons.forEach((i) => (i.is_available = false));
 
     const response = FindBestMatch.run(tasks, copiedHolons);
@@ -259,7 +345,7 @@ describe('Test FindBestMatch module', () => {
       if (i.start_date) i.start_date = new Date(i.start_date);
       if (i.due_date) i.due_date = new Date(i.due_date);
     });
-    const copiedHolons = holons.map((i) => JSON.parse(JSON.stringify(i)));
+    const copiedHolons = copyHolons(holons);
     const response = FindBestMatch.run(copiedTasks, copiedHolons);
     const parsedResponse = JSON.parse(response);
 
@@ -268,19 +354,19 @@ describe('Test FindBestMatch module', () => {
       const allocations = parsedResponse.allocations;
       if (i === 0) {
         expect(allocations[i].taskId).toBe(3);
-        expect(allocations[i].holonIds[0]).toBe(holonSample1.id);
+        expect(allocations[i].holonIds[0]).toBe(holonSample3.id);
         expect(allocations[i].holonIds.length).toBe(1);
       }
 
       if (i === 1) {
         expect(allocations[i].taskId).toBe(1);
-        expect(allocations[i].holonIds[0]).toBe(holonSample2.id);
+        expect(allocations[i].holonIds[0]).toBe(holonSample1.id);
         expect(allocations[i].holonIds.length).toBe(1);
       }
 
       if (i === 2) {
         expect(allocations[i].taskId).toBe(8);
-        expect(allocations[i].holonIds[0]).toBe(holonSample3.id);
+        expect(allocations[i].holonIds[0]).toBe(holonSample2.id);
         expect(allocations[i].holonIds.length).toBe(1);
       }
     }
@@ -297,7 +383,7 @@ describe('Test FindBestMatch module', () => {
       }
       if (i.due_date) i.due_date = new Date(i.due_date);
     });
-    const copiedHolons = holons.map((i) => JSON.parse(JSON.stringify(i)));
+    const copiedHolons = copyHolons(holons);
     const response = FindBestMatch.run(copiedTasks, copiedHolons);
     const parsedResponse = JSON.parse(response);
 
@@ -322,7 +408,7 @@ describe('Test FindBestMatch module', () => {
       if (i.due_date) i.due_date = new Date(i.due_date);
       i.estimated_time = null;
     });
-    const copiedHolons = holons.map((i) => JSON.parse(JSON.stringify(i)));
+    const copiedHolons = copyHolons(holons);
     const response = FindBestMatch.run(copiedTasks, copiedHolons);
     const parsedResponse = JSON.parse(response);
 
@@ -331,19 +417,19 @@ describe('Test FindBestMatch module', () => {
       const allocations = parsedResponse.allocations;
       if (i === 0) {
         expect(allocations[i].taskId).toBe(3);
-        expect(allocations[i].holonIds[0]).toBe(holonSample1.id);
+        expect(allocations[i].holonIds[0]).toBe(holonSample3.id);
         expect(allocations[i].holonIds.length).toBe(1);
       }
 
       if (i === 1) {
         expect(allocations[i].taskId).toBe(1);
-        expect(allocations[i].holonIds[0]).toBe(holonSample2.id);
+        expect(allocations[i].holonIds[0]).toBe(holonSample1.id);
         expect(allocations[i].holonIds.length).toBe(1);
       }
 
       if (i === 2) {
         expect(allocations[i].taskId).toBe(8);
-        expect(allocations[i].holonIds[0]).toBe(holonSample3.id);
+        expect(allocations[i].holonIds[0]).toBe(holonSample2.id);
         expect(allocations[i].holonIds.length).toBe(1);
       }
     }
@@ -363,7 +449,7 @@ describe('Test FindBestMatch module', () => {
         i.due_date = date;
       }
     });
-    const copiedHolons = holons.map((i) => JSON.parse(JSON.stringify(i)));
+    const copiedHolons = copyHolons(holons);
     const response = FindBestMatch.run(copiedTasks, copiedHolons);
     const parsedResponse = JSON.parse(response);
 
@@ -372,14 +458,14 @@ describe('Test FindBestMatch module', () => {
       const allocations = parsedResponse.allocations;
       if (i === 0) {
         expect(allocations[i].taskId).toBe(3);
-        expect(allocations[i].holonIds[0]).toBe(holonSample1.id);
-        expect(allocations[i].holonIds[1]).toBe(holonSample2.id);
+        expect(allocations[i].holonIds[0]).toBe(holonSample3.id);
+        expect(allocations[i].holonIds[1]).toBe(holonSample1.id);
         expect(allocations[i].holonIds.length).toBe(2);
       }
 
       if (i === 1) {
         expect(allocations[i].taskId).toBe(1);
-        expect(allocations[i].holonIds[0]).toBe(holonSample3.id);
+        expect(allocations[i].holonIds[0]).toBe(holonSample2.id);
         expect(allocations[i].holonIds.length).toBe(1);
       }
 

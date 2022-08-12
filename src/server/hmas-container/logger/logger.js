@@ -1,4 +1,4 @@
-let isActive = true;
+let isActive = false;
 
 const logTemplate = {
   type: '',

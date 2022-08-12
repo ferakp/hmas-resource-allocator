@@ -1,4 +1,5 @@
 import * as utils from '../utils/utils';
+import * as graphApi from '../api/graph-api';
 
 export class Holon {
   // Previous holonObject
@@ -30,6 +31,7 @@ export class Holon {
   created_on = null;
   updated_on = null;
   created_by = null;
+  graphRecords = [];
   latest_state = {
     representativeHolon: null,
     status: holonStatus.na,
@@ -62,6 +64,7 @@ export class Holon {
     this.created_by = formattedHolon.created_by;
     this.latest_state = formattedHolon.latest_state;
     this.is_available = formattedHolon.is_available;
+    setInterval(() => this.updateGraph(), 20000);
   }
 
   /**
@@ -108,6 +111,12 @@ export class Holon {
   readMessage() {
     this.readMessages.concat(this.messages);
     this.messages = [];
+  }
+
+  async updateGraph() {
+    if (this.id !== null && this.name !== 'SuperHolon') {
+      this.graphRecords = await graphApi.getGraph('Holon', this.id);
+    }
   }
 }
 
