@@ -133,31 +133,28 @@ export async function patchHolon(req, res) {
         const holon = utils.formatAndFixHolonDataFields(holonResult.results[0]);
         const editHolon = reqParams;
 
-        if (reqParams.hasOwnProperty('load_data')) {
-          editHolon.load_data = JSON.parse(editHolon.load_data);
-          holon.load_data.records.push([holon.load_data.currentValue, holon.load_data.latestUpdate]);
-          holon.load_data.currentValue = editHolon.load_data.currentValue;
-          holon.load_data.latestUpdate = new Date();
-          holon.load_data = JSON.stringify(holon.load_data);
-          editHolon.load_data = holon.load_data;
-        }
-
         if (reqParams.hasOwnProperty('cost_data')) {
           editHolon.cost_data = JSON.parse(editHolon.cost_data);
           holon.cost_data.records.push([holon.cost_data.currentValue, holon.cost_data.latestUpdate]);
           holon.cost_data.currentValue = editHolon.cost_data.currentValue;
           holon.cost_data.latestUpdate = new Date();
-          holon.cost_data = JSON.stringify(holon.cost_data);
-          editHolon.cost_data = holon.cost_data;
+          editHolon.cost_data = JSON.stringify(holon.cost_data);
         }
 
         if (reqParams.hasOwnProperty('availability_data')) {
           editHolon.availability_data = JSON.parse(editHolon.availability_data);
           holon.availability_data.records.push([holon.availability_data.currentValue, holon.availability_data.latestUpdate]);
           holon.availability_data.currentValue = editHolon.availability_data.currentValue;
-          holon.availability_data.latestUpdate = new Date();
-          holon.availability_data = JSON.stringify(holon.availability_data);
-          editHolon.availability_data = holon.availability_data;
+          holon.availability_data.latestUpdate = new Date(); 
+          editHolon.availability_data = JSON.stringify(holon.availability_data);
+        }
+
+        if (reqParams.hasOwnProperty('load_data')) {
+          editHolon.load_data = JSON.parse(editHolon.load_data);
+          holon.load_data.records.push([holon.load_data.currentValue, holon.load_data.latestUpdate]);
+          holon.load_data.currentValue = editHolon.load_data.currentValue;
+          holon.load_data.latestUpdate = new Date();
+          editHolon.load_data = JSON.stringify(holon.load_data);
         }
 
         if (reqParams.hasOwnProperty('stress_data')) {
@@ -165,8 +162,15 @@ export async function patchHolon(req, res) {
           holon.stress_data.records.push([holon.stress_data.currentValue, holon.stress_data.latestUpdate]);
           holon.stress_data.currentValue = editHolon.stress_data.currentValue;
           holon.stress_data.latestUpdate = new Date();
-          holon.stress_data = JSON.stringify(holon.stress_data);
-          editHolon.stress_data = holon.stress_data;
+          editHolon.stress_data = JSON.stringify(holon.stress_data);
+        }
+
+        if (reqParams.hasOwnProperty('load_data') || reqParams.hasOwnProperty('stress_data')) {
+          const newCostDataValue = (holon.stress_data.currentValue + holon.load_data.currentValue) / 2;
+          holon.cost_data.records.push([holon.cost_data.currentValue, holon.cost_data.latestUpdate]);
+          holon.cost_data.currentValue = newCostDataValue;
+          holon.cost_data.latestUpdate = new Date();
+          editHolon.cost_data = JSON.stringify(holon.cost_data);
         }
       }
     }

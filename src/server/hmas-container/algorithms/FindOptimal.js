@@ -60,7 +60,7 @@ export const run = (tasks, holons) => {
 };
 
 /**
- * Sort tasks according to their estimated_time and then created optimal division
+ * Sort tasks according to their estimated_time and then creates optimal division
  * Tasks with higher estimated_time are moved to the end of line
  * @param {array} tasks tasks to be sorted
  */
