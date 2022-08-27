@@ -12,7 +12,6 @@ import usersRoutes from './users';
 import algorithmsRoutes from './algorithms';
 import nliRoutes from './nli';
 import settingsRoutes from './settings';
-import messagesRoutes from './messages';
 
 router.use('/auth', authRoutes);
 router.use('/holons', holonsRoutes);
@@ -24,6 +23,5 @@ router.use('/users', usersRoutes);
 router.use('/algorithms', algorithmsRoutes);
 router.use('/nli', nliRoutes);
 router.use('/settings', settingsRoutes);
-router.use('/messages', messagesRoutes);
 
 export default router;

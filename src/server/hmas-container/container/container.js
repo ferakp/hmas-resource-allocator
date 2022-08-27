@@ -82,7 +82,7 @@ function initialize() {
     // Create a core holon
     const coreHolon = new CoreHolon();
     coreHolon.latest_state.status = 'RUNNING';
-    coreHolon.latest_state.type = 'MODEL';
+    coreHolon.latest_state.type = 'UTILITY';
     coreHolon.latest_state.position = 'SINGLEPART';
     holons.push(coreHolon);
 
