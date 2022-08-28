@@ -47,7 +47,7 @@ export class Login extends React.Component {
       // Login with username and password
       const response = await api.login(this._usernameValue, this._passwordValue);
       // Login was not successfull
-      if (response.errors.length > 0) throw new Error(response.errors[0].detail);
+      if (response.errors && response.errors.length > 0) throw new Error(response.errors[0].detail);
       // Login was successful
       const userResponse = await api.getUsers('?username=' + this._usernameValue);
       // Login was successful but user was not found or other erros occured
@@ -61,7 +61,6 @@ export class Login extends React.Component {
         },
       });
     } catch (error) {
-      console.log(error);
       this.setState({notificationMessage: error.message});
       this.closeNotification(8000);
     }

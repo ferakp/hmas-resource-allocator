@@ -24,7 +24,7 @@ const activateApi = () => {
   updateData();
   dataUpdateInterval = setInterval(async () => {
     await updateData();
-  }, 5000);
+  }, 10000);
 };
 
 const deActivateApi = utils.debounce(() => {
@@ -48,30 +48,37 @@ async function updateData() {
     const tasksResponse = await getAllTasks();
     const usersResponse = await getAllUsers();
 
+    const failedUpdateTargets = [];
+
     if (algorithmsResponse)
       if (algorithmsResponse.errors.length === 0) data.algorithms = algorithmsResponse.data.map((alg) => alg.attributes);
-      else handleErrorResponse(algorithmsResponse);
+      else failedUpdateTargets.push('algorithms');
     if (allocationsResponse)
       if (allocationsResponse.errors.length === 0) data.allocations = allocationsResponse.data.map((al) => al.attributes);
-      else handleErrorResponse(allocationsResponse);
+      else failedUpdateTargets.push('allocations');
     if (holonsResponse)
       if (holonsResponse.errors.length === 0) data.holons = holonsResponse.data.map((hol) => hol.attributes);
-      else handleErrorResponse(holonsResponse);
+      else failedUpdateTargets.push('holons');
     if (settingsResponse)
       if (settingsResponse.errors.length === 0) data.settings = settingsResponse.data.map((set) => set.attributes);
-      else handleErrorResponse(settingsResponse);
+      else failedUpdateTargets.push('settings');
     if (tasksResponse)
       if (tasksResponse.errors.length === 0) data.tasks = tasksResponse.data.map((task) => task.attributes);
-      else handleErrorResponse(tasksResponse);
+      else failedUpdateTargets.push('tasks');
     if (usersResponse)
       if (usersResponse.errors.length === 0) data.users = usersResponse.data.map((users) => users.attributes);
-      else handleErrorResponse(usersResponse);
+      else failedUpdateTargets.push('users');
 
-    if (dispatch) {
+    if (dispatch && Object.keys(data).length > 0) {
       dispatch({ type: 'DATA_UPDATED', payload: { data } });
-      logger.log('Success', 'Data have been retrieved');
+      if (failedUpdateTargets.length === 0) logger.log('Success', 'Data have been retrieved');
+      else logger.log('Success', 'Data have been partially retrieved');
     } else {
-      logger.log('Error', 'Data have been retrieved but no dispatch is available');
+      logger.log('Error', 'Data have been not retrieved or no dispatch is available');
+    }
+
+    if (failedUpdateTargets.length > 0) {
+      logger.log('Error', 'Failed to update ' + failedUpdateTargets.join(', '));
     }
   } catch (err) {
     logger.log('Error', 'Failed to update data');
@@ -89,8 +96,21 @@ async function updateData() {
 /**
  * JSON API Error message handler
  * @param {JSON:API} response
+ * @returns throw error or return undefined
  */
 function handleErrorResponse(response) {
+  // Throw error if connection to the server is lost
+  if (!response) {
+    const error = new Error('SERVER IS DOWN');
+    error.cError = {
+      code: 'N/A',
+      title: 'SERVER IS DOWN',
+      detail: 'The network connection to the server is broken or temporarily down.',
+    };
+    throw error;
+  }
+
+  // Connection to the server is working
   if (response.errors?.length === 0) return;
   logger.log('API ERROR RESPONSE', response.errors[0].detail);
 
@@ -122,7 +142,12 @@ export async function login(username, password) {
   try {
     const loginResponse = await utils.login(username, password);
     const response = loginResponse.data || loginResponse.response.data;
-    if (response.errors.length === 0) {
+    // If connection to the server is lost
+    if (!response) {
+      return { errors: [{ detail: 'Unable to connect to the server' }] };
+    }
+    // If server returned response
+    if (response.errors?.length === 0) {
       token = response.data[0].attributes.token;
       if (dispatch) dispatch({ type: 'REFRESHTOKEN', payload: { token: token } });
       activateApi();
@@ -144,9 +169,9 @@ export async function login(username, password) {
 export async function refreshToken() {
   try {
     checkConnection();
-    const callResponse = await utils.get('refreshtoken', '', token);
+    const callResponse = await utils.get('auth/refreshtoken', '', token);
     const response = callResponse.data || callResponse.response.data;
-    if (response.errors.length > 0) {
+    if (!response || response.errors?.length > 0) {
       deActivateApi();
       handleErrorResponse(response);
       return;
