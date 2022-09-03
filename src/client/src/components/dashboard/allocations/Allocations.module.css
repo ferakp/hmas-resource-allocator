@@ -54,7 +54,7 @@
   padding-top: 5px;
 }
 
-.taskAssignedSwitchContainer {
+.switchContainer {
   display: flex;
   flex: 1;
   flex-direction: row;
@@ -62,54 +62,59 @@
   max-height: 29px;
 }
 
+.searchElement label {
+  font-size: 14px !important;
+}
+
 .filterIcon {
   margin-right: 10px;
   border: 1px rgba(0, 0, 0, 0.189) solid;
 }
 
-.tasksContainer {
+.displayerCategoryClass p {
+  font-weight: 600;
+}
+
+.allocationsContainer {
   display: flex;
   flex-direction: column;
   flex: 1;
   padding-left: 15px;
 }
 
-.tasksContainerHeader {
+.allocationsContainerHeader {
   display: flex;
   flex-direction: row;
   flex: 1;
   max-height: 28px;
-  max-width: 250px;
+  max-width: 360px;
   align-items: center;
   padding-bottom: 5px;
 }
 
-.tasksContainerHeaderIcon {
+.allocationsContainerHeaderIcon {
   margin-right: 5px;
 }
 
-.tasksContainerHeaderTitle {
+.allocationsContainerHeaderTitle {
   font-size: 16px;
   color: rgba(51, 51, 51, 0.923);
   font-weight: 600;
   margin: 0px 15px 0px 0px;
+  white-space: nowrap;
 }
 
-.taskRows {
+.allocationRows {
   display: flex;
   flex-direction: column;
   flex: 1;
   margin-top: 10px;
 }
 
-.taskRows>div:not(:last-child) {
+.allocationRows > div:not(:last-child) {
   margin-bottom: 3px;
 }
 
-.searchElement label{
-  font-size: 14px !important;
-}
-
-.taskDisplayerCategoryClass p {
-    font-weight: 600;
+.addAllocationButton {
+  min-width: 180px !important;
 }

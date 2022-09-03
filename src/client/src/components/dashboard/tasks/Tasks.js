@@ -32,7 +32,7 @@ export class Tasks extends React.Component {
   };
   updateInterval = null;
 
-  //The properties of task object: id, type, is_completed, completed_on, name, description, estimated_time,
+  // The properties of task object: id, type, is_completed, completed_on, name, description, estimated_time,
   // knowledge_tags, resource_demand, priority, created_on, created_by, start_date, due_date, assigned_to, updated_on
   tempTask = {
     id: -1,
@@ -64,7 +64,7 @@ export class Tasks extends React.Component {
     this.update();
   }
 
-  update() {
+  async update() {
     // Return if this.props.state.data.task has not been changed or if it's not an array
     if (!Array.isArray(this.props.state.data.tasks) || JSON.stringify(this.props.state.data.tasks) === JSON.stringify(this.state.allTasksUnordered)) return;
     this.setState({ loading: true, allTasksUnordered: this.props.state.data.tasks });
@@ -96,10 +96,7 @@ export class Tasks extends React.Component {
 
   search = utils.debounceLong((event) => {
     const filter = event.target.value.toLowerCase();
-    const displayTasks =
-      this.state.taskDisplayerCategory === 'All tasks'
-        ? this.filterTasks(this.state.allTasks, filter)
-        : this.filterTasks(this.state.myTasks, filter);
+    const displayTasks = this.state.taskDisplayerCategory === 'All tasks' ? this.filterTasks(this.state.allTasks, filter) : this.filterTasks(this.state.myTasks, filter);
     this.setState({ searchFilter: filter, displayTasks: displayTasks });
   });
 
@@ -132,11 +129,11 @@ export class Tasks extends React.Component {
                 <Icon path={mdiFilterVariant} size={1.2} color={this.state.searchFilter ? 'green' : 'black'} className={styles.filterIcon} />
                 <TextField className={styles.searchElement} label="Search" multiline variant="standard" onChange={(event) => this.search(event)} />
                 <div className={styles.taskAssignedSwitchContainer}>
-                  <ToggleButtonGroup value={this.state.taskDisplayerCategory} exclusive onChange={(v, c) => this.taskDisplayChanged(v, c)} aria-label="Task filter switch">
-                    <ToggleButton className={styles.taskDisplayerCategoryClass} value="All tasks" aria-label="Show all tasks">
+                  <ToggleButtonGroup size="small" value={this.state.taskDisplayerCategory} exclusive onChange={(v, c) => this.taskDisplayChanged(v, c)} aria-label="Task filter switch">
+                    <ToggleButton style={{ textTransform: 'none' }} className={styles.taskDisplayerCategoryClass} value="All tasks" aria-label="Show all tasks">
                       <p>All tasks</p>
                     </ToggleButton>
-                    <ToggleButton className={styles.taskDisplayerCategoryClass} value="My tasks" aria-label="Show tasks assigned to me">
+                    <ToggleButton style={{ textTransform: 'none' }} className={styles.taskDisplayerCategoryClass} value="My tasks" aria-label="Show tasks assigned to me">
                       <p>My tasks</p>
                     </ToggleButton>
                   </ToggleButtonGroup>

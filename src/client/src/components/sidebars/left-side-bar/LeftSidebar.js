@@ -4,7 +4,7 @@ import Icon from '@mdi/react';
 import { getContext } from '../../../state/context';
 import { mdiCog } from '@mdi/js';
 import { mdiViewDashboardVariant } from '@mdi/js';
-import { mdiRobotOutline } from '@mdi/js';
+import { mdiCloudBraces } from '@mdi/js';
 import { mdiCogOutline } from '@mdi/js';
 import { mdiLogin } from '@mdi/js';
 import { mdiHelpCircle } from '@mdi/js';
@@ -41,19 +41,19 @@ export class LeftSidebar extends React.Component {
             </div>
           </div>
           <div className={styles.linkContainer}>
-            <div className={`${styles.link} ${this.props.location.pathname === '/dashboard' ? styles.activeLink : ''}`} onClick={() => this.linkClick('Dashboard')}>
+            <div className={`${styles.link} ${this.props.location.pathname.startsWith('/dashboard') ? styles.activeLink : ''}`} onClick={() => this.linkClick('Dashboard')}>
               <Icon path={mdiViewDashboardVariant} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
               <p className={styles.linkName}>Dashboard</p>
             </div>
-            <div className={`${styles.link} ${this.props.location.pathname === '/holons' ? styles.activeLink : ''}`} onClick={() => this.linkClick('Holons')}>
-              <Icon path={mdiRobotOutline} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
-              <p className={styles.linkName}>Holons</p>
+            <div className={`${styles.link} ${this.props.location.pathname.startsWith('/api')  ? styles.activeLink : ''}`} onClick={() => this.linkClick('API')}>
+              <Icon path={mdiCloudBraces} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
+              <p className={styles.linkName}>API</p>
             </div>
-            <div className={`${styles.link} ${this.props.location.pathname === '/help' ? styles.activeLink : ''}`} onClick={() => this.linkClick('Help')}>
+            <div className={`${styles.link} ${this.props.location.pathname.startsWith('/help') ? styles.activeLink : ''}`} onClick={() => this.linkClick('Help')}>
               <Icon path={mdiHelpCircle} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
               <p className={styles.linkName}>Help</p>
             </div>
-            <div className={`${styles.link} ${this.props.location.pathname === '/settings' ? styles.activeLink : ''}`} onClick={() => this.linkClick('Settings')}>
+            <div className={`${styles.link} ${this.props.location.pathname.startsWith('/settings') ? styles.activeLink : ''}`} onClick={() => this.linkClick('Settings')}>
               <Icon path={mdiCogOutline} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
               <p className={styles.linkName}>Settings</p>
             </div>
@@ -65,7 +65,7 @@ export class LeftSidebar extends React.Component {
                 <p className={styles.linkName}>{this.props.state.auth.user ? 'Logout' : 'Login'}</p>
               </div>
               {this.props.state.auth.user ? (
-                <div className={`${styles.link} ${this.props.location.pathname === '/account' ? styles.activeLink : ''}`} onClick={() => this.linkClick('Account')}>
+                <div className={`${styles.link} ${this.props.location.pathname.startsWith('/account') ? styles.activeLink : ''}`} onClick={() => this.linkClick('Account')}>
                   <Icon path={mdiAccountDetails} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
                   <p className={styles.linkName}>Account</p>
                 </div>

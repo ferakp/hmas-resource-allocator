@@ -1,0 +1,31 @@
+.container {
+  display: flex;
+  flex-direction: row;
+}
+
+.leftInnerContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.element {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 19px;
+}
+
+.fade * {
+  opacity: 0.5 !important;
+}
+
+.statusText {
+  margin: 0px 0px 0px 10px;
+  font-size: 0.86rem;
+  opacity: 0.8;
+}
+
+.statusIcon {
+  margin-right: 40px;
+}

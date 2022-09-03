@@ -8,6 +8,7 @@ import { mdiKeyboardBackspace } from '@mdi/js';
 import { getContext } from '../../state/context';
 import { mdiCloseBox } from '@mdi/js';
 import * as api from '../../api/api';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 /**
  * STATE
@@ -21,7 +22,7 @@ export class Login extends React.Component {
   _passwordValue = '';
   _emailValue = '';
   // adding value to notificationMessage variable activates notification
-  state = { mode: 'signin', notificationMessage: null };
+  state = { mode: 'signin', notificationMessage: null, loading: false };
 
   constructor(props) {
     super(props);
@@ -39,11 +40,11 @@ export class Login extends React.Component {
     return { mode: 'signin', notificationMessage: null };
   }
 
-  componentDidCatch(error, errorInfo) {
-  }
+  componentDidCatch(error, errorInfo) {}
 
   signinClicked = async () => {
     try {
+      this.setState({ loading: true });
       // Login with username and password
       const response = await api.login(this._usernameValue, this._passwordValue);
       // Login was not successfull
@@ -60,8 +61,10 @@ export class Login extends React.Component {
           user: userResponse.data[0].attributes,
         },
       });
+      this.props.navigate('/dashboard');
+      this.setState({ loading: false });
     } catch (error) {
-      this.setState({notificationMessage: error.message});
+      this.setState({ loading: false, notificationMessage: error.message });
       this.closeNotification(8000);
     }
   };
@@ -122,9 +125,9 @@ export class Login extends React.Component {
                     this._passwordValue = event.target.value;
                   }}
                 ></input>
-                <Button variant="contained" className={styles.button} onClick={this.signinClicked}>
+                <LoadingButton loading={this.state.loading} size="small" variant="contained" className={styles.button} onClick={this.signinClicked}>
                   Sign in
-                </Button>
+                </LoadingButton>
               </React.Fragment>
             ) : (
               <React.Fragment>
