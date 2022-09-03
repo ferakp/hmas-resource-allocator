@@ -1,6 +1,8 @@
 import * as utils from '../utils/utils';
 import * as logger from '../logger/logger';
 
+
+
 /**
  * PROPERTIES
  *
@@ -10,6 +12,7 @@ import * as logger from '../logger/logger';
  */
 export let isRestApiActive = false;
 export let dispatch = null;
+export let state = null;
 
 /**
  * UPDATE
@@ -18,7 +21,7 @@ export let dispatch = null;
 let lastDataUpdateTime = new Date();
 let dataUpdateInterval = null;
 
-const activateApi = () => {
+export const activateApi = () => {
   isRestApiActive = true;
   if (dataUpdateInterval) clearInterval(dataUpdateInterval);
   updateData();
@@ -27,10 +30,12 @@ const activateApi = () => {
   }, 10000);
 };
 
-const deActivateApi = utils.debounce(() => {
+export const deActivateApi = utils.debounce(() => {
   isRestApiActive = false;
   if (dataUpdateInterval) clearInterval(dataUpdateInterval);
-  if (dispatch) dispatch({ type: 'LOGOUT' });
+  if (dispatch){
+    dispatch({ type: 'LOGOUT' });
+  }
 });
 
 export function setDispatch(f) {
@@ -101,6 +106,7 @@ async function updateData() {
 function handleErrorResponse(response) {
   // Throw error if connection to the server is lost
   if (!response) {
+    if(dispatch) dispatch({type: "ADD_GLOBAL_ERROR_MESSAGE", payload: {globalErrorMessage: "The network connection to the server is broken or temporarily down."}});
     const error = new Error('SERVER IS DOWN');
     error.cError = {
       code: 'N/A',
@@ -133,6 +139,10 @@ let token = null;
 const refreshInterval = setInterval(async () => {
   await refreshToken();
 }, 1000 * 60 * 55);
+
+export const setToken = (tokenNew) => {
+  token = tokenNew;
+}
 
 /**
  * Logins with username and password
