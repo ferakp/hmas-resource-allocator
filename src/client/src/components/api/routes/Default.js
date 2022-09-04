@@ -41,7 +41,7 @@ export class Default extends React.Component {
 
             <p className={styles.referenceTableTitle}>REST API Developer Endpoint Reference</p>
 
-            <table className={styles.endpointTable}>
+            <table className={styles.endpointTable} id="endpointreference">
               <tbody>
                 <tr>
                   <th>Resource</th>
@@ -100,6 +100,13 @@ export class Default extends React.Component {
                 </tr>
               </tbody>
             </table>
+
+            <p className={styles.versionTitle}>Version</p>
+
+            <p className={styles.descriptionText} id="version">
+              Current REST API version is 1.0, updated on 4th July 2022. This REST API documentation is written for the 1.0 version and doesn't not necessarily support newer versions. 
+              If you are a REST API developer, please contact the system administrator before changing this documentation. 
+            </p>
           </div>
         </div>
       </div>
