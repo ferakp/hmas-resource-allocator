@@ -1,0 +1,153 @@
+.container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+  
+  .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    max-width: 650px;
+  }
+  
+  .title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #404040;
+  }
+  
+  .tableContent {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 650px;
+    height: 355px;
+    border: 1px solid #eee;
+    color: #555d66;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgb(0 0 0 / 10%);
+    border-radius: 3px;
+  }
+  
+  .tableContent p {
+    font-weight: 600;
+    border-bottom: 1px solid #eee;
+    margin: 0px;
+    padding: 10px 10px 5px 20px;
+  }
+  
+  .tableList {
+    text-decoration: none;
+    list-style: none;
+    padding: 0px 10px 0px 20px;
+  }
+  
+  .tableList li {
+    margin-bottom: 12px;
+  }
+  
+  .tableList a {
+    color: #21759b;
+    text-decoration: none;
+  }
+  
+  .innerTableList {
+    margin-top: 5px;
+  }
+  
+  .innerTableList li {
+    display: inline;
+  }
+  
+  .sectionTitle {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: #555;
+    margin-top: 40px;
+  }
+  
+  .subsectionTitle {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: #555;
+      margin-top: 0px;
+    }
+  
+  .descriptionText {
+    font-size: 0.97rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 0px 0px 20px 0px;
+    text-align: justify;
+  }
+  
+  .noStyleDescription {
+      text-align: left;
+  }
+  
+  .sectionTable {
+    border: 1px solid #f0f0f0;
+    box-sizing: border-box !important;
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-bottom: 25px;
+  }
+  
+  .sectionTable tbody {
+    box-sizing: border-box !important;
+    margin: 0;
+  }
+  
+  .sectionTable tr:first-child th {
+    padding: 0.8em;
+    border-bottom: 1px solid #f0f0f0;
+    background: #f0f0f0;
+    margin: 0 !important;
+    width: 150px;
+    text-align: left;
+  }
+  
+  .sectionTable tr td {
+    text-align: left;
+    padding: 10px 10px 10px 13px;
+  }
+  
+  .sectionTable tbody tr {
+    border-bottom: 1px solid #f0f0f0 !important;
+    vertical-align: baseline;
+  }
+  
+  .sectionTable tbody tr td {
+    border-left: 1px solid #f0f0f0 !important;
+  }
+  
+  code {
+      color: black !important;
+      font-weight: 600;
+  }
+  
+  @media only screen and (max-width: 767px) {
+    .content {
+      margin: 5px 0% 0px 5px;
+    }
+  }
+  
+  @media only screen and (min-width: 768px) {
+    .content {
+      margin: 5px 0% 0px 5px;
+    }
+  }
+  
+  @media only screen and (min-width: 992px) {
+    .content {
+      margin: 5px 5% 0px 5%;
+    }
+  }
+  
+  @media only screen and (min-width: 1200px) {
+    .content {
+      margin: 5px 24% 0px 24%;
+    }
+  }
+  

@@ -69,7 +69,7 @@ export class Default extends React.Component {
                   <td>No</td>
                 </tr>
                 <tr>
-                  <td><a href="/api/v1/algorithms">Algorithms</a></td>
+                  <td><a href="/api/algorithms">Algorithms</a></td>
                   <td>/api/v1/algorithms</td>
                   <td>No</td>
                 </tr>

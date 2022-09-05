@@ -224,11 +224,12 @@ export class Holons extends React.Component {
           </table>
 
           <p className={styles.sectionTitle} id="listobjects">
-            List Holons
+            List holons
           </p>
           <p className={`${styles.descriptionText} ${styles.noStyleDescription}`}>
             Query this endpoint to retrieve a collection of holons. The response you receive can be controlled and filtered using the URL query parameters below. Parameters with
             the asterisk (*) character support .e (equal), .elt (equal or less than), .egt (equal or greater than), .gt (greater than) and .lt (less than) suffix controllers.
+            <br />
             <br /> For example GET <u>api/v1/holons?updated_on.egt="2022-09-04T12:17:17.551Z"</u> would return all holons that have been updated on 4th July 2022 (12 AM) or after
             the given time.
           </p>
