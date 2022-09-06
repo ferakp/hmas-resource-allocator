@@ -36,13 +36,18 @@ class App extends React.Component {
   componentDidMount() {
     if (!this.props.state.auth.user && this.props.location.pathname !== '/' && this.props.location.pathname.startsWith('/api') && this.props.location.pathname.startsWith('/help'))
       setTimeout(() => this.props.navigate('/'), 500);
-    if (this.props.state.auth.user && this.props.location.pathname === '/') setTimeout(() => this.props.navigate('/dashboard'), 250);
-    // Active API
-    api.setDispatch(this.props.dispatch);
-    if (this.props.state.auth.token) {
-      api.setToken(this.props.state.auth.token);
-      api.activateApi();
-    }
+    // Wait till other libraries have uploaded
+    setTimeout(() => {
+      // Active API
+      api.setDispatch(this.props.dispatch);
+      if (this.props.state.auth.token) {
+        api.setToken(this.props.state.auth.token);
+        api.activateApi();
+      }
+      if (this.props.state.auth.user && this.props.location.pathname === '/') {
+        setTimeout(() => this.props.navigate('/dashboard'), 150);
+      }
+    }, 100);
   }
 
   render() {

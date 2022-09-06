@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './Holons.module.css';
+import styles from './Algorithms.module.css';
 
 export class Algorithms extends React.Component {
   state = { schemaData: [], listObjectsArgumentsData: [] };
@@ -16,7 +16,7 @@ export class Algorithms extends React.Component {
     // name, type, description, isReadOnly, Context
     this.setState({
       schemaData: [
-        ['id', ['number'], 'The unique identifier for the algorithm.', true, ['view', 'edit']],
+        ['id', ['number'], 'The unique identifier for the algorithm.', true, ['view']],
         ['type', ['string'], 'The type of algorithm.', false, ['view', 'edit', 'embed']],
         ['name', ['string'], "The algorithm's name.", false, ['view', 'edit', 'embed']],
         ['description', ['string'], 'The description for the algorithm.', false, ['view', 'edit', 'embed']],
@@ -151,7 +151,7 @@ export class Algorithms extends React.Component {
             Schema
           </p>
           <p className={styles.descriptionText}>
-            The schema defines all the fields that exist within a post record. Any response from these endpoints can be expected to contain the fields. Each field has its own
+            The schema defines all the fields that exist within an algorithm record. Any response from these endpoints can be expected to contain the fields. Each field has its own
             format, description and requirement(s). <br /> <br /> Following HTTP methods are available only for users whose technical role is 'app': <b>PATCH</b>, <b>POST</b> and{' '}
             <b>DELETE</b>. Only <b>GET</b> method is available for ordinary users.
           </p>

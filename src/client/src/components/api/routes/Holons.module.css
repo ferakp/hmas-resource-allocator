@@ -65,14 +65,16 @@
   font-weight: 600;
   color: #555;
   margin-top: 40px;
+  text-decoration: underline;
+  text-underline-offset: 5px;
 }
 
 .subsectionTitle {
-    font-size: 0.98rem;
-    font-weight: 600;
-    color: #555;
-    margin-top: 0px;
-  }
+  font-size: 0.93rem;
+  font-weight: 600;
+  color: rgba(85, 85, 85, 0.792);
+  margin-top: 0px;
+}
 
 .descriptionText {
   font-size: 0.97rem;
@@ -83,7 +85,7 @@
 }
 
 .noStyleDescription {
-    text-align: left;
+  text-align: left;
 }
 
 .sectionTable {
@@ -123,8 +125,8 @@
 }
 
 code {
-    color: black !important;
-    font-weight: 600;
+  color: black !important;
+  font-weight: 600;
 }
 
 @media only screen and (max-width: 767px) {

@@ -1,8 +1,6 @@
 import * as utils from '../utils/utils';
 import * as logger from '../logger/logger';
 
-
-
 /**
  * PROPERTIES
  *
@@ -21,19 +19,37 @@ export let state = null;
 let lastDataUpdateTime = new Date();
 let dataUpdateInterval = null;
 
-export const activateApi = () => {
-  isRestApiActive = true;
+export const activateApi = utils.debounce(() => {
   if (dataUpdateInterval) clearInterval(dataUpdateInterval);
-  updateData();
+  isRestApiActive = true;
   dataUpdateInterval = setInterval(async () => {
     await updateData();
   }, 10000);
+  updateData();
+});
+
+export const activateApiSync = () => {
+  if (dataUpdateInterval) clearInterval(dataUpdateInterval);
+  isRestApiActive = true;
+  dataUpdateInterval = setInterval(async () => {
+    await updateData();
+  }, 10000);
+  updateData();
 };
 
 export const deActivateApi = utils.debounce(() => {
   isRestApiActive = false;
   if (dataUpdateInterval) clearInterval(dataUpdateInterval);
-  if (dispatch){
+  logout();
+});
+
+export const deActivateApiMinimal = utils.debounce(() => {
+  isRestApiActive = false;
+  if (dataUpdateInterval) clearInterval(dataUpdateInterval);
+});
+
+const logout = utils.debounce(() => {
+  if (dispatch) {
     dispatch({ type: 'LOGOUT' });
   }
 });
@@ -106,7 +122,7 @@ async function updateData() {
 function handleErrorResponse(response) {
   // Throw error if connection to the server is lost
   if (!response) {
-    if(dispatch) dispatch({type: "ADD_GLOBAL_ERROR_MESSAGE", payload: {globalErrorMessage: "The network connection to the server is broken or temporarily down."}});
+    if (dispatch) dispatch({ type: 'ADD_GLOBAL_ERROR_MESSAGE', payload: { globalErrorMessage: 'The network connection to the server is broken or temporarily down.' } });
     const error = new Error('SERVER IS DOWN');
     error.cError = {
       code: 'N/A',
@@ -137,12 +153,12 @@ function handleErrorResponse(response) {
 let token = null;
 // Refresh token every 55 minutes
 const refreshInterval = setInterval(async () => {
-  await refreshToken();
-}, 1000 * 60 * 55);
+  //await refreshToken();
+}, 1000 * 10);
 
 export const setToken = (tokenNew) => {
   token = tokenNew;
-}
+};
 
 /**
  * Logins with username and password
@@ -159,8 +175,8 @@ export async function login(username, password) {
     // If server returned response
     if (response.errors?.length === 0) {
       token = response.data[0].attributes.token;
+      activateApiSync();
       if (dispatch) dispatch({ type: 'REFRESHTOKEN', payload: { token: token } });
-      activateApi();
       return response;
     } else {
       handleErrorResponse(response);
@@ -186,7 +202,7 @@ export async function refreshToken() {
       handleErrorResponse(response);
       return;
     } else {
-      token = callResponse.data.data[0].attributes.token;
+      token = response.data[0].attributes.token;
       activateApi();
       if (dispatch) {
         dispatch({ type: 'REFRESHTOKEN', payload: { token: token } });

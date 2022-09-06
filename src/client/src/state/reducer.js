@@ -1,5 +1,6 @@
 import { initialState } from './state';
 import * as utils from '../utils/utils';
+import * as api from '../api/api';
 
 export const reducer = (state, action) => {
   let newState = { ...state };
@@ -21,6 +22,7 @@ export const reducer = (state, action) => {
         })
       );
       localStorage.setItem('authState', JSON.stringify(newState.auth));
+      api.deActivateApiMinimal();
       break;
     case 'READ_NOTIFICATIONS':
       break;

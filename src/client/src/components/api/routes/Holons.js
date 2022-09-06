@@ -16,7 +16,7 @@ export class Holons extends React.Component {
     // name, type, description, isReadOnly, Context
     this.setState({
       schemaData: [
-        ['id', ['number'], 'The unique identifier for the holon.', true, ['view', 'edit']],
+        ['id', ['number'], 'The unique identifier for the holon.', true, ['view']],
         ['type', ['string'], 'The type of holon.', false, ['view', 'edit', 'embed']],
         ['name', ['string'], "The holon's name.", false, ['view', 'edit', 'embed']],
         ['gender', ['string'], 'The gender of holon if the type of holon is employee.', false, ['view', 'edit', 'embed']],
@@ -187,7 +187,7 @@ export class Holons extends React.Component {
             Schema
           </p>
           <p className={styles.descriptionText}>
-            The schema defines all the fields that exist within a post record. Any response from these endpoints can be expected to contain the fields. Each field has its own
+            The schema defines all the fields that exist within a holon record. Any response from these endpoints can be expected to contain the fields. Each field has its own
             format, description and requirement(s).
           </p>
 

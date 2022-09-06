@@ -64,6 +64,7 @@ export class Login extends React.Component {
       this.props.navigate('/dashboard');
       this.setState({ loading: false });
     } catch (error) {
+      api.deActivateApiMinimal();
       this.setState({ loading: false, notificationMessage: error.message });
       this.closeNotification(8000);
     }
