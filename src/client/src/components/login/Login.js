@@ -53,7 +53,6 @@ export class Login extends React.Component {
       const userResponse = await api.getUsers('?username=' + this._usernameValue);
       // Login was successful but user was not found or other erros occured
       if (userResponse.errors.length > 0) throw new Error(userResponse.errors[0].detail);
-      console.log(userResponse.data[0].attributes, response.data[0].attributes.token)
       // Login was succesfull and user was found
       this.context.dispatch({
         type: 'LOGGEDIN',
@@ -67,7 +66,7 @@ export class Login extends React.Component {
       setTimeout(() => {
         this.setState({ loading: false });
         this.props.navigate('/dashboard');
-      }, 100);
+      }, 200);
     } catch (error) {
       api.deActivateApiMinimal();
       this.setState({ loading: false, notificationMessage: error.message });

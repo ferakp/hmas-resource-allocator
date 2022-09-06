@@ -4,6 +4,56 @@ const axios = require('axios').default;
  * FORMATTING
  */
 
+export function formatHolon(holon) {
+  try {
+    holon.id = Number(holon.id);
+    holon.type = holon.type.toString();
+    holon.name = holon.name.toString();
+    holon.gender = holon.gender ? holon.gender.toString() : null;
+    holon.daily_work_hours = Number(holon.daily_work_hours);
+    holon.latest_state = holon.latest_state ? JSON.parse(holon.latest_state) : {};
+    holon.remote_address = holon.remote_address ? holon.remote_address : null;
+    holon.api_token = holon.api_token ? holon.api_token : null;
+    holon.availability_data = holon.availability_data ? JSON.parse(holon.availability_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
+    holon.cost_data = holon.cost_data ? JSON.parse(holon.cost_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
+    holon.load_data = holon.load_data ? JSON.parse(holon.load_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
+    holon.stress_data = holon.stress_data ? JSON.parse(holon.stress_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
+    holon.age = isNumber(holon.age) ? Number(holon.age) : null;
+    holon.experience_years = isNumber(holon.experience_years) ? Number(holon.experience_years) : null;
+    holon.created_on = new Date(holon.created_on);
+    holon.created_by = Number(holon.created_by);
+    holon.updated_on = new Date(holon.updated_on);
+    holon.is_available = convertToBoolean(holon.is_available) ? true : false;
+    return holon;
+  } catch(err) {
+    return holon;
+  }
+}
+
+ export function formatTask(task) {
+  try {
+    task.id = Number(task.id);
+    task.type = task.type ? task.type.toString() : null;
+    task.is_completed = convertToBoolean(task.is_completed) ? true : false;
+    task.completed_on = task.completed_on ? new Date(task.completed_on) : null;
+    task.name = task.name ? task.name.toString() : null;
+    task.description = task.description ? task.description.toString() : null;
+    task.estimated_time = isNumber(task.estimated_time) ? Number(task.estimated_time) : null;
+    task.knowledge_tags = task.knowledge_tags ? JSON.parse(task.knowledge_tags) : { tags: [] };
+    task.resource_demand = task.resource_demand ? JSON.parse(task.resource_demand) : { demands: [] };
+    task.priority = isNumber(task.priority) ? Number(task.priority) : 0;
+    task.created_on = new Date(task.created_on);
+    task.created_by = isNumber(task.created_by) ? Number(task.created_by) : null;
+    task.start_date = task.start_date ? new Date(task.start_date) : null;
+    task.due_date = task.due_date ? new Date(task.due_date) : null;
+    task.assigned_to = task.assigned_to ? JSON.parse(task.assigned_to) : { ids: [] };
+    task.updated_on = task.updated_on ? new Date(task.updated_on) : null;
+    return task;
+  } catch (err) {
+    return task;
+  }
+}
+
 /**
  * Formats to DD.MM.YYYY HH:MM
  * @param {string} date
@@ -129,24 +179,7 @@ function formatData(data) {
   if (Array.isArray(data.holons)) {
     data.holons.forEach((holon, i) => {
       try {
-        holon.id = Number(holon.id);
-        holon.type = holon.type.toString();
-        holon.name = holon.name.toString();
-        holon.gender = holon.gender ? holon.gender.toString() : null;
-        holon.daily_work_hours = Number(holon.daily_work_hours);
-        holon.latest_state = holon.latest_state ? JSON.parse(holon.latest_state) : {};
-        holon.remote_address = holon.remote_address ? holon.remote_address : null;
-        holon.api_token = holon.api_token ? holon.api_token : null;
-        holon.availability_data = holon.availability_data ? JSON.parse(holon.availability_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
-        holon.cost_data = holon.cost_data ? JSON.parse(holon.cost_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
-        holon.load_data = holon.load_data ? JSON.parse(holon.load_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
-        holon.stress_data = holon.stress_data ? JSON.parse(holon.stress_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
-        holon.age = isNumber(holon.age) ? Number(holon.age) : null;
-        holon.experience_years = isNumber(holon.experience_years) ? Number(holon.experience_years) : null;
-        holon.created_on = new Date(holon.created_on);
-        holon.created_by = Number(holon.created_by);
-        holon.updated_on = new Date(holon.updated_on);
-        holon.is_available = convertToBoolean(holon.is_available) ? true : false;
+        holon = formatHolon(holon);
       } catch (err) {
         invalidElements.push(i);
       }
@@ -225,32 +258,8 @@ function formatData(data) {
   }
 }
 
-export function formatTask(task) {
-  try {
-    task.id = Number(task.id);
-    task.type = task.type ? task.type.toString() : null;
-    task.is_completed = convertToBoolean(task.is_completed) ? true : false;
-    task.completed_on = task.completed_on ? new Date(task.completed_on) : null;
-    task.name = task.name ? task.name.toString() : null;
-    task.description = task.description ? task.description.toString() : null;
-    task.estimated_time = isNumber(task.estimated_time) ? Number(task.estimated_time) : null;
-    task.knowledge_tags = task.knowledge_tags ? JSON.parse(task.knowledge_tags) : { tags: [] };
-    task.resource_demand = task.resource_demand ? JSON.parse(task.resource_demand) : { demands: [] };
-    task.priority = isNumber(task.priority) ? Number(task.priority) : 0;
-    task.created_on = new Date(task.created_on);
-    task.created_by = isNumber(task.created_by) ? Number(task.created_by) : null;
-    task.start_date = task.start_date ? new Date(task.start_date) : null;
-    task.due_date = task.due_date ? new Date(task.due_date) : null;
-    task.assigned_to = task.assigned_to ? JSON.parse(task.assigned_to) : { ids: [] };
-    task.updated_on = task.updated_on ? new Date(task.updated_on) : null;
-    return task;
-  } catch (err) {
-    return task;
-  }
-}
-
 /**
- * Inserts updated task into the state
+ * Update the state with the updated task
  * @param {object} state state of the app
  * @param {object} task task object
  * @returns boolean
@@ -261,6 +270,26 @@ export const updateTask = debounce((state, task) => {
     for (let i = 0; i < state.data.tasks.length; i++) {
       if (state.data.tasks[i].id === formattedTask.id) {
         state.data.tasks[i] = formattedTask;
+        return true;
+      }
+    }
+  } catch (err) {
+    return false;
+  }
+});
+
+/**
+ * Update the state with the updated holon
+ * @param {object} state state of the app
+ * @param {object} task holon object
+ * @returns boolean
+ */
+ export const updateHolon = debounce((state, holon) => {
+  try {
+    const formattedHolon = formatHolon(holon);
+    for (let i = 0; i < state.data.holons.length; i++) {
+      if (state.data.holons[i].id === formattedHolon.id) {
+        state.data.holons[i] = formattedHolon;
         return true;
       }
     }

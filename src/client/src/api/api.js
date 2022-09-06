@@ -322,6 +322,23 @@ export async function deleteUser(userId) {
  */
 
 /**
+ * Update the holon's is_available field
+ * @param {Number} holonId
+ *  @param {Boolean} isAvailable
+ * @returns standard JSON:API response
+ */
+ export async function updateHolonIsAvailableField(holonId, isAvailable = false) {
+  try {
+    checkConnection();
+    const response = await utils.patch('holons/' + holonId, token, { is_available: isAvailable });
+    handleErrorResponse(response.data || response.response.data);
+    return response.data || response.response.data;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while updating is_availability field', err);
+  }
+}
+
+/**
  * Retrieves all holons from database
  * @returns standard JSON:API response
  */

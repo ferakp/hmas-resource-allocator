@@ -9,6 +9,7 @@ import * as utils from '../../../utils/utils';
 import { mdiFilterVariant } from '@mdi/js';
 import { mdiClipboardList } from '@mdi/js';
 import { mdiPlusThick } from '@mdi/js';
+import { HolonRow } from './holon-row/HolonRow';
 
 export class Holons extends React.Component {
   /**
@@ -122,7 +123,9 @@ export class Holons extends React.Component {
               </LoadingButton>
             </div>
             <div className={styles.holonsRows}>
-
+              {this.state.displayHolons.map((task, i) => (
+                <HolonRow data={task} key={'taskRowKey' + i} {...this.props} />
+              ))}
             </div>
           </div>
         </div>
