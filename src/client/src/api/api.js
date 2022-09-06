@@ -151,13 +151,14 @@ function handleErrorResponse(response) {
  */
 
 let token = null;
-// Refresh token every 55 minutes
+// Refresh token every 48 hours
 const refreshInterval = setInterval(async () => {
-  //await refreshToken();
-}, 1000 * 10);
+  await refreshToken();
+}, 1000 * 48 *60);
 
 export const setToken = (tokenNew) => {
   token = tokenNew;
+  activateApiSync();
 };
 
 /**
@@ -168,15 +169,16 @@ export async function login(username, password) {
   try {
     const loginResponse = await utils.login(username, password);
     const response = loginResponse.data || loginResponse.response.data;
+
     // If connection to the server is lost
     if (!response) {
       return { errors: [{ detail: 'Unable to connect to the server' }] };
     }
+
     // If server returned response
     if (response.errors?.length === 0) {
       token = response.data[0].attributes.token;
       activateApiSync();
-      if (dispatch) dispatch({ type: 'REFRESHTOKEN', payload: { token: token } });
       return response;
     } else {
       handleErrorResponse(response);
@@ -190,10 +192,11 @@ export async function login(username, password) {
 }
 
 /**
- * Refreshes current token every 55 minutes and sets isRestApiActive as true
+ * Refreshes current token every 48 hours
  */
 export async function refreshToken() {
   try {
+    if(!token) return;
     checkConnection();
     const callResponse = await utils.get('auth/refreshtoken', '', token);
     const response = callResponse.data || callResponse.response.data;
@@ -202,10 +205,8 @@ export async function refreshToken() {
       handleErrorResponse(response);
       return;
     } else {
-      token = response.data[0].attributes.token;
-      activateApi();
       if (dispatch) {
-        dispatch({ type: 'REFRESHTOKEN', payload: { token: token } });
+        dispatch({ type: 'REFRESHTOKEN', payload: { token: response.data[0].attributes.token } });
         logger.log('Success', 'Token has been refreshed');
       } else {
         logger.log('Error', 'Token has been refreshed but dispatch is not available');

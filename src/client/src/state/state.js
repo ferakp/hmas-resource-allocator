@@ -18,14 +18,19 @@ export let initialState = {
     tasks: [],
     users: [],
   },
-  globalErrorMessage: null
+  globalErrorMessage: null,
 };
 
 const syncFromLocalStorage = () => {
-  const auth = localStorage.getItem("authState");
-  if(auth && JSON.parse(auth)) {
-    initialState.auth = JSON.parse(auth);
+  const auth = localStorage.getItem('authState');
+  if (auth && JSON.parse(auth)) {
+    const initialStateAuth = JSON.parse(auth);
+    if (!initialStateAuth.loginTime && !initialStateAuth.token && !initialStateAuth.user) {
+      return;
+    } else {
+      initialState.auth = initialStateAuth;
+    }
   }
-}
+};
 
 syncFromLocalStorage();
