@@ -8,7 +8,12 @@ export class Settings extends React.Component {
     super(props);
   }
 
+  componentDidMount() {
+    
+  }
+
   render() {
+    if (!this.props.state.auth.user) setTimeout(() => this.props.navigate('/'), 200);
     return <div className={styles.container}></div>;
   }
 }

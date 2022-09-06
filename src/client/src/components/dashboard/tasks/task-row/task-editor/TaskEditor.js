@@ -76,8 +76,8 @@ export class TaskEditor extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // If task has been updated during edit mode
-    // import new task but leave edited fields untouchable
+    // If the task has been updated during edit mode
+    // import a new task but leave edited fields untouchable
     if (JSON.stringify(prevProps.data) !== JSON.stringify(this.props.data)) {
       let newTask = JSON.parse(JSON.stringify(this.props.data));
       this.editedPropertyNames.forEach((propertyName) => {
@@ -268,6 +268,7 @@ export class TaskEditor extends React.Component {
     // Show error if required fields are not filled
     if (!this.state.task.type || !this.state.task.name) {
       this.showErrorMessage('Type and name fields are required');
+      this.setState({ taskUpdaterLoading: false });
       return;
     }
 

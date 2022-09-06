@@ -1,0 +1,85 @@
+.container {
+    display: flex;
+    flex-direction: row;
+}
+
+.leftInnerContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.rightInnerContainer {
+    display: flex;
+    flex-direction: column;
+    padding-left: 40px;
+}
+
+.restApiContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.databaseContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.frontContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.hmasContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.statusText {
+    margin-left: 10px;
+    font-size: 0.86rem;
+    opacity: 0.9;
+}
+
+.hmasContainerTitle {
+    opacity: 0.8;
+    font-size: 1.0rem;
+    margin: 10px 0px 5px 0px;
+    border-bottom: 1px solid #2c252510;
+}
+
+.hmasStatusElementContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-width: 185px;
+}
+
+.hmasStatusTitle {
+    margin: 5px 0px 2px 0px;
+    opacity: 0.8;
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+.hmasStatusText {
+    margin: 2px 0px 2px 0px;
+    opacity: 0.9;
+    margin-left: auto;
+    font-size: 0.86rem;
+}
+
+.active {
+    color: green !important;
+}
+
+.inactive {
+    color: red !important;
+}

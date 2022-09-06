@@ -1,6 +1,31 @@
 const axios = require('axios').default;
 
 /**
+ * FORMATTING
+ */
+
+/**
+ * Formats to DD.MM.YYYY HH:MM
+ * @param {string} date
+ */
+export const formatDate = (date) => {
+  if (isDate(new Date(date))) {
+    date = new Date(date);
+    return date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+  } else return 'N/A';
+};
+
+/**
+ * VALIDATION
+ */
+
+export function isDate(param) {
+  if (param instanceof Date && !isNaN(param)) {
+    return true;
+  } else return false;
+}
+
+/**
  * FUNCTIONS FOR STATE MODULE
  */
 
@@ -31,7 +56,7 @@ export function debounce(func) {
     clearTimeout(timer);
     timer = setTimeout(() => {
       func.apply(this, args);
-    }, 100);
+    }, 200);
   };
 }
 
@@ -269,7 +294,7 @@ export const deleteTask = debounce((state, id) => {
  */
 export const addTask = debounce((state, task) => {
   try {
-    console.log("Add task called");
+    console.log('Add task called');
     const formattedTask = formatTask(task);
     state.data.tasks.push(formattedTask);
     return true;
@@ -331,6 +356,7 @@ export function orderArrayElements(array, fieldName, isAscendant) {
       else {
         for (let i = 0; i < newArray.length; i++) {
           if (element[fieldName] < newArray[i][fieldName]) {
+            // Inserts the new element
             newArray.splice(i, 0, element);
             break;
           }

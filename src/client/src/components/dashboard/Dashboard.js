@@ -2,14 +2,14 @@ import React from 'react';
 import styles from './Dashboard.module.css';
 import { Analytics } from './analytics/Analytics';
 import { Tasks } from './tasks/Tasks';
-import { Resources } from './resources/Resources';
 import { Algorithms } from './algorithms/Algorithms';
-import { Activity } from './activity/Activity';
+import { Allocations } from './allocations/Allocations';
+import { Holons } from './holons/Holons';
 
 export class Dashboard extends React.Component {
   state = {
     selectedTab: 'Analytics',
-    tabs: ['Analytics', 'Tasks', 'Resources', 'Algorithms', 'Activity'],
+    tabs: ['Analytics', 'Tasks', 'Holons', 'Allocations', 'Algorithms'],
     errorMessage: '',
     displayError: false,
   };
@@ -36,19 +36,20 @@ export class Dashboard extends React.Component {
       case 'Tasks':
         return <Tasks showErrorMessage={this.showErrorMessage} {...this.props} />;
         break;
-      case 'Resources':
-        return <Resources showErrorMessage={this.showErrorMessage} {...this.props} />;
-        break;
       case 'Algorithms':
         return <Algorithms showErrorMessage={this.showErrorMessage} {...this.props} />;
         break;
-      case 'Activity':
-        return <Activity showErrorMessage={this.showErrorMessage} {...this.props} />;
+      case 'Allocations':
+        return <Allocations showErrorMessage={this.showErrorMessage} {...this.props} />;
+        break;
+      case 'Holons':
+        return <Holons showErrorMessage={this.showErrorMessage} {...this.props} />;
         break;
     }
   };
 
   render() {
+    if (!this.props.state.auth.user) setTimeout(() => this.props.navigate('/'), 200);
     return (
       <div className={styles.container}>
         <div className={styles.header}>

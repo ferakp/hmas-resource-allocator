@@ -1,0 +1,69 @@
+.section {
+    display:flex;
+    flex-direction: column;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    max-width: 350px;
+    padding-right: 15px;
+    border-right: 1px solid rgba(0, 0, 0, 0.031);
+    margin-bottom: 10px;
+}
+
+.progressList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 45px;
+}
+
+.containerTitle {
+    font-size: 0.9rem;
+    opacity: 0.6;
+    margin: 0px;
+}
+
+.progressContainer {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 4px solid rgba(0, 0, 0, 0.109);
+}
+
+.progressListItem {
+    display: flex;
+    flex-direction: row;
+    width: 130px;
+    margin-top: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.109);
+}
+
+.progressListItem:last-of-type {
+    border-bottom: none;
+}
+
+.progressListItemTitle {
+    font-size: 14px;
+    opacity: 0.8;
+    margin: 0px;
+}
+
+.progressListItemCount {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-left: auto;
+    margin-top: 0px;
+}
+
+.progressListItemColor {
+    background-color: black;
+    border-radius: 45%;
+    max-height: 16px;
+    margin-right: 10px;
+}
+
+.progressListItemFade * {
+    opacity: 0.3;
+}

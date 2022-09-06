@@ -8,6 +8,7 @@ import { mdiKeyboardBackspace } from '@mdi/js';
 import { getContext } from '../../state/context';
 import { mdiCloseBox } from '@mdi/js';
 import * as api from '../../api/api';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 /**
  * STATE
@@ -21,7 +22,7 @@ export class Login extends React.Component {
   _passwordValue = '';
   _emailValue = '';
   // adding value to notificationMessage variable activates notification
-  state = { mode: 'signin', notificationMessage: null };
+  state = { mode: 'signin', notificationMessage: null, loading: false };
 
   constructor(props) {
     super(props);
@@ -39,30 +40,37 @@ export class Login extends React.Component {
     return { mode: 'signin', notificationMessage: null };
   }
 
-  componentDidCatch(error, errorInfo) {
-  }
+  componentDidCatch(error, errorInfo) {}
 
   signinClicked = async () => {
     try {
+      this.setState({ loading: true });
       // Login with username and password
       const response = await api.login(this._usernameValue, this._passwordValue);
       // Login was not successfull
-      if (response.errors.length > 0) throw new Error(response.errors[0].detail);
+      if (response.errors && response.errors.length > 0) throw new Error(response.errors[0].detail);
       // Login was successful
       const userResponse = await api.getUsers('?username=' + this._usernameValue);
       // Login was successful but user was not found or other erros occured
       if (userResponse.errors.length > 0) throw new Error(userResponse.errors[0].detail);
+      console.log(userResponse.data[0].attributes, response.data[0].attributes.token)
       // Login was succesfull and user was found
       this.context.dispatch({
         type: 'LOGGEDIN',
         payload: {
+          token: response.data[0].attributes.token,
           loginTime: new Date(),
           user: userResponse.data[0].attributes,
         },
       });
+      // Wait till the dispatch has handled the update
+      setTimeout(() => {
+        this.setState({ loading: false });
+        this.props.navigate('/dashboard');
+      }, 100);
     } catch (error) {
-      console.log(error);
-      this.setState({notificationMessage: error.message});
+      api.deActivateApiMinimal();
+      this.setState({ loading: false, notificationMessage: error.message });
       this.closeNotification(8000);
     }
   };
@@ -123,9 +131,9 @@ export class Login extends React.Component {
                     this._passwordValue = event.target.value;
                   }}
                 ></input>
-                <Button variant="contained" className={styles.button} onClick={this.signinClicked}>
+                <LoadingButton loading={this.state.loading} size="small" variant="contained" className={styles.button} onClick={this.signinClicked}>
                   Sign in
-                </Button>
+                </LoadingButton>
               </React.Fragment>
             ) : (
               <React.Fragment>
