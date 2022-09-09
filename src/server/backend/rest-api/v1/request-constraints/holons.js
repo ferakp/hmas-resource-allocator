@@ -108,7 +108,6 @@ export const postHolon = {
     'availability_data',
     'load_data',
     'stress_data',
-    'cost_data',
     'age',
     'experience_years',
     'is_available'

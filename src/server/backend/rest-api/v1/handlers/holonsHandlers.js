@@ -57,30 +57,31 @@ export async function postHolon(req, res) {
       records: [],
     });
   }
+
+  let loadDataValue = 0;
   if (!reqParams.hasOwnProperty('load_data')) reqParams['load_data'] = JSON.stringify({ currentValue: 0, latestUpdate: new Date(), records: [] });
   else {
+    loadDataValue = JSON.parse(reqParams['load_data']).currentValue;
     reqParams['load_data'] = JSON.stringify({
       currentValue: JSON.parse(reqParams['load_data']).currentValue,
       latestUpdate: new Date(),
       records: [],
     });
   }
+
+  let stressDataValue = 0;
   if (!reqParams.hasOwnProperty('stress_data')) reqParams['stress_data'] = JSON.stringify({ currentValue: 0, latestUpdate: new Date(), records: [] });
   else {
+    stressDataValue = JSON.parse(reqParams['stress_data']).currentValue;
     reqParams['stress_data'] = JSON.stringify({
       currentValue: JSON.parse(reqParams['stress_data']).currentValue,
       latestUpdate: new Date(),
       records: [],
     });
   }
-  if (!reqParams.hasOwnProperty('cost_data')) reqParams['cost_data'] = JSON.stringify({ currentValue: 0, latestUpdate: new Date(), records: [] });
-  else {
-    reqParams['cost_data'] = JSON.stringify({
-      currentValue: JSON.parse(reqParams['cost_data']).currentValue,
-      latestUpdate: new Date(),
-      records: [],
-    });
-  }
+
+  reqParams['cost_data'] = JSON.stringify({ currentValue: (loadDataValue+stressDataValue)/2, latestUpdate: new Date(), records: [] });
+
   if (!reqParams.hasOwnProperty('experience_years')) reqParams['experience_years'] = 0;
   reqParams['created_on'] = new Date();
   reqParams['updated_on'] = new Date();
@@ -144,7 +145,7 @@ export async function patchHolon(req, res) {
         if (reqParams.hasOwnProperty('availability_data')) {
           editHolon.availability_data = JSON.parse(editHolon.availability_data);
           holon.availability_data.records.push([holon.availability_data.currentValue, holon.availability_data.latestUpdate]);
-          holon.availability_data.currentValue = editHolon.availability_data.currentValue;
+          holon.availability_data.currentValue = Number(editHolon.availability_data.currentValue);
           holon.availability_data.latestUpdate = new Date(); 
           editHolon.availability_data = JSON.stringify(holon.availability_data);
         }
@@ -152,7 +153,7 @@ export async function patchHolon(req, res) {
         if (reqParams.hasOwnProperty('load_data')) {
           editHolon.load_data = JSON.parse(editHolon.load_data);
           holon.load_data.records.push([holon.load_data.currentValue, holon.load_data.latestUpdate]);
-          holon.load_data.currentValue = editHolon.load_data.currentValue;
+          holon.load_data.currentValue = Number(editHolon.load_data.currentValue);
           holon.load_data.latestUpdate = new Date();
           editHolon.load_data = JSON.stringify(holon.load_data);
         }
@@ -160,13 +161,13 @@ export async function patchHolon(req, res) {
         if (reqParams.hasOwnProperty('stress_data')) {
           editHolon.stress_data = JSON.parse(editHolon.stress_data);
           holon.stress_data.records.push([holon.stress_data.currentValue, holon.stress_data.latestUpdate]);
-          holon.stress_data.currentValue = editHolon.stress_data.currentValue;
+          holon.stress_data.currentValue = Number(editHolon.stress_data.currentValue);
           holon.stress_data.latestUpdate = new Date();
           editHolon.stress_data = JSON.stringify(holon.stress_data);
         }
 
         if (reqParams.hasOwnProperty('load_data') || reqParams.hasOwnProperty('stress_data')) {
-          const newCostDataValue = (holon.stress_data.currentValue + holon.load_data.currentValue) / 2;
+          const newCostDataValue = (Number(holon.stress_data.currentValue) + Number(holon.load_data.currentValue)) / 2;
           holon.cost_data.records.push([holon.cost_data.currentValue, holon.cost_data.latestUpdate]);
           holon.cost_data.currentValue = newCostDataValue;
           holon.cost_data.latestUpdate = new Date();

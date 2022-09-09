@@ -95,7 +95,7 @@ export class Tasks extends React.Component {
   };
 
   search = utils.debounceLong((event) => {
-    const filter = event.target.value.toLowerCase();
+    const filter = event?.target.value.toLowerCase();
     const displayTasks = this.state.taskDisplayerCategory === 'All tasks' ? this.filterTasks(this.state.allTasks, filter) : this.filterTasks(this.state.myTasks, filter);
     this.setState({ searchFilter: filter, displayTasks: displayTasks });
   });
@@ -103,7 +103,7 @@ export class Tasks extends React.Component {
   taskDisplayChanged(event, choice) {
     choice = choice || this.state.taskDisplayerCategory;
     this.setState({ taskDisplayerCategory: choice });
-    this.update();
+    this.search(null);
   }
 
   openAddTaskMode = () => {

@@ -10,6 +10,7 @@ import { mdiFilterVariant } from '@mdi/js';
 import { mdiClipboardList } from '@mdi/js';
 import { mdiPlusThick } from '@mdi/js';
 import { HolonRow } from './holon-row/HolonRow';
+import {HolonEditor} from './holon-row/holon-editor/HolonEditor';
 
 export class Holons extends React.Component {
   /**
@@ -69,9 +70,16 @@ export class Holons extends React.Component {
     }
   };
 
+  search = utils.debounceLong((event) => {
+    const filter = event?.target.value.toLowerCase();
+    const displayHolons = this.state.displayerCategory === 'All holons' ? this.filterHolons(this.state.allHolons, filter) : this.filterHolons(this.state.myHolons, filter);
+    this.setState({ searchFilter: filter, displayHolons: displayHolons });
+  });
+
   switchHolons = (event, select) => {
     select = select || this.state.displayerCategory;
     this.setState({ displayerCategory: select });
+    this.search(null);
   };
 
   openAddMode = () => {
@@ -123,6 +131,7 @@ export class Holons extends React.Component {
               </LoadingButton>
             </div>
             <div className={styles.holonsRows}>
+              {this.state.mode === 'Add' ? <HolonEditor close={this.closeAddMode} {...this.props} isDraft={true}/> : ''}
               {this.state.displayHolons.map((task, i) => (
                 <HolonRow data={task} key={'taskRowKey' + i} {...this.props} />
               ))}

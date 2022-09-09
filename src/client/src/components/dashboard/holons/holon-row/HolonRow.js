@@ -1,17 +1,23 @@
 import React from 'react';
 import styles from './HolonRow.module.css';
+import * as utils from '../../../../utils/utils';
 import { mdiCheckCircleOutline } from '@mdi/js';
 import Icon from '@mdi/react';
 import * as api from '../../../../api/api';
 import { mdiLoading } from '@mdi/js';
 import Tooltip from '@mui/material/Tooltip';
-import { mdiAlertCircle } from '@mdi/js';
-import { mdiTimerSand } from '@mdi/js';
-import { mdiFileTree } from '@mdi/js';
 import { mdiUpdate } from '@mdi/js';
 import { mdiPencil } from '@mdi/js';
 import { mdiDelete } from '@mdi/js';
 import { HolonEditor } from './holon-editor/HolonEditor';
+import { mdiCameraTimer } from '@mdi/js';
+import { mdiWrenchClock } from '@mdi/js';
+import { mdiFanClock } from '@mdi/js';
+import { mdiChartBar } from '@mdi/js';
+import { mdiChartAreasplineVariant } from '@mdi/js';
+import { mdiChartWaterfall } from '@mdi/js';
+import { mdiChartBellCurveCumulative } from '@mdi/js';
+import { mdiFilePlus } from '@mdi/js';
 
 /**
  * The properties of task object:
@@ -20,17 +26,17 @@ import { HolonEditor } from './holon-editor/HolonEditor';
  * updated_on, created_by, is_available
  *
  *
- * (handled - is_available, created_by)
+ * (handled - is_available, created_by, name, id, age, experience_years, daily_work_hours, availability_data, stress_data, load_data, cost_data)
  *
  *
  * State
- * taskIsAvailableLoading - changes is_available icon to loading icon
- * tasUpdated - highlights row to inform user that the task has been updated
+ * holonIsAvailableLoading - changes is_available icon to loading icon
+ * rowUpdated - highlights row in order to inform user that the holon has been updated
  *
  */
 
 export class HolonRow extends React.Component {
-  state = { holonIsAvailableLoading: false, taskUpdated: false, editMode: false, clickedSection: 'Default', taskDeleteLoading: false };
+  state = { holonIsAvailableLoading: false, rowUpdated: false, editMode: false, clickedSection: 'Default', taskDeleteLoading: false };
 
   constructor(props) {
     super(props);
@@ -39,16 +45,16 @@ export class HolonRow extends React.Component {
 
   componentDidMount() {
     if (this.props.isDraft) this.setState({ editMode: true });
-    this.taskUpdated();
+    this.rowUpdated();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (JSON.stringify(prevProps.data) !== JSON.stringify(this.props.data)) this.taskUpdated();
+    if (JSON.stringify(prevProps.data) !== JSON.stringify(this.props.data)) this.rowUpdated();
   }
 
-  taskUpdated = () => {
-    this.setState({ taskUpdated: true });
-    setTimeout(() => this.setState({ taskUpdated: false }), 2000);
+  rowUpdated = () => {
+    this.setState({ rowUpdated: true });
+    setTimeout(() => this.setState({ rowUpdated: false }), 2000);
   };
 
   holonIsAvailableClicked = async () => {
@@ -81,11 +87,11 @@ export class HolonRow extends React.Component {
     if (this.props.closeAddTaskMode) this.props.closeAddTaskMode();
   };
 
-  editTask = () => {
+  edit = () => {
     this.setState({ editMode: true, clickedSection: 'Default' });
   };
 
-  deleteTask = async () => {
+  delete = async () => {
     const id = this.props.data.id;
     if (typeof id !== 'number') {
       this.showErrorMessage('Unable to delete task due invalid ID field');
@@ -105,7 +111,7 @@ export class HolonRow extends React.Component {
 
   render() {
     return (
-      <div className={`${styles.container} ${this.state.taskUpdated ? styles.taskUpdated : ''} ${this.state.editMode ? styles.editMode : ''}`} ref={this.wrapperRef}>
+      <div className={`${styles.container} ${this.state.rowUpdated ? styles.rowUpdated : ''} ${this.state.editMode ? styles.editMode : ''}`} ref={this.wrapperRef}>
         {this.state.editMode ? this.getEditor() : this.getViewRow()}
       </div>
     );
@@ -126,13 +132,20 @@ export class HolonRow extends React.Component {
         <div className={styles.creatorContainer}>{this.getCreatorSection()}</div>
         <div className={styles.holonNameContainer}>{this.getHolonNameSection()}</div>
         <div className={styles.idContainer}>{this.getIdSection()}</div>
-        {/* <div className={styles.taskStartDueContainer}>{this.getStartDueDateSection()}</div>
-        <div className={styles.taskCompleteStatusContainer}>{this.getCompleteStatusSection()}</div>
-        <div className={styles.taskPriorityContainer}>{this.getPrioritySection()}</div>
-        <div className={styles.taskEstimatedTimeContainer}>{this.getEstimatedTimeSection()}</div>
-        <div className={styles.taskTypeContainer}>{this.getTypeSection()}</div>
-        <div className={styles.taskUpdateContainer}>{this.getUpdateSection()}</div>
-        <div className={styles.rowOptionsContainer}>{this.getRowOptionsSection()}</div> */}
+        <div className={styles.statusContainer}>{this.getAgeSection()}</div>
+        <div className={styles.statusContainer}>{this.getExperienceYearsSection()}</div>
+        <div className={styles.statusContainer}>{this.getDailyWorkHoursSection()}</div>
+        <div className={styles.line}>
+          <hr />
+        </div>
+        <div className={styles.statusContainer}>{this.getDataSection()}</div>
+        <div className={styles.line}>
+          <hr />
+        </div>
+        <div className={styles.statusContainer}>{this.getHistorySection()}</div>
+        <div className={`${styles.rowOptionsContainer} ${Number(this.props.data.created_by) !== Number(this.props.state.auth.user.id) ? styles.hide : ''}`}>
+          {this.getRowOptionsSection()}
+        </div>
       </div>
     );
   };
@@ -171,7 +184,7 @@ export class HolonRow extends React.Component {
     }
 
     return (
-      <Tooltip title={"Created by " +fullName} placement="top" leaveDelay={0} disableInteractive>
+      <Tooltip title={'Created by ' + fullName} placement="top" leaveDelay={0} disableInteractive>
         <p className={styles.rowCreator} onClick={() => this.openEditContainer('CreatedBy')}>
           {createdBy}
         </p>
@@ -199,155 +212,92 @@ export class HolonRow extends React.Component {
     );
   };
 
-  getStartDueDateSection = () => {
-    let startDate = 'No start date';
-    let dueDate = 'No due date';
-
-    try {
-      const start_date = this.props.data.start_date;
-      const due_date = this.props.data.due_date;
-      if (start_date) startDate = start_date.toLocaleString('en-us', { weekday: 'short' }) + ' ' + start_date.getDate() + ' ' + start_date.toDateString().split(' ')[1];
-      if (due_date) dueDate = due_date.toLocaleString('en-us', { weekday: 'short' }) + ' ' + due_date.getDate() + ' ' + due_date.toDateString().split(' ')[1];
-    } catch (err) {
-      startDate = 'No start date';
-      dueDate = 'No due date';
-    }
-
+  getAgeSection = () => {
     return (
-      <React.Fragment>
-        <Tooltip title="Start date" placement="top" leaveDelay={0} disableInteractive>
-          <p className={styles.rowStartDate} onClick={() => this.openEditContainer('StartDate')}>
-            {startDate}
-          </p>
+      <Tooltip title="Age" placement="top" leaveDelay={0} disableInteractive>
+        <div className={styles.rowData} onClick={() => this.openEditContainer('Age')}>
+          <Icon path={mdiCameraTimer} size={0.8} color="#555" className={styles.rowIcon} />
+          <p className={`${styles.rowStatusData}`}>{this.props.data.age || 'N/A'}</p>
+        </div>
+      </Tooltip>
+    );
+  };
+
+  getExperienceYearsSection = () => {
+    return (
+      <Tooltip title="Experience years" placement="top" leaveDelay={0} disableInteractive>
+        <div className={`${styles.rowData} ${styles.experienceYearsSection}`} onClick={() => this.openEditContainer('ExperienceYears')}>
+          <Icon path={mdiWrenchClock} size={0.78} color="#555" className={`${styles.rowIcon} ${styles.experienceYearsIcons}`} />
+          <p className={`${styles.rowStatusData} ${styles.rowExperienceYearsData}`}>{this.props.data.experience_years || 'N/A'}</p>
+        </div>
+      </Tooltip>
+    );
+  };
+
+  getDailyWorkHoursSection = () => {
+    return (
+      <Tooltip title="Daily work hours" placement="top" leaveDelay={0} disableInteractive>
+        <div className={`${styles.rowData}`} onClick={() => this.openEditContainer('DailyWorkHours')}>
+          <Icon path={mdiFanClock} size={0.78} color="#555" className={`${styles.rowIcon}`} />
+          <p className={`${styles.rowStatusData}`}>{this.props.data.daily_work_hours || 'N/A'}</p>
+        </div>
+      </Tooltip>
+    );
+  };
+
+  getDataSection = () => {
+    return (
+      <div className={styles.dataSection}>
+        <div className={styles.dataSectionTitleContainer}>
+          <p className={styles.dataSectionTitle}>Data</p>
+        </div>
+        <Tooltip title={'Availability data: ' + this.props.data.availability_data?.currentValue} placement="top" leaveDelay={0} disableInteractive className={styles.tooltip}>
+          <Icon path={mdiChartBar} size={0.78} color={'green'} className={`${styles.rowIcon}`} onClick={() => this.openEditContainer('AvailabilityData')} />
         </Tooltip>
-        <p>&nbsp; - &nbsp;</p>
-        <Tooltip title="Due date" placement="top" leaveDelay={0} disableInteractive>
-          <p className={styles.rowDueDate} onClick={() => this.openEditContainer('DueDate')}>
-            {dueDate}
-          </p>
+        <Tooltip title={'Load data: ' + this.props.data.load_data?.currentValue} placement="top" leaveDelay={0} disableInteractive className={styles.tooltip}>
+          <Icon path={mdiChartAreasplineVariant} size={0.78} color={'brown'} className={`${styles.rowIcon}`} onClick={() => this.openEditContainer('LoadData')} />
         </Tooltip>
-      </React.Fragment>
+        <Tooltip title={'Stress data: ' + this.props.data.stress_data?.currentValue} placement="top" leaveDelay={0} disableInteractive className={styles.tooltip}>
+          <Icon path={mdiChartWaterfall} size={0.78} color={'red'} className={`${styles.rowIcon}`} onClick={() => this.openEditContainer('StressData')} />
+        </Tooltip>
+        <Tooltip title={'Cost data: ' + this.props.data.cost_data?.currentValue} placement="top" leaveDelay={0} disableInteractive className={styles.tooltip}>
+          <Icon path={mdiChartBellCurveCumulative} size={0.78} color={'black'} className={`${styles.rowIcon}`} onClick={() => this.openEditContainer('CostData')} />
+        </Tooltip>
+      </div>
     );
   };
 
-  getCompleteStatusSection = () => {
-    let completedText = 'Uncompleted';
-    try {
-      const completed_date = this.props.data.completed_on;
-      if (completed_date)
-        completedText =
-          'Completed ' + completed_date.toLocaleString('en-us', { weekday: 'short' }) + ' ' + completed_date.getDate() + ' ' + completed_date.toDateString().split(' ')[1];
-      if (!completed_date && this.props.data.is_completed) completedText = 'Not Available';
-    } catch (err) {
-      completedText = 'N/A';
-    }
+  getHistorySection = () => {
+    let createdOnText = utils.formatDateForDisplay(this.props.data.created_on);
+    let updatedOnText = utils.formatDateForDisplay(this.props.data.updated_on);
     return (
-      <Tooltip title="Status" placement="top" leaveDelay={0} disableInteractive>
-        <p
-          className={`${styles.rowCompleteStatus} ${this.props.data.is_completed ? styles.taskCompleted : styles.taskUncompleted}`}
-          onClick={() => this.openEditContainer('IsComplete')}
-        >
-          {completedText}
-        </p>
-      </Tooltip>
-    );
-  };
-
-  getPrioritySection = () => {
-    const priority = this.props.data.priority;
-    let priorityNumber = priority;
-    let priorityText = 'Priority: N/A (N/A)';
-    let priorityColor = 'grey';
-    switch (priority) {
-      case 1:
-        priorityText = 'Priority: None (1)';
-        priorityColor = 'grey';
-        break;
-      case 2:
-        priorityText = 'Priority: Low (2)';
-        priorityColor = 'yellow';
-        break;
-      case 3:
-        priorityText = 'Priority: Middle (3)';
-        priorityColor = 'green';
-        break;
-      case 4:
-        priorityText = 'Priority: High (4)';
-        priorityColor = 'red';
-        break;
-      case 5:
-        priorityText = 'Priority: Important (5)';
-        priorityColor = 'black';
-        break;
-      default:
-        priorityNumber = 0;
-        priorityText = 'Priority: N/A (N/A)';
-        priorityColor = 'grey';
-        break;
-    }
-
-    return (
-      <Tooltip title={priorityText} placement="top" leaveDelay={0} disableInteractive>
-        <Icon path={mdiAlertCircle} size={0.9} color={priorityColor} className={styles.rowPriority} onClick={() => this.openEditContainer('Priority')} />
-      </Tooltip>
-    );
-  };
-
-  getEstimatedTimeSection = () => {
-    const estimatedTime = this.props.data.estimated_time;
-    let tooltipText = 'Not available';
-
-    if (estimatedTime !== null) {
-      tooltipText = 'Estimated time: ' + estimatedTime + 'h';
-    }
-
-    return (
-      <Tooltip title={tooltipText} placement="top" leaveDelay={0} disableInteractive>
-        <Icon path={mdiTimerSand} size={0.9} color="black" className={styles.rowEstimatedTime} onClick={() => this.openEditContainer('EstimatedTime')} />
-      </Tooltip>
-    );
-  };
-
-  getTypeSection = () => {
-    const type = this.props.data.type;
-    let tooltipText = 'Not available';
-    if (type) {
-      tooltipText = 'Type: ' + type[0].toUpperCase() + type.slice(1);
-    }
-    return (
-      <Tooltip title={tooltipText} placement="top" leaveDelay={0} disableInteractive>
-        <Icon path={mdiFileTree} size={0.9} color="black" className={styles.rowType} onClick={() => this.openEditContainer('Type')} />
-      </Tooltip>
-    );
-  };
-
-  getUpdateSection = () => {
-    const updatedOn = this.props.data.updated_on;
-    let tooltipText = 'Not available';
-    if (updatedOn && updatedOn instanceof Date) {
-      const splitDateString = updatedOn.toDateString().split(' ');
-      tooltipText = 'Last update time: ' + splitDateString[0] + ' ' + splitDateString[2] + ' ' + splitDateString[1];
-    }
-    return (
-      <Tooltip title={tooltipText} placement="top" leaveDelay={0} disableInteractive>
-        <Icon path={mdiUpdate} size={0.9} color={updatedOn ? 'green' : 'black'} className={styles.rowUpdate} onClick={() => this.openEditContainer('UpdatedOn')} />
-      </Tooltip>
+      <div className={styles.dataSection}>
+        <div className={styles.dataSectionTitleContainer}>
+          <p className={styles.dataSectionTitle}>History</p>
+        </div>
+        <Tooltip title={'Latest update time: ' + updatedOnText} placement="top" leaveDelay={0} disableInteractive className={styles.tooltip}>
+          <Icon path={mdiUpdate} size={0.82} color={'green'} className={`${styles.rowIcon}`} onClick={() => this.openEditContainer('LatestUpdateTime')} />
+        </Tooltip>
+        <Tooltip title={'Creation time: ' + createdOnText} placement="top" leaveDelay={0} disableInteractive className={styles.tooltip}>
+          <Icon path={mdiFilePlus} size={0.82} color={'blue'} className={`${styles.rowIcon}`} onClick={() => this.openEditContainer('LatestUpdateTime')} />
+        </Tooltip>
+      </div>
     );
   };
 
   getRowOptionsSection = () => {
     return (
       <React.Fragment>
-        <Tooltip title="Edit task" placement="top" leaveDelay={0} disableInteractive className={styles.editTaskTooltip}>
-          <Icon path={mdiPencil} size={0.9} color="rgba(0, 0, 0, 0.718)" className={styles.editTaskIcon} onClick={this.editTask} />
+        <Tooltip title="Edit holon" placement="top" leaveDelay={0} disableInteractive className={`${styles.editTaskTooltip}`}>
+          <Icon path={mdiPencil} size={0.9} color="rgba(0, 0, 0, 0.718)" className={styles.editTaskIcon} onClick={this.edit} />
         </Tooltip>
         {this.state.taskDeleteLoading ? (
           <Tooltip title="Loading" leaveDelay={0}>
             <Icon path={mdiLoading} size={0.9} color="grey" spin={true} className={`${styles.loadingIcon}`} />
           </Tooltip>
         ) : (
-          <Tooltip title="Delete task" placement="top" leaveDelay={0} disableInteractive className={styles.deleteTaskTooltip}>
-            <Icon path={mdiDelete} size={0.9} color="red" className={styles.deleteTaskIcon} onClick={this.deleteTask} />
+          <Tooltip title="Delete holon" placement="top" leaveDelay={0} disableInteractive className={styles.deleteTaskTooltip}>
+            <Icon path={mdiDelete} size={0.9} color="red" className={styles.deleteTaskIcon} onClick={this.delete} />
           </Tooltip>
         )}
       </React.Fragment>

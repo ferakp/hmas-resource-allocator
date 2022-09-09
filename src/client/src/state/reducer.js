@@ -58,6 +58,9 @@ export const reducer = (state, action) => {
     case 'ADD_TASK':
       utils.addTask(newState, action.payload.task);
       break;
+    case 'ADD_HOLON':
+      utils.addHolon(newState, action.payload.holon);
+      break;
     case 'ADD_GLOBAL_ERROR_MESSAGE':
       newState.globalErrorMessage = action.payload.globalErrorMessage;
       break;

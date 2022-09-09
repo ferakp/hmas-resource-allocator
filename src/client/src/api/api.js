@@ -322,6 +322,38 @@ export async function deleteUser(userId) {
  */
 
 /**
+ * Add holon with given parameters
+ * @param {object} parameters new holon details
+ * @returns standard JSON:API response
+ */
+ export async function addHolon(params) {
+  try {
+    checkConnection();
+    const response = await utils.post('holons/', token, params);
+    handleErrorResponse(response.data || response.response.data);
+    return response.data || response.response.data;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while adding the holon', err);
+  }
+}
+
+/**
+ * Updates holon with given parameters
+ * @param {object} params holon fields to be updated
+ * @returns standard JSON:API response
+ */
+ export async function updateHolon(holonId, params) {
+  try {
+    checkConnection();
+    const response = await utils.patch('holons/' + holonId, token, params);
+    handleErrorResponse(response.data || response.response.data);
+    return response.data || response.response.data;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while updating the holon', err);
+  }
+}
+
+/**
  * Update the holon's is_available field
  * @param {Number} holonId
  *  @param {Boolean} isAvailable
@@ -368,22 +400,6 @@ export async function getHolonUpdates(holonIds) {
   } catch (err) {
     // err has cError property which contains actual error
     return generateErrorTemplate('Error occured while checking for updated holons', err);
-  }
-}
-
-/**
- * Updates holon
- * @param {object} fields
- * @returns standard JSON:API response
- */
-export async function updateHolon(holonId, fields) {
-  try {
-    checkConnection();
-    const holonResponse = await utils.patch('holons/' + holonId, token, fields);
-    handleErrorResponse(holonResponse.data || holonResponse.response.data);
-    return holonResponse.data || holonResponse.response.data;
-  } catch (err) {
-    return generateErrorTemplate('Error occured while updating holon', err);
   }
 }
 
@@ -502,7 +518,7 @@ export async function addTask(params) {
     handleErrorResponse(taskResponse.data || taskResponse.response.data);
     return taskResponse.data || taskResponse.response.data;
   } catch (err) {
-    return generateErrorTemplate('Error occured while deleting the task', err);
+    return generateErrorTemplate('Error occured while adding the task', err);
   }
 }
 

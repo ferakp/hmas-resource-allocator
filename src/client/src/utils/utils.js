@@ -25,12 +25,12 @@ export function formatHolon(holon) {
     holon.updated_on = new Date(holon.updated_on);
     holon.is_available = convertToBoolean(holon.is_available) ? true : false;
     return holon;
-  } catch(err) {
+  } catch (err) {
     return holon;
   }
 }
 
- export function formatTask(task) {
+export function formatTask(task) {
   try {
     task.id = Number(task.id);
     task.type = task.type ? task.type.toString() : null;
@@ -63,6 +63,31 @@ export const formatDate = (date) => {
     date = new Date(date);
     return date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
   } else return 'N/A';
+};
+
+/**
+ * Formats date to Weekday MonthNumber Month Hour Minutes
+ */
+export const formatDateForDisplay = (date) => {
+  let createdOnText = 'N/A';
+  try {
+    const created_date = date;
+    if (created_date)
+      createdOnText =
+        created_date.toLocaleString('en-us', { weekday: 'short' }) +
+        ' ' +
+        created_date.getDate() +
+        ' ' +
+        created_date.toDateString().split(' ')[1] +
+        ' ' +
+        created_date.getHours() +
+        ':' +
+        created_date.getMinutes();
+    if (!created_date && this.props.data.created_on) createdOnText = 'Not Available';
+  } catch (err) {
+    createdOnText = 'N/A';
+  }
+  return createdOnText;
 };
 
 /**
@@ -279,17 +304,42 @@ export const updateTask = debounce((state, task) => {
 });
 
 /**
- * Update the state with the updated holon
+ * Update the holon from the inside state data
  * @param {object} state state of the app
- * @param {object} task holon object
+ * @param {object} holon holon object
  * @returns boolean
  */
- export const updateHolon = debounce((state, holon) => {
+export const updateHolon = debounce((state, holon) => {
   try {
     const formattedHolon = formatHolon(holon);
     for (let i = 0; i < state.data.holons.length; i++) {
       if (state.data.holons[i].id === formattedHolon.id) {
         state.data.holons[i] = formattedHolon;
+        return true;
+      }
+    }
+  } catch (err) {
+    return false;
+  }
+});
+
+/**
+ * Adds a new holon to the state (app's state)
+ * @param {object} state state of the app
+ * @param {object} holon holon object
+ * @returns boolean
+ */
+export const addHolon = debounce((state, holon) => {
+  try {
+    const formattedHolon = formatHolon(holon);
+    for (let i = 0; i < state.data.holons.length; i++) {
+      if (state.data.holons[i].id === formattedHolon.id) {
+        break;
+        return false;
+      }
+
+      if (i === state.data.holons.length - 1) {
+        state.data.holons.push(formattedHolon);
         return true;
       }
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { scaleLinear, scaleBand } from 'd3-scale';
+import { scaleLinear, scaleBand, scalePoint } from 'd3-scale';
 import XYAxis from './axis/xy-axis';
 import Line from './line/line';
 import { line, curveMonotoneX } from 'd3-shape';
@@ -13,25 +13,20 @@ export class LineChart extends React.Component {
     super();
     this.state = {
       data: [
-        { name: 'Jan', value: 0.0},
-        { name: 'Feb', value: 0.415 },
-        { name: 'Mar', value: 0.35 },
-        { name: 'Apr', value: 0.254 },
-        { name: 'May', value: 0.15 },
-        { name: 'Jun', value: 0.95},
-        { name: 'July', value: 0.65 },
-        { name: 'Aug', value: 0.15 },
-        { name: 'Sep', value: 0.25},
-        { name: 'Oct', value: 0.45 },
-        { name: 'Nov', value: 0.35 },
-        { name: 'Dec', value: 0.15 },
+        { name: 'N/A', value: 0.0},
+        { name: 'N/A', value: 1 },
       ],
     };
   }
 
+  componentDidMount(){
+    if(this.props.data) this.setState({data: this.props.data});
+  }
+
   render() {
-    const { data } = this.state;
-    const parentWidth = 350;
+    let data = this.state.data;
+    if(this.props.data) data = this.props.data;
+    const parentWidth = this.props.width || 400;
 
     const margins = {
       top: 25,
@@ -46,7 +41,7 @@ export class LineChart extends React.Component {
     const ticks = 5;
     const t = transition().duration(1000);
 
-    const xScale = scaleBand()
+    const xScale = scalePoint()
       .domain(data.map((d) => d.name))
       .rangeRound([0, width])
       .padding(0.1);
