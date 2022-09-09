@@ -16,7 +16,7 @@ export const reducer = (state, action) => {
       newState.auth.token = action.payload.token;
 
       // Invalid login information received - logout user
-      if(!newState.auth.loginTime || !newState.auth.user ||!newState.auth.token) {
+      if (!newState.auth.loginTime || !newState.auth.user || !newState.auth.token) {
         newState.auth = JSON.parse(
           JSON.stringify({
             loginTime: null,
@@ -49,11 +49,17 @@ export const reducer = (state, action) => {
     case 'UPDATE_TASK':
       utils.updateTask(newState, action.payload.task);
       break;
+    case 'UPDATE_HOLON':
+      utils.updateHolon(newState, action.payload.holon);
+      break;
     case 'DELETE_TASK':
       utils.deleteTask(newState, action.payload.id);
       break;
     case 'ADD_TASK':
       utils.addTask(newState, action.payload.task);
+      break;
+    case 'ADD_HOLON':
+      utils.addHolon(newState, action.payload.holon);
       break;
     case 'ADD_GLOBAL_ERROR_MESSAGE':
       newState.globalErrorMessage = action.payload.globalErrorMessage;
