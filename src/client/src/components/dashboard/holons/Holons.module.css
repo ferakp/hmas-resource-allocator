@@ -2,7 +2,7 @@
   display: flex;
   flex: 1;
   flex-direction: row;
-  margin-left: 2px 15px 2px 15px;
+  margin: 2px 15px 2px 15px;
 }
 
 .sideBarContainer {
