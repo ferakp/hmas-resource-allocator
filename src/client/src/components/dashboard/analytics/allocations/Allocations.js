@@ -5,7 +5,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 export class Allocations extends React.Component {
   state = {
-    displayer: "All allocations"
+    displayer: 'All allocations',
   };
 
   constructor(props) {
@@ -21,14 +21,15 @@ export class Allocations extends React.Component {
   }
 
   render() {
+    const valueNames = ['allocations', 'completed', 'uncompleted', 'running', 'failed', 'mine', 'bestMatch', 'optimal', 'maximumExecution', 'thisMonth', 'thisWeek', 'today'];
     return (
       <div className={styles.container}>
         <div className={styles.allocationsSwitcher}>
           <ToggleButtonGroup size="small" value={this.state.displayer} exclusive onChange={(v, c) => this.changeDisplayer(v, c)} aria-label="Allocations filter switch">
-            <ToggleButton style={{textTransform: "none"}} className={styles.allocationsCategoryClass} value="All allocations" aria-label="Show all allocations">
+            <ToggleButton style={{ textTransform: 'none' }} className={styles.allocationsCategoryClass} value="All allocations" aria-label="Show all allocations">
               <p>All allocations</p>
             </ToggleButton>
-            <ToggleButton style={{textTransform: "none"}} className={styles.allocationsCategoryClass} value="My allocations" aria-label="Show my allocations">
+            <ToggleButton style={{ textTransform: 'none' }} className={styles.allocationsCategoryClass} value="My allocations" aria-label="Show my allocations">
               <p>My allocations</p>
             </ToggleButton>
           </ToggleButtonGroup>
@@ -44,7 +45,9 @@ export class Allocations extends React.Component {
                       &nbsp;&nbsp;&nbsp;&nbsp;
                     </div>
                     <p className={styles.progressListItemTitle}>{progressTitle}</p>
-                    <p className={styles.progressListItemCount}>({this.props.data[progressTitle.toLowerCase()]?.length})</p>
+                    <p className={styles.progressListItemCount}>
+                      ({this.state.displayer === 'All allocations' ? this.props.data.allAllocations[valueNames[i]]?.length : this.props.data.myAllocations[valueNames[i]]?.length})
+                    </p>
                   </div>
                 );
               }

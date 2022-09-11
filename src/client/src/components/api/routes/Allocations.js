@@ -19,7 +19,13 @@ export class Allocations extends React.Component {
         ['id', ['number'], 'The unique identifier for the allocation.', true, ['view']],
         ['request_by', ['number'], 'The ID of the user who created the allocation request.', false, ['view', 'edit', 'embed']],
         ['request', ['string (JSON)'], 'The request.', false, ['view', 'edit', 'embed']],
-        ['result', ['string (JSON)'], 'The result.', false, ['view', 'edit', 'embed']],
+        [
+          'result',
+          ['string (JSON)'],
+          'The result. This parameter has inner fields "error" and "allocations". The error is reserved for error message and allocation for successful allocation result.',
+          false,
+          ['view', 'edit', 'embed'],
+        ],
         ['start_time', ['string (JS Date)'], 'The exact time the allocation request was started by HMAS Container.', false, ['view', 'edit', 'embed']],
         ['end_time', ['string (JS Date)'], 'The exact time the allocation request was finished by HMAS Container.', false, ['view', 'edit', 'embed']],
         ['created_on', ['string (JS Date)'], 'The exact time the allocation was created.', true, ['view']],
@@ -152,8 +158,8 @@ export class Allocations extends React.Component {
             Schema
           </p>
           <p className={styles.descriptionText}>
-            The schema defines all the fields that exist within an allocation record. Any response from these endpoints can be expected to contain the fields. Each field has its own
-            format, description and requirement(s).
+            The schema defines all the fields that exist within an allocation record. Any response from these endpoints can be expected to contain the fields. Each field has its
+            own format, description and requirement(s).
           </p>
 
           <table className={styles.sectionTable}>

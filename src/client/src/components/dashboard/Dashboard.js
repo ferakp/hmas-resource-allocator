@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Dashboard.module.css';
+import { ProgressBar } from '../progress-bar/ProgressBar';
 import { Analytics } from './analytics/Analytics';
 import { Tasks } from './tasks/Tasks';
 import { Algorithms } from './algorithms/Algorithms';
@@ -12,6 +13,7 @@ export class Dashboard extends React.Component {
     tabs: ['Analytics', 'Tasks', 'Holons', 'Allocations', 'Algorithms'],
     errorMessage: '',
     displayError: false,
+    loading: false,
   };
 
   constructor(props) {
@@ -28,22 +30,28 @@ export class Dashboard extends React.Component {
     this.setState({ selectedTab: tabName });
   };
 
+  switchLoading = (mode) => {
+    if (!mode) this.setState({ loading: !this.state.loading });
+    else if (mode === 'on') this.setState({ loading: true });
+    else this.setState({ loading: false });
+  };
+
   getTab = () => {
     switch (this.state.selectedTab) {
       case 'Analytics':
-        return <Analytics showErrorMessage={this.showErrorMessage} {...this.props} />;
+        return <Analytics switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />;
         break;
       case 'Tasks':
-        return <Tasks showErrorMessage={this.showErrorMessage} {...this.props} />;
+        return <Tasks switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />;
         break;
       case 'Algorithms':
-        return <Algorithms showErrorMessage={this.showErrorMessage} {...this.props} />;
+        return <Algorithms switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />;
         break;
       case 'Allocations':
-        return <Allocations showErrorMessage={this.showErrorMessage} {...this.props} />;
+        return <Allocations switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />;
         break;
       case 'Holons':
-        return <Holons showErrorMessage={this.showErrorMessage} {...this.props} />;
+        return <Holons switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />;
         break;
     }
   };
@@ -70,6 +78,7 @@ export class Dashboard extends React.Component {
 
         <hr className={styles.tabHr} />
         <div className={styles.tabContainer}>
+          <ProgressBar loading={this.state.loading} />
           <div className={`${styles.tabErrorContainer} ${this.state.displayError ? styles.displayError : ''}`}>
             <p className={styles.errorMessage}>{this.state.errorMessage}</p>
           </div>

@@ -6,32 +6,27 @@ import Line from './line/line';
 import { line, curveMonotoneX } from 'd3-shape';
 import { extent } from 'd3-array';
 import { transition } from 'd3-transition';
-import styles from './LineChart.module.css'
+import styles from './LineChart.module.css';
 
 export class LineChart extends React.Component {
   constructor() {
     super();
     this.state = {
       data: [
-        { name: 'N/A', value: 0.0},
-        { name: 'N/A', value: 1 },
+        { name: 'Error', value: 0.0 },
+        { name: 'Error', value: 1 },
       ],
     };
   }
 
-  componentDidMount(){
-    if(this.props.data) this.setState({data: this.props.data});
-  }
-
   render() {
-    let data = this.state.data;
-    if(this.props.data) data = this.props.data;
+    const data = this.props.data;
     const parentWidth = this.props.width || 400;
 
     const margins = {
-      top: 25,
+      top: 20,
       right: 25,
-      bottom: 25,
+      bottom: 20,
       left: 25,
     };
 
@@ -60,8 +55,14 @@ export class LineChart extends React.Component {
       <div className={styles.container}>
         <svg className={styles.lineChartSvg} width={width + margins.left + margins.right} height={height + margins.top + margins.bottom}>
           <g transform={`translate(${margins.left}, ${margins.top})`}>
-            <XYAxis {...{ xScale, yScale, height, ticks, t }} />
-            <Line data={data} xScale={xScale} yScale={yScale} lineGenerator={lineGenerator} width={width} height={height} />
+            {this.props.data?.length > 2 ? (
+              <React.Fragment>
+                <XYAxis {...{ xScale, yScale, height, ticks, t }} />
+                <Line data={this.props.data} xScale={xScale} yScale={yScale} lineGenerator={lineGenerator} width={width} height={height} />
+              </React.Fragment>
+            ) : (
+              ''
+            )}
           </g>
         </svg>
       </div>

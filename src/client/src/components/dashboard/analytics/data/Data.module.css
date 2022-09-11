@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+
+.optionContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 2px;
+  max-width: 220px;
+}
+
+.lineChartContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.elementTitle {
+  font-size: 0.9rem;
+  opacity: 0.6;
+  margin: 0px 0px 3px 0px;
+}
+
+.toggleButtonGroup {
+    margin-top: 10px;
+}

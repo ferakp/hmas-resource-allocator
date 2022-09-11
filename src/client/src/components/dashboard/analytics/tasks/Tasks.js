@@ -25,7 +25,7 @@ export class Tasks extends React.Component {
                   className={`${styles.progressListItem} ${
                     (progressTitle === 'No Date' ? this.props.data.noDate.length : this.props.data[progressTitle.toLowerCase()].length) === 0 ? styles.progressListItemFade : ''
                   }`}
-                  key={"prgli"+i}
+                  key={'prgli' + i}
                 >
                   <div className={styles.progressListItemColor} style={{ backgroundColor: this.props.colors[i] }}>
                     &nbsp;&nbsp;&nbsp;&nbsp;

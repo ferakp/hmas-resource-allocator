@@ -4,11 +4,11 @@ import * as d3 from 'd3';
 
 export class Pie extends React.Component {
   colorsTemplate = [
+    '#27acaa',
     '#8ce8ad',
     '#57e188',
     '#34c768',
     '#2db757',
-    '#27acaa',
     '#42c9c2',
     '#60e6e1',
     '#93f0e6',
@@ -37,6 +37,11 @@ export class Pie extends React.Component {
     this.chRef = React.createRef();
   }
 
+  componentDidUpdate(){
+    this.chRef.current.innerHTML = '';
+    this.drawChart();
+  }
+
   componentDidMount() {
     this.chRef.current.innerHTML = '';
     this.drawChart();
@@ -55,7 +60,7 @@ export class Pie extends React.Component {
       data = [{ name: 'NO DATA', value: 100 }];
       colors = ['grey'];
     }
-
+    let values = this.props.data.map((d, i) => [d.name, colors[i]]);
     const svgContainer = d3.select(this.chRef.current).node();
     const width = svgContainer.getBoundingClientRect().width;
     const height = width;
@@ -93,7 +98,13 @@ export class Pie extends React.Component {
           .innerRadius(radius / 1.75) // This is the size of the donut hole
           .outerRadius(radius)
       )
-      .attr('fill', (d) => colors[d.index])
+      .attr('fill', (i, d) => {
+        let response = "gray";
+        values.forEach(arr => {
+          if(i.data?.name && arr[0] === i.data.name) response = arr[1];
+        });
+        return response;
+      })
       .attr('stroke', '#fff')
       .style('stroke-width', '2')
       .style('opacity', '0.8');
