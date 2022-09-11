@@ -77,14 +77,19 @@
   flex-direction: column;
   align-items: flex-end;
   justify-content: end;
+  margin-right: 25px !important;
 }
 
 .taskStatusSeparator {
   display: none;
 }
 
-@media only screen and (min-width: 1200px) {
+.statusSection {
+  border-left: rgba(51, 51, 51, 0.081) 1px solid;
+  padding-left: 25px;
+}
 
+@media only screen and (min-width: 1200px) {
   .contentContainer {
     margin-right: 50px;
   }
@@ -129,5 +134,9 @@
 
   .usersSection {
     margin-left: 10px !important;
+  }
+
+  .taskoverview {
+    margin-right: 60px !important;
   }
 }
