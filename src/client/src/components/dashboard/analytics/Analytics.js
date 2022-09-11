@@ -8,6 +8,7 @@ import { Allocations } from './allocations/Allocations';
 import { Users } from './users/Users';
 import { Data } from './data/Data';
 import * as utils from '../../../utils/utils';
+import * as api from "../../../api/api";
 
 /**
  * REMINDERS
@@ -216,6 +217,7 @@ export class Analytics extends React.Component {
 
   updateStatus = async (status) => {
     if (!status) return;
+    status["Front End"] = api.isRestApiActive ? "active" : "inactive";
     this.setState({ statusRaw: status, status });
   };
 
