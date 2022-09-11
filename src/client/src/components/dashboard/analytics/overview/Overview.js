@@ -9,7 +9,6 @@ import { mdiAlertCircle } from '@mdi/js';
 import { mdiCog } from '@mdi/js';
 
 export class Overview extends React.Component {
-  state = {};
 
   constructor(props) {
     super(props);

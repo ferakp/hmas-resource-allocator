@@ -10,7 +10,7 @@ import { mdiFilterVariant } from '@mdi/js';
 import { mdiClipboardList } from '@mdi/js';
 import { mdiPlusThick } from '@mdi/js';
 import { HolonRow } from './holon-row/HolonRow';
-import {HolonEditor} from './holon-row/holon-editor/HolonEditor';
+import { HolonEditor } from './holon-row/holon-editor/HolonEditor';
 
 export class Holons extends React.Component {
   /**
@@ -28,33 +28,37 @@ export class Holons extends React.Component {
     displayHolons: [],
   };
 
-  updaterInterval = null;
-
   constructor(props) {
     super(props);
     this.wrapperRef = React.createRef();
   }
 
   componentDidMount() {
-    if (this.updateInterval) clearInterval(this.updateInterval);
-    this.updateInterval = setInterval(() => this.update(), 1000);
     this.update();
   }
 
+  componentDidUpdate() {
+    if (Array.isArray(this.props.state.data.holons) && JSON.stringify(this.props.state.data.holons) !== JSON.stringify(this.state.allHolonsUnordered)) {
+      this.update();
+    }
+  }
+
   update() {
-    // Return if this.props.state.data.holons has not been changed or if it's not an array
-    if (!Array.isArray(this.props.state.data.holons) || JSON.stringify(this.props.state.data.holons) === JSON.stringify(this.state.allHolonsUnordered)) return;
-    this.setState({ allHolonsUnordered: this.props.state.data.holons });
-    let allHolons = utils.orderArrayElements(this.props.state.data.holons, ...this.state.orderCriteria);
-    let myHolons = allHolons.filter((t) => {
-      if (t.created_by === this.props.state.auth.user?.id) return true;
-      else return false;
-    });
-    this.setState({
-      allHolons: allHolons,
-      myHolons: myHolons,
-      displayHolons: this.state.displayerCategory === 'All holons' ? this.filterHolons(allHolons, this.state.searchFilter) : this.filterHolons(myHolons, this.state.searchFilter),
-    });
+    try {
+      this.setState({ allHolonsUnordered: this.props.state.data.holons });
+      let allHolons = utils.orderArrayElements(this.props.state.data.holons, ...this.state.orderCriteria);
+      let myHolons = allHolons.filter((t) => {
+        if (t.created_by === this.props.state.auth.user?.id) return true;
+        else return false;
+      });
+      this.setState({
+        allHolons: allHolons || [],
+        myHolons: myHolons || [],
+        displayHolons: this.state.displayerCategory === 'All holons' ? this.filterHolons(allHolons, this.state.searchFilter) : this.filterHolons(myHolons, this.state.searchFilter),
+      });
+    } catch (err) {
+      this.props.showErrorMessage("Unknown error occured while updating holons");
+    }
   }
 
   filterHolons = (holons, searchFilter) => {
@@ -131,9 +135,9 @@ export class Holons extends React.Component {
               </LoadingButton>
             </div>
             <div className={styles.holonsRows}>
-              {this.state.mode === 'Add' ? <HolonEditor close={this.closeAddMode} {...this.props} isDraft={true}/> : ''}
-              {this.state.displayHolons.map((task, i) => (
-                <HolonRow data={task} key={'taskRowKey' + i} {...this.props} />
+              {this.state.mode === 'Add' ? <HolonEditor close={this.closeAddMode} {...this.props} isDraft={true} /> : ''}
+              {this.state.displayHolons.map((holon, i) => (
+                <HolonRow data={holon} key={'holonRowKey' + i} {...this.props} />
               ))}
             </div>
           </div>

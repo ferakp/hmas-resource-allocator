@@ -10,7 +10,8 @@ export class Holons extends React.Component {
     this.wrapperRef = React.createRef();
   }
 
-  componentDidUpdate() {}
+  componentDidUpdate() {
+  }
 
   render() {
     return (

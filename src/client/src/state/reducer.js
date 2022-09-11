@@ -44,7 +44,7 @@ export const reducer = (state, action) => {
     case 'FORGOT_PASSWORD':
       break;
     case 'DATA_UPDATED':
-      utils.debounceUpdateData(newState, action.payload.data);
+      utils.updateData(newState, action.payload.data);
       break;
     case 'UPDATE_TASK':
       utils.updateTask(newState, action.payload.task);
@@ -54,6 +54,9 @@ export const reducer = (state, action) => {
       break;
     case 'DELETE_TASK':
       utils.deleteTask(newState, action.payload.id);
+      break;
+    case 'DELETE_HOLON':
+      utils.deleteHolon(newState, action.payload.id);
       break;
     case 'ADD_TASK':
       utils.addTask(newState, action.payload.task);

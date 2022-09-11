@@ -36,7 +36,7 @@ import { mdiFilePlus } from '@mdi/js';
  */
 
 export class HolonRow extends React.Component {
-  state = { holonIsAvailableLoading: false, rowUpdated: false, editMode: false, clickedSection: 'Default', taskDeleteLoading: false };
+  state = { holonIsAvailableLoading: false, rowUpdated: false, editMode: false, clickedSection: 'Default', holonDeleteLoading: false };
 
   constructor(props) {
     super(props);
@@ -94,19 +94,22 @@ export class HolonRow extends React.Component {
   delete = async () => {
     const id = this.props.data.id;
     if (typeof id !== 'number') {
-      this.showErrorMessage('Unable to delete task due invalid ID field');
+      this.showErrorMessage('Unable to delete holon due invalid ID field');
       return;
     }
     try {
-      this.setState({ taskDeleteLoading: true });
-      const serverResponse = await api.deleteTask(id);
+      this.setState({ holonDeleteLoading: true });
+      const serverResponse = await api.deleteHolon(id);
+      console.log(serverResponse);
       if (serverResponse.errors.length === 0 && serverResponse.data[0].attributes && this.props.dispatch)
-        this.props.dispatch({ type: 'DELETE_TASK', payload: { id: Number(serverResponse.data[0].attributes.id) } });
+        this.props.dispatch({ type: 'DELETE_HOLON', payload: { id: Number(serverResponse.data[0].attributes.id) } });
+      else if (serverResponse.errors.length > 0 && this.props.dispatch && serverResponse.errors[0].status === 404) this.props.dispatch({ type: 'DELETE_HOLON', payload: { id } });
       else if (this.props.dispatch && serverResponse.errors.length > 0) this.showErrorMessage(serverResponse.errors[0].detail);
     } catch (err) {
-      this.showErrorMessage('Error occured while deleting the task');
+      console.log(err);
+      this.showErrorMessage('Error occured while deleting the holon');
     }
-    setTimeout(() => this.setState({ taskDeleteLoading: false }), 500);
+    setTimeout(() => this.setState({ holonDeleteLoading: false }), 500);
   };
 
   render() {
@@ -291,7 +294,7 @@ export class HolonRow extends React.Component {
         <Tooltip title="Edit holon" placement="top" leaveDelay={0} disableInteractive className={`${styles.editTaskTooltip}`}>
           <Icon path={mdiPencil} size={0.9} color="rgba(0, 0, 0, 0.718)" className={styles.editTaskIcon} onClick={this.edit} />
         </Tooltip>
-        {this.state.taskDeleteLoading ? (
+        {this.state.holonDeleteLoading ? (
           <Tooltip title="Loading" leaveDelay={0}>
             <Icon path={mdiLoading} size={0.9} color="grey" spin={true} className={`${styles.loadingIcon}`} />
           </Tooltip>

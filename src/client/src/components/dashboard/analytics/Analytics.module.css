@@ -13,6 +13,15 @@
   margin-bottom: 30px;
 }
 
+.holonDataSection {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+  margin-bottom: 30px;
+  justify-content: end;
+  min-width: 350px;
+}
+
 .sideBarContainer {
   display: flex;
   flex-direction: column;
@@ -34,8 +43,7 @@
   color: #333;
   opacity: 0.8;
   margin-bottom: 15px;
-  max-width: 220px;
-  border-bottom: #6c5a5a10 1px solid;
+  border-bottom: #6c5a5a31 1px solid;
   padding-bottom: 3px;
 }
 
@@ -43,6 +51,10 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
+
+.noWrap {
+  flex-wrap: nowrap !important;
 }
 
 .sectionContainer > div:not(:last-of-type) {
@@ -72,6 +84,7 @@
 }
 
 @media only screen and (min-width: 1200px) {
+
   .contentContainer {
     margin-right: 50px;
   }
@@ -112,5 +125,9 @@
     background-color: rgba(0, 6, 120, 0.356);
     opacity: 0.3;
     height: 100%;
+  }
+
+  .usersSection {
+    margin-left: 10px !important;
   }
 }

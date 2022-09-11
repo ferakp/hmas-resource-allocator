@@ -117,13 +117,14 @@ export function updateData(state, data) {
     if (Array.isArray(data.settings)) state.data.settings = data.settings;
     if (Array.isArray(data.tasks)) state.data.tasks = data.tasks;
     if (Array.isArray(data.users)) state.data.users = data.users;
+    if (data.status) state.data.status = data.status;
     updateInProgress = false;
   } catch (err) {
     updateInProgress = false;
   }
 }
 
-export const debounceUpdateData = debounce((state, data) => updateData(state, data));
+export const debounceUpdateData = shortDebounce((state, data) => updateData(state, data));
 
 export function debounce(func) {
   let timer;
@@ -132,6 +133,16 @@ export function debounce(func) {
     timer = setTimeout(() => {
       func.apply(this, args);
     }, 200);
+  };
+}
+
+export function shortDebounce(func) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, 50);
   };
 }
 
@@ -180,8 +191,8 @@ function formatData(data) {
       try {
         allocation.id = Number(allocation.id);
         allocation.request_by = Number(allocation.request_by);
-        allocation.request = JSON.parse(allocation.request);
-        allocation.result = allocation.result ? JSON.parse(allocation.request) : null;
+        allocation.request = allocation.request && typeof allocation.request === 'string' ? JSON.parse(allocation.request) : null;
+        allocation.result = allocation.result && typeof allocation.result === 'string' ? JSON.parse(allocation.result) : null;
         allocation.created_on = new Date(allocation.created_on);
         allocation.start_time = allocation.start_time ? new Date(allocation.start_time) : null;
         allocation.end_time = allocation.end_time ? new Date(allocation.end_time) : null;
@@ -309,7 +320,7 @@ export const updateTask = debounce((state, task) => {
  * @param {object} holon holon object
  * @returns boolean
  */
-export const updateHolon = debounce((state, holon) => {
+export const updateHolon = (state, holon) => {
   try {
     const formattedHolon = formatHolon(holon);
     for (let i = 0; i < state.data.holons.length; i++) {
@@ -321,7 +332,7 @@ export const updateHolon = debounce((state, holon) => {
   } catch (err) {
     return false;
   }
-});
+};
 
 /**
  * Adds a new holon to the state (app's state)
@@ -329,20 +340,10 @@ export const updateHolon = debounce((state, holon) => {
  * @param {object} holon holon object
  * @returns boolean
  */
-export const addHolon = debounce((state, holon) => {
+export const addHolon = shortDebounce((state, holon) => {
   try {
     const formattedHolon = formatHolon(holon);
-    for (let i = 0; i < state.data.holons.length; i++) {
-      if (state.data.holons[i].id === formattedHolon.id) {
-        break;
-        return false;
-      }
-
-      if (i === state.data.holons.length - 1) {
-        state.data.holons.push(formattedHolon);
-        return true;
-      }
-    }
+    state.data.holons.push(formattedHolon);
   } catch (err) {
     return false;
   }
@@ -353,7 +354,7 @@ export const addHolon = debounce((state, holon) => {
  * @param {number} id task ID
  * @returns boolean
  */
-export const deleteTask = debounce((state, id) => {
+export const deleteTask = (state, id) => {
   try {
     for (let i = 0; i < state.data.tasks.length; i++) {
       if (state.data.tasks[i].id === id) {
@@ -364,7 +365,25 @@ export const deleteTask = debounce((state, id) => {
   } catch (err) {
     return false;
   }
-});
+};
+
+/**
+ * Deletes the holon with given id from the state data
+ * @param {number} id holon ID
+ * @returns boolean
+ */
+export const deleteHolon = (state, id) => {
+  try {
+    for (let i = 0; i < state.data.holons.length; i++) {
+      if (Number(state.data.holons[i].id) === Number(id)) {
+        state.data.holons.splice(i, 1);
+        return true;
+      }
+    }
+  } catch (err) {
+    return false;
+  }
+};
 
 /**
  * Add a new task
@@ -373,7 +392,6 @@ export const deleteTask = debounce((state, id) => {
  */
 export const addTask = debounce((state, task) => {
   try {
-    console.log('Add task called');
     const formattedTask = formatTask(task);
     state.data.tasks.push(formattedTask);
     return true;
@@ -430,30 +448,26 @@ export function convertToBoolean(result) {
 export function orderArrayElements(array, fieldName, isAscendant) {
   const newArray = [];
   try {
-    array.forEach((element) => {
-      if (newArray.length === 0) newArray.push(element);
-      else {
-        for (let i = 0; i < newArray.length; i++) {
-          if (element[fieldName] < newArray[i][fieldName]) {
-            // Inserts the new element
-            newArray.splice(i, 0, element);
-            break;
-          }
-          if (i === newArray.length - 1) {
-            newArray.push(element);
-            break;
-          }
-        }
-      }
+    array.sort((a, b) => {
+      if (a[fieldName] < b[fieldName]) return -1;
+      else if (a[fieldName] > b[fieldName]) return 1;
+      else return 0;
     });
-    if (isAscendant) return newArray;
-    else {
-      return newArray.reverse();
-    }
+    if (isAscendant) return array;
+    else return array.reverse();
   } catch (err) {
-    return array;
+    return newArray;
   }
 }
+
+export const getWeekNumber = (date) => {
+  if (!isDate(date)) return -1;
+  let currentdate = date;
+  let oneJan = new Date(currentdate.getFullYear(), 0, 1);
+  let numberOfDays = Math.floor((currentdate - oneJan) / (24 * 60 * 60 * 1000));
+  const weekNumber = Math.ceil((currentdate.getDay() + 1 + numberOfDays) / 7);
+  return weekNumber;
+};
 
 /**
  * AJAX CALLS

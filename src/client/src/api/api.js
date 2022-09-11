@@ -58,7 +58,7 @@ export function setDispatch(f) {
   dispatch = f;
 }
 
-async function updateData() {
+export const updateData = async () => {
   if (!isRestApiActive) return;
   const data = {};
   try {
@@ -68,6 +68,7 @@ async function updateData() {
     const settingsResponse = await getAllSettings();
     const tasksResponse = await getAllTasks();
     const usersResponse = await getAllUsers();
+    const statusResponse = await getStatus();
 
     const failedUpdateTargets = [];
 
@@ -89,6 +90,9 @@ async function updateData() {
     if (usersResponse)
       if (usersResponse.errors.length === 0) data.users = usersResponse.data.map((users) => users.attributes);
       else failedUpdateTargets.push('users');
+    if(statusResponse)
+      if(statusResponse.errors.length === 0) data.status = statusResponse.data[0].attributes;
+      else failedUpdateTargets.push('status');
 
     if (dispatch && Object.keys(data).length > 0) {
       dispatch({ type: 'DATA_UPDATED', payload: { data } });
@@ -104,7 +108,7 @@ async function updateData() {
   } catch (err) {
     logger.log('Error', 'Failed to update data');
   }
-}
+};
 
 /**
  * ERROR HANDLER
@@ -154,7 +158,7 @@ let token = null;
 // Refresh token every 48 hours
 const refreshInterval = setInterval(async () => {
   await refreshToken();
-}, 1000 * 48 *60);
+}, 1000 * 48 * 60);
 
 export const setToken = (tokenNew) => {
   token = tokenNew;
@@ -196,7 +200,7 @@ export async function login(username, password) {
  */
 export async function refreshToken() {
   try {
-    if(!token) return;
+    if (!token) return;
     checkConnection();
     const callResponse = await utils.get('auth/refreshtoken', '', token);
     const response = callResponse.data || callResponse.response.data;
@@ -326,7 +330,7 @@ export async function deleteUser(userId) {
  * @param {object} parameters new holon details
  * @returns standard JSON:API response
  */
- export async function addHolon(params) {
+export async function addHolon(params) {
   try {
     checkConnection();
     const response = await utils.post('holons/', token, params);
@@ -342,7 +346,7 @@ export async function deleteUser(userId) {
  * @param {object} params holon fields to be updated
  * @returns standard JSON:API response
  */
- export async function updateHolon(holonId, params) {
+export async function updateHolon(holonId, params) {
   try {
     checkConnection();
     const response = await utils.patch('holons/' + holonId, token, params);
@@ -359,7 +363,7 @@ export async function deleteUser(userId) {
  *  @param {Boolean} isAvailable
  * @returns standard JSON:API response
  */
- export async function updateHolonIsAvailableField(holonId, isAvailable = false) {
+export async function updateHolonIsAvailableField(holonId, isAvailable = false) {
   try {
     checkConnection();
     const response = await utils.patch('holons/' + holonId, token, { is_available: isAvailable });
@@ -400,6 +404,22 @@ export async function getHolonUpdates(holonIds) {
   } catch (err) {
     // err has cError property which contains actual error
     return generateErrorTemplate('Error occured while checking for updated holons', err);
+  }
+}
+
+/**
+ * Delete the holon with given id
+ * @param {number} holonId holon ID
+ * @returns standard JSON:API response
+ */
+export async function deleteHolon(holonId) {
+  try {
+    checkConnection();
+    const response = await utils.del('holons/' + holonId, token);
+    handleErrorResponse(response.data || response.response.data);
+    return response.data || response.response.data;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while deleting the holon', err);
   }
 }
 
@@ -544,6 +564,30 @@ export async function getAllAlgorithms() {
     return generateErrorTemplate('Error occured while retrieving algorithms', err);
   }
 }
+
+/**
+ * STATUS
+ *
+ *
+ *
+ *
+ */
+
+/**
+ * Retrieve status
+ * @returns standard JSON:API response
+ */
+ export async function getStatus() {
+  try {
+    checkConnection();
+    const response = await utils.get('status', '', token);
+    handleErrorResponse(response.data || response.response.data);
+    return response.data || response.response.data;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while retrieving status', err);
+  }
+}
+
 
 /**
  * ALLOCATIONS
