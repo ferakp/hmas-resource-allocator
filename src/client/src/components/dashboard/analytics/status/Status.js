@@ -33,8 +33,8 @@ export class Status extends React.Component {
           </Tooltip>
           <Tooltip title="HMAS Container" placement="top" leaveDelay={0} disableInteractive>
             <div className={styles.hmasContainer}>
-              <Icon path={mdiRobot} size={1.2} color={this.props.data['HMAS Container'] === 'inactive' ? 'green' : 'grey'} className={styles.statusIcon} />
-              <p className={styles.statusText}>{this.props.data['HMAS Container'] === 'active' ? 'active' : 'inactive'}</p>
+              <Icon path={mdiRobot} size={1.2} color={this.props.data['HMAS Container'] !== 'inactive' ? 'green' : 'grey'} className={styles.statusIcon} />
+              <p className={styles.statusText}>{this.props.data['HMAS Container'] !== 'inactive' ? 'active' : 'inactive'}</p>
             </div>
           </Tooltip>
         </div>
