@@ -258,11 +258,7 @@ export class Analytics extends React.Component {
                 </div>
               </div>
 
-              <div className={styles.taskStatusSeparator}>
-                <hr></hr>
-              </div>
-
-              <div className={`${styles.section}`}>
+              <div className={`${styles.section} ${styles.statusSection}`}>
                 <p className={styles.sectionTitle}>Status</p>
                 <div className={styles.sectionContainer}>
                   <Status data={this.state.status} />
