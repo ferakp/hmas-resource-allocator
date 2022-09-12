@@ -6,7 +6,7 @@ import { Tasks } from './tasks/Tasks';
 import { Algorithms } from './algorithms/Algorithms';
 import { Allocations } from './allocations/Allocations';
 import { Holons } from './holons/Holons';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 
 export class Dashboard extends React.Component {
   state = {
@@ -65,6 +65,7 @@ export class Dashboard extends React.Component {
             <p className={styles.errorMessage}>{this.state.errorMessage}</p>
           </div>
           <Routes>
+            <Route path="/" element={<Navigate replace to="/dashboard/analytics" />} />
             <Route path="/analytics" element={<Analytics switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />} />
             <Route path="/tasks" element={<Tasks switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />} />
             <Route path="/algorithms" element={<Algorithms switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />} />
