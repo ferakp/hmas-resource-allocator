@@ -6,6 +6,7 @@ import { Tasks } from './tasks/Tasks';
 import { Algorithms } from './algorithms/Algorithms';
 import { Allocations } from './allocations/Allocations';
 import { Holons } from './holons/Holons';
+import { Route, Routes } from 'react-router-dom';
 
 export class Dashboard extends React.Component {
   state = {
@@ -28,32 +29,13 @@ export class Dashboard extends React.Component {
 
   tabClicked = (tabName) => {
     this.setState({ selectedTab: tabName });
+    this.props.navigate('dashboard/' + tabName.toLowerCase());
   };
 
   switchLoading = (mode) => {
     if (!mode) this.setState({ loading: !this.state.loading });
     else if (mode === 'on') this.setState({ loading: true });
     else this.setState({ loading: false });
-  };
-
-  getTab = () => {
-    switch (this.state.selectedTab) {
-      case 'Analytics':
-        return <Analytics switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />;
-        break;
-      case 'Tasks':
-        return <Tasks switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />;
-        break;
-      case 'Algorithms':
-        return <Algorithms switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />;
-        break;
-      case 'Allocations':
-        return <Allocations switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />;
-        break;
-      case 'Holons':
-        return <Holons switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />;
-        break;
-    }
   };
 
   render() {
@@ -82,7 +64,13 @@ export class Dashboard extends React.Component {
           <div className={`${styles.tabErrorContainer} ${this.state.displayError ? styles.displayError : ''}`}>
             <p className={styles.errorMessage}>{this.state.errorMessage}</p>
           </div>
-          {this.getTab()}
+          <Routes>
+            <Route path="/analytics" element={<Analytics switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />} />
+            <Route path="/tasks" element={<Tasks switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />} />
+            <Route path="/algorithms" element={<Algorithms switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />} />
+            <Route path="/allocations" element={<Allocations switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />} />
+            <Route path="/holons" element={<Holons switchLoading={this.switchLoading} showErrorMessage={this.showErrorMessage} {...this.props} />} />
+          </Routes>
         </div>
       </div>
     );

@@ -557,6 +557,7 @@ export class HolonEditor extends React.Component {
           className={styles.saveButton}
           onClick={this.saveHolon}
           loading={this.state.holonUpdaterLoading}
+          disabled={this.editedPropertyNames.length === 0}
           loadingPosition="start"
           startIcon={<SaveIcon size={0.6} />}
           variant="contained"
