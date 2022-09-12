@@ -58,7 +58,7 @@ class App extends React.Component {
           <div className={styles.container}>
             <ToastContainer />
             <Routes>
-              <Route path="/dashboard" element={<Dashboard {...this.props} />} />
+              <Route path="/dashboard/*" element={<Dashboard {...this.props} />} />
               <Route path="/api/*" element={<Api {...this.props} />} />
               <Route path="/help" element={<Help {...this.props} />} />
               <Route path="/settings" element={<Settings {...this.props} />} />

@@ -783,6 +783,7 @@ export class TaskEditor extends React.Component {
           onClick={this.saveTask}
           loading={this.state.taskUpdaterLoading}
           loadingPosition="start"
+          disabled={this.editedPropertyNames.length === 0}
           startIcon={<SaveIcon size={0.6} />}
           variant="contained"
           size="small"
