@@ -24,7 +24,7 @@ export class Default extends React.Component {
             </div>
             <p className={styles.descriptionText} id="description">
               The HMAS Resource Allocator's REST API is implemented using <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> principles. The REST API
-              uses <a href="https://https://jsonapi.org/">JSON:API</a> specifications for efficient requests and responses. It has rich content for error responses and it provides
+              uses <a href="https://jsonapi.org/">JSON:API</a> specifications for efficient requests and responses. It has rich content for error responses and it provides
               detailed error messages for both requests and responses. The API uses built-in HTTP features, like HTTP authentication and HTTP verbs, which can be understood by
               off-the-shelf HTTP clients, and supports cross-origin resource sharing to allow you to interact securely with the API from a client-side web application.
             </p>
