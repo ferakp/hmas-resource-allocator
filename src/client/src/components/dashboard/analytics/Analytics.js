@@ -8,7 +8,7 @@ import { Allocations } from './allocations/Allocations';
 import { Users } from './users/Users';
 import { Data } from './data/Data';
 import * as utils from '../../../utils/utils';
-import * as api from "../../../api/api";
+import * as api from '../../../api/api';
 
 /**
  * REMINDERS
@@ -217,7 +217,7 @@ export class Analytics extends React.Component {
 
   updateStatus = async (status) => {
     if (!status) return;
-    status["Front End"] = api.isRestApiActive ? "active" : "inactive";
+    status['Front End'] = api.isRestApiActive ? 'active' : 'inactive';
     this.setState({ statusRaw: status, status });
   };
 
@@ -255,28 +255,18 @@ export class Analytics extends React.Component {
               </div>
 
               <div className={`${styles.section} ${styles.taskoverview}`}>
+                <p className={styles.sectionTitle}>Overview</p>
                 <div className={styles.sectionContainer}>
                   <Overview data={this.state.allTasks} />
                 </div>
               </div>
 
-              <div className={`${styles.section} ${styles.statusSection}`}>
-                <p className={styles.sectionTitle}>Status</p>
-                <div className={styles.sectionContainer}>
-                  <Status data={this.state.status} />
-                </div>
-              </div>
-
-              <div className={styles.section}>
+              <div className={`${styles.section}  ${styles.holonSection}`}>
                 <p className={styles.sectionTitle}>Holons</p>
                 <div className={styles.sectionContainer}>
                   <Holons title="All Holons" data={this.state.allHolons} colors={['blue', 'green', 'red', 'brown']} />
                   <Holons title="Mine" data={this.state.myHolons} colors={['yellow', 'green', 'purple', 'black']} />
                 </div>
-              </div>
-
-              <div className={styles.dataAllocationsSeparator}>
-                <hr></hr>
               </div>
 
               <div className={styles.section}>
@@ -289,14 +279,10 @@ export class Analytics extends React.Component {
                 </div>
               </div>
 
-              <div className={styles.dataAllocationsSeparator}>
-                <hr></hr>
-              </div>
-
-              <div className={`${styles.section} ${styles.usersSection}`}>
-                <p className={styles.sectionTitle}>Users</p>
+              <div className={`${styles.section} ${styles.statusSection}`}>
+                <p className={styles.sectionTitle}>Status</p>
                 <div className={styles.sectionContainer}>
-                  <Users data={this.state.allUsers} />
+                  <Status data={this.state.status} />
                 </div>
               </div>
 
@@ -311,6 +297,17 @@ export class Analytics extends React.Component {
                       averageCostData: this.state.averageCostData,
                     }}
                   />
+                </div>
+              </div>
+
+              <div className={styles.dataAllocationsSeparator}>
+                <hr></hr>
+              </div>
+
+              <div className={`${styles.section} ${styles.usersSection}`}>
+                <p className={styles.sectionTitle}>Users</p>
+                <div className={styles.sectionContainer}>
+                  <Users data={this.state.allUsers} />
                 </div>
               </div>
             </div>

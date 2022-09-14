@@ -65,6 +65,7 @@
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
+  max-width: 1500px;
 }
 
 .row {
@@ -75,18 +76,11 @@
 
 .taskoverview {
   flex-direction: column;
-  align-items: flex-end;
-  justify-content: end;
   margin-right: 25px !important;
 }
 
 .taskStatusSeparator {
   display: none;
-}
-
-.statusSection {
-  border-left: rgba(51, 51, 51, 0.081) 1px solid;
-  padding-left: 25px;
 }
 
 @media only screen and (min-width: 1200px) {
@@ -96,6 +90,10 @@
 
   .row:first-child .section {
     margin-right: 20px;
+  }
+
+  .statusSection {
+    margin-right: 100px !important;
   }
 }
 
@@ -116,6 +114,14 @@
     background-color: rgba(0, 0, 0, 0.104);
     opacity: 0.3;
     height: 100%;
+  }
+
+  .taskoverview {
+    margin-left: 208px;
+  }
+
+  .holonSection {
+    margin-right: 100px !important;
   }
 
   .dataAllocationsSeparator {
