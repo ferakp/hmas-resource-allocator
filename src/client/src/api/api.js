@@ -90,8 +90,8 @@ export const updateData = async () => {
     if (usersResponse)
       if (usersResponse.errors.length === 0) data.users = usersResponse.data.map((users) => users.attributes);
       else failedUpdateTargets.push('users');
-    if(statusResponse)
-      if(statusResponse.errors.length === 0) data.status = statusResponse.data[0].attributes;
+    if (statusResponse)
+      if (statusResponse.errors.length === 0) data.status = statusResponse.data[0].attributes;
       else failedUpdateTargets.push('status');
 
     if (dispatch && Object.keys(data).length > 0) {
@@ -577,7 +577,7 @@ export async function getAllAlgorithms() {
  * Retrieve status
  * @returns standard JSON:API response
  */
- export async function getStatus() {
+export async function getStatus() {
   try {
     checkConnection();
     const response = await utils.get('status', '', token);
@@ -588,7 +588,6 @@ export async function getAllAlgorithms() {
   }
 }
 
-
 /**
  * ALLOCATIONS
  *
@@ -596,6 +595,69 @@ export async function getAllAlgorithms() {
  *
  *
  */
+
+/**
+ * Delete the allocation with given id
+ * @param {number} allocationId allocation ID
+ * @returns standard JSON:API response
+ */
+ export async function deleteAllocation(allocationId) {
+  try {
+    checkConnection();
+    const response = await utils.del('allocations/' + allocationId, token);
+    handleErrorResponse(response.data || response.response.data);
+    return response.data || response.response.data;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while deleting the allocation', err);
+  }
+}
+
+/**
+ * Updates allocation with given parameters
+ * @param {object} params allocation fields to be updated
+ * @returns standard JSON:API response
+ */
+export async function updateAllocation(allocationId, params) {
+  try {
+    checkConnection();
+    const response = await utils.patch('allocations/' + allocationId, token, params);
+    handleErrorResponse(response.data || response.response.data);
+    return response.data || response.response.data;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while updating the allocation', err);
+  }
+}
+
+/**
+ * Updates the allocation's completion status
+ * @returns standard JSON:API response
+ */
+ export async function updateAllocationCompletion(allocationId) {
+  try {
+    checkConnection();
+    const response = await utils.patch('allocations/' + allocationId+"/complete-requests", token, null);
+    handleErrorResponse(response.data || response.response.data);
+    return response.data || response.response.data;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while updating the allocation\'s completion status', err);
+  }
+}
+
+/**
+ * Add allocation with given parameters
+ * @param {object} parameters new allocation details
+ * @returns standard JSON:API response
+ */
+ export async function addAllocation(params) {
+  try {
+    checkConnection();
+    const response = await utils.post('allocations/', token, params);
+    handleErrorResponse(response.data || response.response.data);
+    return response.data || response.response.data;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while adding the allocation', err);
+  }
+}
 
 /**
  * Retrieves all allocations from database
@@ -609,6 +671,23 @@ export async function getAllAllocations() {
     return allocationResponse.data || allocationResponse.response.data;
   } catch (err) {
     return generateErrorTemplate('Error occured while retrieving allocations', err);
+  }
+}
+
+/**
+ * Update the allocation's reallocate field
+ * @param {Number} allocationId
+ *  @param {Boolean} reallocate
+ * @returns standard JSON:API response
+ */
+ export async function updateAllocationReallocateField(allocationId) {
+  try {
+    checkConnection();
+    const response = await utils.post('allocations/' + allocationId+"/reallocate-requests", token, null);
+    handleErrorResponse(response.data || response.response.data);
+    return response.data || response.response.data;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while updating reallocate field', err);
   }
 }
 

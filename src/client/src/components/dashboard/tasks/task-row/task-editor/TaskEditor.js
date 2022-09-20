@@ -109,11 +109,15 @@ export class TaskEditor extends React.Component {
   };
 
   startDateHandleChange = (value) => {
+    value.setHours(new Date().getHours());
+    value.setMinutes(new Date().getMinutes());
     this.setState({ task: { ...this.state.task, start_date: value } });
     if (!this.editedPropertyNames.includes('start_date')) this.editedPropertyNames.push('start_date');
   };
 
   dueDateHandleChange = (value) => {
+    value.setHours(new Date().getHours());
+    value.setMinutes(new Date().getMinutes());
     this.setState({ task: { ...this.state.task, due_date: value } });
     if (!this.editedPropertyNames.includes('due_date')) this.editedPropertyNames.push('due_date');
   };

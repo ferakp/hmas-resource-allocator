@@ -31,7 +31,7 @@ export class LineChart extends React.Component {
     };
 
     const width = parentWidth - margins.left - margins.right;
-    const height = 200 - margins.top - margins.bottom;
+    const height = 220 - margins.top - margins.bottom;
 
     const ticks = 5;
     const t = transition().duration(1000);

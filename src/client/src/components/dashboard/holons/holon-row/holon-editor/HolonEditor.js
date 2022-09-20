@@ -25,7 +25,6 @@ export class HolonEditor extends React.Component {
   state = {
     holon: null,
     holonUpdaterLoading: false,
-    taskUpdated: false,
     activeTab: 'Details',
     errorMessage: '',
     fields: {

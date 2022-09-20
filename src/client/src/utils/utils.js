@@ -11,13 +11,14 @@ export function formatHolon(holon) {
     holon.name = holon.name.toString();
     holon.gender = holon.gender ? holon.gender.toString() : null;
     holon.daily_work_hours = Number(holon.daily_work_hours);
-    holon.latest_state = holon.latest_state ? JSON.parse(holon.latest_state) : {};
+    if (typeof holon.latest_state !== 'object') holon.latest_state = holon.latest_state ? JSON.parse(holon.latest_state) : null;
     holon.remote_address = holon.remote_address ? holon.remote_address : null;
     holon.api_token = holon.api_token ? holon.api_token : null;
-    holon.availability_data = holon.availability_data ? JSON.parse(holon.availability_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
-    holon.cost_data = holon.cost_data ? JSON.parse(holon.cost_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
-    holon.load_data = holon.load_data ? JSON.parse(holon.load_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
-    holon.stress_data = holon.stress_data ? JSON.parse(holon.stress_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
+    if (typeof holon.availability_data !== 'object')
+      holon.availability_data = holon.availability_data ? JSON.parse(holon.availability_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
+    if (typeof holon.cost_data !== 'object') holon.cost_data = holon.cost_data ? JSON.parse(holon.cost_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
+    if (typeof holon.load_data !== 'object') holon.load_data = holon.load_data ? JSON.parse(holon.load_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
+    if (typeof holon.stress_data !== 'object') holon.stress_data = holon.stress_data ? JSON.parse(holon.stress_data) : { currentValue: 0, latestUpdate: new Date(), records: [] };
     holon.age = isNumber(holon.age) ? Number(holon.age) : null;
     holon.experience_years = isNumber(holon.experience_years) ? Number(holon.experience_years) : null;
     holon.created_on = new Date(holon.created_on);
@@ -26,7 +27,7 @@ export function formatHolon(holon) {
     holon.is_available = convertToBoolean(holon.is_available) ? true : false;
     return holon;
   } catch (err) {
-    return holon;
+    throw new Error();
   }
 }
 
@@ -39,18 +40,38 @@ export function formatTask(task) {
     task.name = task.name ? task.name.toString() : null;
     task.description = task.description ? task.description.toString() : null;
     task.estimated_time = isNumber(task.estimated_time) ? Number(task.estimated_time) : null;
-    task.knowledge_tags = task.knowledge_tags ? JSON.parse(task.knowledge_tags) : { tags: [] };
-    task.resource_demand = task.resource_demand ? JSON.parse(task.resource_demand) : { demands: [] };
+    if (typeof task.knowledge_tags !== 'object') task.knowledge_tags = task.knowledge_tags ? JSON.parse(task.knowledge_tags) : { tags: [] };
+    if (typeof task.resource_demand !== 'object') task.resource_demand = task.resource_demand ? JSON.parse(task.resource_demand) : { demands: [] };
     task.priority = isNumber(task.priority) ? Number(task.priority) : 0;
     task.created_on = new Date(task.created_on);
     task.created_by = isNumber(task.created_by) ? Number(task.created_by) : null;
     task.start_date = task.start_date ? new Date(task.start_date) : null;
     task.due_date = task.due_date ? new Date(task.due_date) : null;
-    task.assigned_to = task.assigned_to ? JSON.parse(task.assigned_to) : { ids: [] };
+    if (typeof task.assigned_to !== 'object') task.assigned_to = task.assigned_to ? JSON.parse(task.assigned_to) : { ids: [] };
     task.updated_on = task.updated_on ? new Date(task.updated_on) : null;
     return task;
   } catch (err) {
-    return task;
+    throw new Error();
+  }
+}
+
+export function formatAllocation(allocation) {
+  try {
+    allocation.id = Number(allocation.id);
+    allocation.request_by = Number(allocation.request_by);
+    if (!Array.isArray(allocation.request?.holonIds) && !Array.isArray(allocation.request?.taskIds) && !allocation.request.algorithm)
+      allocation.request = allocation.request && typeof allocation.request === 'string' ? JSON.parse(allocation.request) : null;
+    if (!Array.isArray(allocation.result?.allocations) && !allocation.result?.error)
+      allocation.result = allocation.result && typeof allocation.result === 'string' ? JSON.parse(allocation.result) : null;
+    allocation.created_on = new Date(allocation.created_on);
+    allocation.start_time = allocation.start_time ? new Date(allocation.start_time) : null;
+    allocation.end_time = allocation.end_time ? new Date(allocation.end_time) : null;
+    allocation.reallocate = Boolean(allocation.reallocate);
+    allocation.updated_on = new Date(allocation.updated_on);
+    allocation.completed_on = allocation.completed_on ? new Date(allocation.completed_on) : null;
+    return allocation;
+  } catch (err) {
+    throw new Error();
   }
 }
 
@@ -189,16 +210,7 @@ function formatData(data) {
   if (Array.isArray(data.allocations)) {
     data.allocations.forEach((allocation, i) => {
       try {
-        allocation.id = Number(allocation.id);
-        allocation.request_by = Number(allocation.request_by);
-        allocation.request = allocation.request && typeof allocation.request === 'string' ? JSON.parse(allocation.request) : null;
-        allocation.result = allocation.result && typeof allocation.result === 'string' ? JSON.parse(allocation.result) : null;
-        allocation.created_on = new Date(allocation.created_on);
-        allocation.start_time = allocation.start_time ? new Date(allocation.start_time) : null;
-        allocation.end_time = allocation.end_time ? new Date(allocation.end_time) : null;
-        allocation.reallocate = Boolean(allocation.reallocate);
-        allocation.updated_on = new Date(allocation.updated_on);
-        allocation.completed_on = allocation.completed_on ? new Date(allocation.completed_on) : null;
+        allocation = formatAllocation(allocation);
       } catch (err) {
         invalidElements.push(i);
       }
@@ -315,6 +327,41 @@ export const updateTask = debounce((state, task) => {
 });
 
 /**
+ * Update the state with the updated allocation
+ * @param {object} state state of the app
+ * @param {object} allocation allocation object
+ * @returns boolean
+ */
+export const updateAllocation = (state, allocation) => {
+  try {
+    const formattedAllocation = formatAllocation(allocation);
+    for (let i = 0; i < state.data.allocations.length; i++) {
+      if (state.data.allocations[i].id === formattedAllocation.id) {
+        state.data.allocations[i] = formattedAllocation;
+        return true;
+      }
+    }
+  } catch (err) {
+    return false;
+  }
+};
+
+/**
+ * Adds a new allocation to the state (app's state)
+ * @param {object} state state of the app
+ * @param {object} allocation allocation object
+ * @returns boolean
+ */
+export const addAllocation = shortDebounce((state, allocation) => {
+  try {
+    const formattedAllocation = formatAllocation(allocation);
+    state.data.allocations.push(formattedAllocation);
+  } catch (err) {
+    return false;
+  }
+});
+
+/**
  * Update the holon from the inside state data
  * @param {object} state state of the app
  * @param {object} holon holon object
@@ -377,6 +424,24 @@ export const deleteHolon = (state, id) => {
     for (let i = 0; i < state.data.holons.length; i++) {
       if (Number(state.data.holons[i].id) === Number(id)) {
         state.data.holons.splice(i, 1);
+        return true;
+      }
+    }
+  } catch (err) {
+    return false;
+  }
+};
+
+/**
+ * Deletes the allocation with given id from the state data
+ * @param {number} id allocation ID
+ * @returns boolean
+ */
+export const deleteAllocation = (state, id) => {
+  try {
+    for (let i = 0; i < state.data.allocations.length; i++) {
+      if (Number(state.data.allocations[i].id) === Number(id)) {
+        state.data.allocations.splice(i, 1);
         return true;
       }
     }
