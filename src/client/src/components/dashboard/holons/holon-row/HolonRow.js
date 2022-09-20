@@ -20,13 +20,10 @@ import { mdiChartBellCurveCumulative } from '@mdi/js';
 import { mdiFilePlus } from '@mdi/js';
 
 /**
- * The properties of task object:
+ * The properties of holon object:
  * id, type, name, gender, daily_work_hours, latest_state, remote_address, api_token,
  * availability_data, load_data, stress_data, cost_data, age, experience_years, created_on,
  * updated_on, created_by, is_available
- *
- *
- * (handled - is_available, created_by, name, id, age, experience_years, daily_work_hours, availability_data, stress_data, load_data, cost_data)
  *
  *
  * State
@@ -84,7 +81,7 @@ export class HolonRow extends React.Component {
 
   closeEditContainer = () => {
     this.setState({ editMode: false, clickedSection: 'Default' });
-    if (this.props.closeAddTaskMode) this.props.closeAddTaskMode();
+    if (this.props.closeAddMode) this.props.closeAddMode();
   };
 
   edit = () => {
@@ -100,13 +97,11 @@ export class HolonRow extends React.Component {
     try {
       this.setState({ holonDeleteLoading: true });
       const serverResponse = await api.deleteHolon(id);
-      console.log(serverResponse);
       if (serverResponse.errors.length === 0 && serverResponse.data[0].attributes && this.props.dispatch)
         this.props.dispatch({ type: 'DELETE_HOLON', payload: { id: Number(serverResponse.data[0].attributes.id) } });
       else if (serverResponse.errors.length > 0 && this.props.dispatch && serverResponse.errors[0].status === 404) this.props.dispatch({ type: 'DELETE_HOLON', payload: { id } });
       else if (this.props.dispatch && serverResponse.errors.length > 0) this.showErrorMessage(serverResponse.errors[0].detail);
     } catch (err) {
-      console.log(err);
       this.showErrorMessage('Error occured while deleting the holon');
     }
     setTimeout(() => this.setState({ holonDeleteLoading: false }), 500);
@@ -291,16 +286,16 @@ export class HolonRow extends React.Component {
   getRowOptionsSection = () => {
     return (
       <React.Fragment>
-        <Tooltip title="Edit holon" placement="top" leaveDelay={0} disableInteractive className={`${styles.editTaskTooltip}`}>
-          <Icon path={mdiPencil} size={0.9} color="rgba(0, 0, 0, 0.718)" className={styles.editTaskIcon} onClick={this.edit} />
+        <Tooltip title="Edit holon" placement="top" leaveDelay={0} disableInteractive className={`${styles.editTooltip}`}>
+          <Icon path={mdiPencil} size={0.9} color="rgba(0, 0, 0, 0.718)" className={styles.editIcon} onClick={this.edit} />
         </Tooltip>
         {this.state.holonDeleteLoading ? (
           <Tooltip title="Loading" leaveDelay={0}>
             <Icon path={mdiLoading} size={0.9} color="grey" spin={true} className={`${styles.loadingIcon}`} />
           </Tooltip>
         ) : (
-          <Tooltip title="Delete holon" placement="top" leaveDelay={0} disableInteractive className={styles.deleteTaskTooltip}>
-            <Icon path={mdiDelete} size={0.9} color="red" className={styles.deleteTaskIcon} onClick={this.delete} />
+          <Tooltip title="Delete holon" placement="top" leaveDelay={0} disableInteractive className={styles.deleteTooltip}>
+            <Icon path={mdiDelete} size={0.9} color="red" className={styles.deleteIcon} onClick={this.delete} />
           </Tooltip>
         )}
       </React.Fragment>

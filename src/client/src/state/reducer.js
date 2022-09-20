@@ -52,14 +52,23 @@ export const reducer = (state, action) => {
     case 'UPDATE_HOLON':
       utils.updateHolon(newState, action.payload.holon);
       break;
+    case 'UPDATE_ALLOCATION':
+      utils.updateAllocation(newState, action.payload.allocation);
+      break;
     case 'DELETE_TASK':
       utils.deleteTask(newState, action.payload.id);
       break;
     case 'DELETE_HOLON':
       utils.deleteHolon(newState, action.payload.id);
       break;
+    case 'DELETE_ALLOCATION':
+      utils.deleteAllocation(newState, action.payload.id);
+      break;
     case 'ADD_TASK':
       utils.addTask(newState, action.payload.task);
+      break;
+    case 'ADD_ALLOCATION':
+      utils.addAllocation(newState, action.payload.allocation);
       break;
     case 'ADD_HOLON':
       utils.addHolon(newState, action.payload.holon);

@@ -151,6 +151,28 @@ export class Allocations extends React.Component {
                   </li>
                 </ul>
               </li>
+              <li>
+                <a href="#reallocatesection">Request reallocation</a>
+                <ul className={styles.innerTableList}>
+                  <li>
+                    <a href="#reallocatedefinition">Definition</a> -{' '}
+                  </li>
+                  <li>
+                    <a href="#reallocateexamplerequests">Example Request</a> -{' '}
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="#completesection">Request completion</a>
+                <ul className={styles.innerTableList}>
+                  <li>
+                    <a href="#completedefinition">Definition</a> -{' '}
+                  </li>
+                  <li>
+                    <a href="#completeexamplerequests">Example Request</a> -{' '}
+                  </li>
+                </ul>
+              </li>
             </ul>
           </div>
 
@@ -374,6 +396,36 @@ export class Allocations extends React.Component {
               })}
             </tbody>
           </table>
+
+          <p className={styles.sectionTitle} id="reallocatesection">
+            Request reallocation
+          </p>
+          <p className={`${styles.descriptionText} ${styles.noStyleDescription}`}>Use this endpoint to request a reallocation. Switching off the realloction is not supported.</p>
+
+          <p className={styles.subsectionTitle} id="reallocatedefinition">
+            Definition
+          </p>
+          <p className={styles.descriptionText}>POST /api/v1/allocations/&#8249;id&#8250;/reallocate-requests</p>
+
+          <p className={styles.subsectionTitle} id="reallocateexamplerequests">
+            Example Requests
+          </p>
+          <p className={styles.descriptionText}>curl -X POST https://example.com/api/v1/allocations/&#8249;id&#8250;/reallocate-requests</p>
+
+          <p className={styles.sectionTitle} id="completesection">
+            Request completion
+          </p>
+          <p className={`${styles.descriptionText} ${styles.noStyleDescription}`}>Use this endpoint to request a completion. Switching off the completion is not supported.</p>
+
+          <p className={styles.subsectionTitle} id="completedefinition">
+            Definition
+          </p>
+          <p className={styles.descriptionText}>POST /api/v1/allocations/&#8249;id&#8250;/complete-requests</p>
+
+          <p className={styles.subsectionTitle} id="completeexamplerequests">
+            Example Requests
+          </p>
+          <p className={styles.descriptionText}>curl -X POST https://example.com/api/v1/allocations/&#8249;id&#8250;/complete-requests</p>
         </div>
       </div>
     );

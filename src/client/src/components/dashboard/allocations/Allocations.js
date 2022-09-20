@@ -4,24 +4,29 @@ import Icon from '@mdi/react';
 import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import * as utils from '../../../utils/utils';
 import LoadingButton from '@mui/lab/LoadingButton';
+import * as utils from '../../../utils/utils';
 import { mdiFilterVariant } from '@mdi/js';
 import { mdiClipboardList } from '@mdi/js';
 import { mdiPlusThick } from '@mdi/js';
+import { AllocationRow } from './allocation-row/AllocationRow';
+import { AllocationEditor } from './allocation-editor/AllocationEditor';
 
 export class Allocations extends React.Component {
+  /**
+   * orderCriteria - [field name (string), isAscendant (boolean)]
+   * mode: Add, Default or Filter
+   */
   state = {
     orderCriteria: ['created_on', true],
     searchFilter: '',
     displayerCategory: 'All allocations',
     mode: 'Default',
-    allAllocationssUnordered: [],
+    allAllocationsUnordered: [],
     allAllocations: [],
     myAllocations: [],
     displayAllocations: [],
   };
-  updaterInterval = null;
 
   constructor(props) {
     super(props);
@@ -29,26 +34,34 @@ export class Allocations extends React.Component {
   }
 
   componentDidMount() {
-    if (this.updateInterval) clearInterval(this.updateInterval);
-    this.updateInterval = setInterval(() => this.update(), 1000);
     this.update();
   }
 
+  componentDidUpdate() {
+    if (Array.isArray(this.props.state.data.allocations) && JSON.stringify(this.props.state.data.allocations) !== JSON.stringify(this.state.allAllocationsUnordered)) {
+      this.update();
+    }
+  }
+
   update() {
-    // Return if this.props.state.data.allocations has not been changed or if it's not an array
-    if (!Array.isArray(this.props.state.data.allocations) || JSON.stringify(this.props.state.data.allocations) === JSON.stringify(this.state.allAllocationsUnordered)) return;
-    this.setState({ allAllocationsUnordered: this.props.state.data.allocations });
-    let allAllocations = utils.orderArrayElements(this.props.state.data.allocations, ...this.state.orderCriteria);
-    let myAllocations = allAllocations.filter((t) => {
-      if (t.created_by === this.props.state.auth.user?.id) return true;
-      else return false;
-    });
-    this.setState({
-      allAllocations: allAllocations,
-      myAllocations: myAllocations,
-      displayAllocations:
-        this.state.displayerCategory === 'All allocations' ? this.filterAllocations(allAllocations, this.state.searchFilter) : this.filterAllocations(myAllocations, this.state.searchFilter),
-    });
+    try {
+      this.setState({ allAllocationsUnordered: this.props.state.data.allocations });
+      let allAllocations = utils.orderArrayElements(this.props.state.data.allocations, ...this.state.orderCriteria);
+      let myAllocations = allAllocations.filter((t) => {
+        if (Number(t.request_by) === this.props.state.auth.user?.id) return true;
+        else return false;
+      });
+      this.setState({
+        allAllocations: allAllocations || [],
+        myAllocations: myAllocations || [],
+        displayAllocations:
+          this.state.displayerCategory === 'All allocations'
+            ? this.filterAllocations(allAllocations, this.state.searchFilter)
+            : this.filterAllocations(myAllocations, this.state.searchFilter),
+      });
+    } catch (err) {
+      this.props.showErrorMessage('Unknown error occured while updating allocations');
+    }
   }
 
   filterAllocations = (allocations, searchFilter) => {
@@ -64,9 +77,17 @@ export class Allocations extends React.Component {
     }
   };
 
+  search = utils.debounceLong((event) => {
+    const filter = event?.target.value.toLowerCase();
+    const displayAllocations =
+      this.state.displayerCategory === 'All allocations' ? this.filterAllocations(this.state.allAllocations, filter) : this.filterAllocations(this.state.myAllocations, filter);
+    this.setState({ searchFilter: filter, displayAllocations: displayAllocations });
+  });
+
   switchAllocations = (event, select) => {
     select = select || this.state.displayerCategory;
     this.setState({ displayerCategory: select });
+    this.search(null);
   };
 
   openAddMode = () => {
@@ -107,7 +128,7 @@ export class Allocations extends React.Component {
               <Icon path={mdiClipboardList} size={0.84} color="grey" className={styles.allocationsContainerHeaderIcon} />
               <p className={styles.allocationsContainerHeaderTitle}>{this.state.displayerCategory}</p>
               <LoadingButton
-                style={{ width: 135, height: 28, paddingTop: 5, paddingBottom: 5, paddingLeft: 5, paddingRight: 5, textTransform: 'none' }}
+                style={{ width: 155, height: 28, paddingTop: 5, paddingBottom: 5, paddingLeft: 5, paddingRight: 5, textTransform: 'none' }}
                 className={styles.addAllocationButton}
                 onClick={this.openAddMode}
                 startIcon={<Icon path={mdiPlusThick} size={0.6} />}
@@ -117,8 +138,11 @@ export class Allocations extends React.Component {
                 Add a new allocation
               </LoadingButton>
             </div>
-            <div className={styles.holonsRows}>
-
+            <div className={styles.allocationRows}>
+              {this.state.mode === 'Add' ? <AllocationEditor close={this.closeAddMode} {...this.props} isDraft={true} /> : ''}
+              {this.state.displayAllocations.map((allocation, i) => (
+                <AllocationRow data={allocation} key={'allocationRowKey' + i} {...this.props} />
+              ))}
             </div>
           </div>
         </div>

@@ -22,6 +22,26 @@ export class Dashboard extends React.Component {
     this.wrapperRef = React.createRef();
   }
 
+  componentDidMount() {
+    switch (this.props.location.pathname.split('/')[this.props.location.pathname.split('/').length - 1]) {
+      case 'allocations':
+        this.setState({ selectedTab: 'Allocations' });
+        break;
+      case 'analytics':
+        this.setState({ selectedTab: 'Analytics' });
+        break;
+      case 'tasks':
+        this.setState({ selectedTab: 'Tasks' });
+        break;
+      case 'Holons':
+        this.setState({ selectedTab: 'Holons' });
+        break;
+      case 'Algorithms':
+        this.setState({ selectedTab: 'Algorithms' });
+        break;
+    }
+  }
+
   showErrorMessage = (errorMessage) => {
     this.setState({ errorMessage: errorMessage, displayError: true });
     setTimeout(() => this.setState({ displayError: false }), 3000);
