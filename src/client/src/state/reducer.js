@@ -76,6 +76,9 @@ export const reducer = (state, action) => {
     case 'ADD_GLOBAL_ERROR_MESSAGE':
       newState.globalErrorMessage = action.payload.globalErrorMessage;
       break;
+    case 'ADD_ACTIVITY':
+      newState.data.activity.push([action.payload.type, action.payload.message, new Date()]);
+      break;
   }
   return newState;
 };

@@ -129,8 +129,14 @@ export class HolonEditor extends React.Component {
       else serverResponse = await api.addHolon(params);
       if (serverResponse.errors.length > 0) this.showErrorMessage(serverResponse.errors[0].detail);
       else if (serverResponse.data) {
-        if (this.props.dispatch && !this.props.isDraft) this.props.dispatch({ type: 'UPDATE_HOLON', payload: { holon: serverResponse.data[0].attributes } });
-        if (this.props.dispatch && this.props.isDraft) this.props.dispatch({ type: 'ADD_HOLON', payload: { holon: serverResponse.data[0].attributes } });
+        if (this.props.dispatch && !this.props.isDraft) {
+          this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'Holon ' + this.props.data.id + ' has been updated' } });
+          this.props.dispatch({ type: 'UPDATE_HOLON', payload: { holon: serverResponse.data[0].attributes } });
+        }
+        if (this.props.dispatch && this.props.isDraft) {
+          this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'Holon ' + this.props.data.id + ' has been created' } });
+          this.props.dispatch({ type: 'ADD_HOLON', payload: { holon: serverResponse.data[0].attributes } });
+        }
         setTimeout(() => {
           this.props.close();
         }, 500);

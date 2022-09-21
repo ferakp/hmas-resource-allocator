@@ -17,6 +17,7 @@ export let initialState = {
     settings: [],
     tasks: [],
     users: [],
+    activity: [],
   },
   globalErrorMessage: null,
 };

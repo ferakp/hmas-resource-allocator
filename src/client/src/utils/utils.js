@@ -93,17 +93,10 @@ export const formatDateForDisplay = (date) => {
   let createdOnText = 'N/A';
   try {
     const created_date = date;
-    if (created_date)
-      createdOnText =
-        created_date.toLocaleString('en-us', { weekday: 'short' }) +
-        ' ' +
-        created_date.getDate() +
-        ' ' +
-        created_date.toDateString().split(' ')[1] +
-        ' ' +
-        created_date.getHours() +
-        ':' +
-        created_date.getMinutes();
+    if (created_date) createdOnText = created_date.toLocaleString('en-us', { weekday: 'short' }) + ' ' + created_date.getDate() + ' ' + created_date.toDateString().split(' ')[1];
+    const hours = created_date.getHours() > 9 ? created_date.getHours() : '0' + created_date.getHours();
+    const minutes = created_date.getMinutes() > 9 ? created_date.getMinutes() : '0' + created_date.getMinutes();
+    createdOnText += ' ' + hours + ':' + minutes;
     if (!created_date && this.props.data.created_on) createdOnText = 'Not Available';
   } catch (err) {
     createdOnText = 'N/A';

@@ -295,7 +295,7 @@ export class TaskEditor extends React.Component {
           }
 
           if (['estimated_time', 'priority'].includes(fieldName)) {
-            if(this.state.task[fieldName] === null || this.state.task[fieldName] === undefined) params[fieldName] = null;
+            if (this.state.task[fieldName] === null || this.state.task[fieldName] === undefined) params[fieldName] = null;
             else params[fieldName] = Number(this.state.task[fieldName]);
           }
 
@@ -304,7 +304,7 @@ export class TaskEditor extends React.Component {
           }
 
           if (['start_date', 'due_date'].includes(fieldName)) {
-            if(this.state.task[fieldName] === null || this.state.task[fieldName] === undefined) params[fieldName] = null;
+            if (this.state.task[fieldName] === null || this.state.task[fieldName] === undefined) params[fieldName] = null;
             else params[fieldName] = new Date(this.state.task[fieldName]);
           }
         }
@@ -315,8 +315,14 @@ export class TaskEditor extends React.Component {
       else serverResponse = await api.addTask(params);
       if (serverResponse.errors.length > 0) this.showErrorMessage(serverResponse.errors[0].detail);
       else if (serverResponse.data) {
-        if (this.props.dispatch && !this.props.isDraft) this.props.dispatch({ type: 'UPDATE_TASK', payload: { task: serverResponse.data[0].attributes } });
-        if (this.props.dispatch && this.props.isDraft) this.props.dispatch({ type: 'ADD_TASK', payload: { task: serverResponse.data[0].attributes } });
+        if (this.props.dispatch && !this.props.isDraft) {
+          this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'Task ' + this.props.data.id + ' has been updated' } });
+          this.props.dispatch({ type: 'UPDATE_TASK', payload: { task: serverResponse.data[0].attributes } });
+        }
+        if (this.props.dispatch && this.props.isDraft) {
+          this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'Task ' + this.props.data.id + ' has been created' } });
+          this.props.dispatch({ type: 'ADD_TASK', payload: { task: serverResponse.data[0].attributes } });
+        }
         setTimeout(() => {
           this.props.close();
         }, 500);

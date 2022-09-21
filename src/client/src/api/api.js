@@ -96,6 +96,7 @@ export const updateData = async () => {
 
     if (dispatch && Object.keys(data).length > 0) {
       dispatch({ type: 'DATA_UPDATED', payload: { data } });
+      dispatch({ type: 'ADD_ACTIVITY', payload: { type: "Default", message: "API has retrieved data" } });
       if (failedUpdateTargets.length === 0) logger.log('Success', 'Data have been retrieved');
       else logger.log('Success', 'Data have been partially retrieved');
     } else {
