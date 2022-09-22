@@ -245,7 +245,7 @@ export class Analytics extends React.Component {
 
   render() {
     const activityMessages = this.props.state.data.activity.filter((i) => i[0] && i[1] && i[2]);
-    const uniqueActivityMessages = [];
+    let uniqueActivityMessages = [];
     activityMessages.reverse();
     activityMessages.forEach((e) => {
       let response = false;
@@ -257,6 +257,7 @@ export class Analytics extends React.Component {
       }
       if (!response) uniqueActivityMessages.push(e);
     });
+    uniqueActivityMessages = uniqueActivityMessages.filter((el, index) => index < 25);
 
     return (
       <React.Fragment>
