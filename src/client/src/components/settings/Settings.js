@@ -1,5 +1,5 @@
-import React from "react";
-import styles from "./Settings.module.css";
+import React from 'react';
+import styles from './Settings.module.css';
 
 export class Settings extends React.Component {
   state = {};
@@ -8,12 +8,12 @@ export class Settings extends React.Component {
     super(props);
   }
 
-  componentDidMount() {
-    
-  }
+  componentDidMount() {}
 
   render() {
     if (!this.props.state.auth.user) setTimeout(() => this.props.navigate('/'), 200);
-    return <div className={styles.container}></div>;
+    return <div className={styles.container}>
+      
+    </div>;
   }
 }

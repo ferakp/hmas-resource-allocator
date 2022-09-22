@@ -5,6 +5,10 @@
   margin-left: 15px;
 }
 
+.container * {
+  opacity: 0.97;
+}
+
 .section {
   display: flex;
   flex-direction: column;
@@ -176,6 +180,13 @@
   }
 }
 
+@media only screen and (min-width: 1777px) {
+  .taskoverview {
+    margin-left: 208px;
+    margin-right: 60px !important;
+  }
+}
+
 @media only screen and (min-width: 1600px) {
   .taskStatusSeparator {
     margin-left: 192px;
@@ -215,10 +226,5 @@
 
   .usersSection {
     margin-left: 10px !important;
-  }
-
-  .taskoverview {
-    margin-left: 208px;
-    margin-right: 60px !important;
   }
 }

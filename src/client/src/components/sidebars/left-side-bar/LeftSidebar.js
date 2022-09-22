@@ -9,14 +9,30 @@ import { mdiCogOutline } from '@mdi/js';
 import { mdiLogin } from '@mdi/js';
 import { mdiHelpCircle } from '@mdi/js';
 import { mdiAccountDetails } from '@mdi/js';
+import { mdiAccountGroup } from '@mdi/js';
+import { mdiChevronLeft } from '@mdi/js';
+import { mdiChevronRight } from '@mdi/js';
 
 export class LeftSidebar extends React.Component {
+  state = {
+    mode: 'Default',
+  };
   static AppContext = getContext();
 
   constructor(props) {
     super(props);
     this.wrapperRef = React.createRef();
   }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize({ target: window });
+  }
+
+  handleResize = (event) => {
+    if (event.target.innerWidth < 1400 && this.state.mode !== 'Minimize') this.setState({ mode: 'Minimize' });
+    else if (event.target.innerWidth >= 1400 && this.state.mode !== 'Default') this.setState({ mode: 'Default' });
+  };
 
   linkClick = (link) => {
     if (link && link !== 'Logout' && link !== 'Login') this.props.navigate('/' + link.toLowerCase());
@@ -26,18 +42,23 @@ export class LeftSidebar extends React.Component {
     }
   };
 
+  switchMenuMode = () => {
+    if (this.state.mode === 'Minimize') this.setState({ mode: 'Default' });
+    else {
+      this.setState({ mode: 'Minimize' });
+    }
+  };
+
   render() {
     return (
-      <div className={styles.container} ref={this.wrapperRef}>
+      <div className={`${styles.container} ${this.state.mode === 'Minimize' ? styles.minimize : ''}`} ref={this.wrapperRef}>
         <div className={styles.innerContainer}>
           <div className={styles.logoContainer}>
             <div className={styles.iconContainer}>
-              <Icon path={mdiCog} size={2} color="white" className={styles.icon} />
               <div className={styles.titleContainer}>
                 <p className={styles.title}>RAS</p>
-                <p className={styles.titleFullName}>(Resource Allocation System)</p>
+                <p className={styles.titleFullName}>Resource Allocation System</p>
               </div>
-              <Icon path={mdiCog} size={2} color="white" className={styles.icon} />
             </div>
           </div>
           <div className={styles.linkContainer}>
@@ -45,7 +66,7 @@ export class LeftSidebar extends React.Component {
               <Icon path={mdiViewDashboardVariant} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
               <p className={styles.linkName}>Dashboard</p>
             </div>
-            <div className={`${styles.link} ${this.props.location.pathname.startsWith('/api')  ? styles.activeLink : ''}`} onClick={() => this.linkClick('API')}>
+            <div className={`${styles.link} ${this.props.location.pathname.startsWith('/api') ? styles.activeLink : ''}`} onClick={() => this.linkClick('API')}>
               <Icon path={mdiCloudBraces} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
               <p className={styles.linkName}>API</p>
             </div>
@@ -53,9 +74,24 @@ export class LeftSidebar extends React.Component {
               <Icon path={mdiHelpCircle} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
               <p className={styles.linkName}>Help</p>
             </div>
+            <div className={`${styles.link} ${this.props.location.pathname.startsWith('/users') ? styles.activeLink : ''}`} onClick={() => this.linkClick('Users')}>
+              <Icon path={mdiAccountGroup} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
+              <p className={styles.linkName}>Users</p>
+            </div>
             <div className={`${styles.link} ${this.props.location.pathname.startsWith('/settings') ? styles.activeLink : ''}`} onClick={() => this.linkClick('Settings')}>
               <Icon path={mdiCogOutline} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
               <p className={styles.linkName}>Settings</p>
+            </div>
+            <div className={styles.minimizer}>
+              <div className={styles.minimizerContent}>
+                <div className={styles.minimizerIcon} onClick={() => this.switchMenuMode()}>
+                  {this.state.mode === 'Minimize' ? (
+                    <Icon path={mdiChevronRight} style={{ paddingLeft: '0px' }} size={1.3} color="white" className={styles.linkIcon} />
+                  ) : (
+                    <Icon path={mdiChevronLeft} style={{ paddingLeft: '0px' }} size={1.3} color="white" className={styles.linkIcon} />
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className={styles.footer}>
