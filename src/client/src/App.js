@@ -10,8 +10,8 @@ import { Dashboard } from './components/dashboard/Dashboard';
 import { Account } from './components/account/Account';
 import { Help } from './components/help/Help';
 import { Api } from './components/api/Api';
-import { Settings } from './components/settings/Settings';
 import { Login } from './components/login/Login';
+import { Users } from './components/users/Users';
 import * as api from './api/api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -34,7 +34,12 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    if (!this.props.state.auth.user && this.props.location.pathname !== '/' && this.props.location.pathname.startsWith('/api') && this.props.location.pathname.startsWith('/help'))
+    if (
+      !this.props.state.auth.user &&
+      this.props.location.pathname !== '/' &&
+      !this.props.location.pathname.startsWith('/api') &&
+      !this.props.location.pathname.startsWith('/help')
+    )
       setTimeout(() => this.props.navigate('/'), 500);
     // Wait till other libraries have uploaded
     setTimeout(() => {
@@ -61,8 +66,8 @@ class App extends React.Component {
               <Route path="/dashboard/*" element={<Dashboard {...this.props} />} />
               <Route path="/api/*" element={<Api {...this.props} />} />
               <Route path="/help" element={<Help {...this.props} />} />
-              <Route path="/settings" element={<Settings {...this.props} />} />
               <Route path="/account" element={<Account {...this.props} />} />
+              <Route path="/users" element={<Users {...this.props} />} />
               <Route path="/" element={<Login {...this.props} />} />
             </Routes>
           </div>

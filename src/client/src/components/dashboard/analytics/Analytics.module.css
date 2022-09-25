@@ -3,7 +3,10 @@
   flex: 1;
   flex-direction: row;
   margin-left: 15px;
-  align-items: flex-start;
+}
+
+.container * {
+  opacity: 0.97;
 }
 
 .section {
@@ -65,7 +68,7 @@
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  max-width: 1500px;
+  max-width: 1250px;
 }
 
 .row {
@@ -83,17 +86,104 @@
   display: none;
 }
 
-@media only screen and (min-width: 1200px) {
-  .contentContainer {
-    margin-right: 50px;
-  }
+.activityContainer {
+  border-left: rgba(51, 51, 51, 0.164) 1px solid;
+  padding-left: 20px;
+  padding-right: 10px;
+}
 
+.messageContainer {
+  display: flex;
+  flex-direction: column-reverse;
+  max-height: 800px;
+  overflow-y: auto;
+}
+
+.messageContainer::-webkit-scrollbar {
+  width: 10px;
+}
+
+.messageContainer::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+.messageContainer::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 10px;
+}
+
+.messageContainer::-webkit-scrollbar-thumb:hover {
+  background: black;
+}
+
+.activityContainer .sectionTitle {
+  margin: 0px 0px 20px 0px;
+}
+
+.message {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  align-items: center;
+}
+
+.message p {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 5px 0px 7px 10px;
+  max-width: 480px;
+  text-overflow: ellipsis;
+}
+
+.time {
+  font-size: 0.78rem;
+  color: white;
+  margin-left: auto;
+  margin-bottom: 2px;
+  margin-right: 5px;
+  background-color: green;
+  border-radius: 5px;
+  padding: 1px 5px 1px 5px;
+  width: 104px;
+}
+
+@media only screen and (min-width: 1200px) {
   .row:first-child .section {
     margin-right: 20px;
   }
 
   .statusSection {
     margin-right: 100px !important;
+  }
+
+  .activityContainer {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .taskoverview {
+    margin-left: 108px;
+  }
+}
+
+@media only screen and (max-width: 1334px) {
+  .taskoverview {
+    margin-left: 0px;
+  }
+}
+
+@media only screen and (max-width: 1599px) {
+  .activityContainer {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 1777px) {
+  .taskoverview {
+    margin-left: 208px;
+    margin-right: 60px !important;
   }
 }
 
@@ -116,10 +206,6 @@
     height: 100%;
   }
 
-  .taskoverview {
-    margin-left: 208px;
-  }
-
   .holonSection {
     margin-right: 100px !important;
   }
@@ -140,9 +226,5 @@
 
   .usersSection {
     margin-left: 10px !important;
-  }
-
-  .taskoverview {
-    margin-right: 60px !important;
   }
 }

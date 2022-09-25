@@ -22,6 +22,7 @@ export class Users extends React.Component {
         ['password', ['string'], "The user's password for authentication. Min 8 characters.", false, ['view', 'edit', 'embed']],
         ['firstname', ['string'], 'The firstname of the user.', false, ['view', 'edit', 'embed']],
         ['lastname', ['string'], 'The lastname of the user.', false, ['view', 'edit', 'embed']],
+        ['email', ['string'], 'Email address.', false, ['view', 'edit', 'embed']],
         ['created_on', ['string (JS Date)'], 'The exact time the user was created.', true, ['view']],
         ['last_login', ['string (JS Date)'], 'The latest time the user had logged in.', true, ['view']],
         ['updated_on', ['string (JS Date)'], 'The latest time the user information was updated.', true, ['view']],
@@ -201,10 +202,10 @@ export class Users extends React.Component {
             List users
           </p>
           <p className={`${styles.descriptionText} ${styles.noStyleDescription}`}>
-            Query this endpoint to retrieve a collection of users. The response you receive can be controlled and filtered using the URL query parameters below. Parameters with
-            the asterisk (*) character support .e (equal), .elt (equal or less than), .egt (equal or greater than), .gt (greater than) and .lt (less than) suffix controllers.
-            <br /> For example GET <u>api/v1/users?updated_on.egt="2022-09-04T12:17:17.551Z"</u> would return all users that have been updated on 4th July 2022 (12 AM) or after
-            the given time.
+            Query this endpoint to retrieve a collection of users. The response you receive can be controlled and filtered using the URL query parameters below. Parameters with the
+            asterisk (*) character support .e (equal), .elt (equal or less than), .egt (equal or greater than), .gt (greater than) and .lt (less than) suffix controllers.
+            <br /> For example GET <u>api/v1/users?updated_on.egt="2022-09-04T12:17:17.551Z"</u> would return all users that have been updated on 4th July 2022 (12 AM) or after the
+            given time.
           </p>
 
           <p className={styles.subsectionTitle} id="listobjectsdefinition">

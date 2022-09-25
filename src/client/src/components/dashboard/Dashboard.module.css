@@ -6,8 +6,17 @@
 }
 
 .header {
+  display: flex;
+  flex-direction: row;
   padding: 25px;
   padding-left: 35px;
+}
+
+.header p {
+  color: #333;
+  margin: 0px;
+  font-size: 24px;
+  font-weight: 600;
 }
 
 .tabs {
@@ -59,18 +68,6 @@
 
 .tabLinkContainer:not(:first-child) {
   margin-left: 25px;
-}
-
-.header {
-  display: flex;
-  flex-direction: row;
-}
-
-.header p {
-  color: #333;
-  margin: 0px;
-  font-size: 24px;
-  font-weight: 600;
 }
 
 .tabContainer {

@@ -55,6 +55,24 @@ export function formatTask(task) {
   }
 }
 
+export function formatUser(user) {
+  try {
+    user.id = Number(user.id);
+    user.role = user.role ? user.role.toString() : null;
+    user.username = user.username ? user.username.toString() : null;
+    user.password = user.password ? user.password.toString() : null;
+    user.firstname = user.firstname ? user.firstname.toString() : null;
+    user.lastname = user.lastname ? user.lastname.toString() : null;
+    user.email = user.email ? user.email.toString() : null;
+    user.created_on = user.created_on ? new Date(user.created_on) : null;
+    user.last_login = user.last_login ? new Date(user.last_login) : null;
+    user.updated_on = user.updated_on ? new Date(user.updated_on) : null;
+    return user;
+  } catch (err) {
+    throw new Error();
+  }
+}
+
 export function formatAllocation(allocation) {
   try {
     allocation.id = Number(allocation.id);
@@ -93,17 +111,10 @@ export const formatDateForDisplay = (date) => {
   let createdOnText = 'N/A';
   try {
     const created_date = date;
-    if (created_date)
-      createdOnText =
-        created_date.toLocaleString('en-us', { weekday: 'short' }) +
-        ' ' +
-        created_date.getDate() +
-        ' ' +
-        created_date.toDateString().split(' ')[1] +
-        ' ' +
-        created_date.getHours() +
-        ':' +
-        created_date.getMinutes();
+    if (created_date) createdOnText = created_date.toLocaleString('en-us', { weekday: 'short' }) + ' ' + created_date.getDate() + ' ' + created_date.toDateString().split(' ')[1];
+    const hours = created_date.getHours() > 9 ? created_date.getHours() : '0' + created_date.getHours();
+    const minutes = created_date.getMinutes() > 9 ? created_date.getMinutes() : '0' + created_date.getMinutes();
+    createdOnText += ' ' + hours + ':' + minutes;
     if (!created_date && this.props.data.created_on) createdOnText = 'Not Available';
   } catch (err) {
     createdOnText = 'N/A';
@@ -282,16 +293,7 @@ function formatData(data) {
   if (Array.isArray(data.users)) {
     data.users.forEach((user, i) => {
       try {
-        user.id = Number(user.id);
-        user.role = user.role ? user.role.toString() : null;
-        user.username = user.username ? user.username.toString() : null;
-        user.password = user.password ? user.password.toString() : null;
-        user.firstname = user.firstname ? user.firstname.toString() : null;
-        user.lastname = user.lastname ? user.lastname.toString() : null;
-        user.email = user.email ? user.email.toString() : null;
-        user.created_on = user.created_on ? new Date(user.created_on) : null;
-        user.last_login = user.last_login ? new Date(user.last_login) : null;
-        user.updated_on = user.updated_on ? new Date(user.updated_on) : null;
+        user = formatUser(user);
       } catch (err) {
         invalidElements.push(i);
       }
@@ -318,6 +320,26 @@ export const updateTask = debounce((state, task) => {
     for (let i = 0; i < state.data.tasks.length; i++) {
       if (state.data.tasks[i].id === formattedTask.id) {
         state.data.tasks[i] = formattedTask;
+        return true;
+      }
+    }
+  } catch (err) {
+    return false;
+  }
+});
+
+/**
+ * Update the state with the updated user
+ * @param {object} state state of the app
+ * @param {object} user user object
+ * @returns boolean
+ */
+export const updateUser = debounce((state, user) => {
+  try {
+    const formattedUser = formatUser(user);
+    for (let i = 0; i < state.data.users.length; i++) {
+      if (state.data.users[i].id === formattedUser.id) {
+        state.data.users[i] = formattedUser;
         return true;
       }
     }
@@ -451,6 +473,24 @@ export const deleteAllocation = (state, id) => {
 };
 
 /**
+ * Deletes the user with given id from the state data
+ * @param {number} id user ID
+ * @returns boolean
+ */
+export const deleteUser = (state, id) => {
+  try {
+    for (let i = 0; i < state.data.users.length; i++) {
+      if (Number(state.data.users[i].id) === Number(id)) {
+        state.data.users.splice(i, 1);
+        return true;
+      }
+    }
+  } catch (err) {
+    return false;
+  }
+};
+
+/**
  * Add a new task
  * @param {object} task new task
  * @returns boolean
@@ -459,6 +499,21 @@ export const addTask = debounce((state, task) => {
   try {
     const formattedTask = formatTask(task);
     state.data.tasks.push(formattedTask);
+    return true;
+  } catch (err) {
+    return false;
+  }
+});
+
+/**
+ * Add a new user
+ * @param {object} user new user
+ * @returns boolean
+ */
+export const addUser = debounce((state, user) => {
+  try {
+    const formattedUser = formatUser(user);
+    state.data.users.push(formattedUser);
     return true;
   } catch (err) {
     return false;

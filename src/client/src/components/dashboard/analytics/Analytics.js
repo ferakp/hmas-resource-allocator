@@ -9,6 +9,11 @@ import { Users } from './users/Users';
 import { Data } from './data/Data';
 import * as utils from '../../../utils/utils';
 import * as api from '../../../api/api';
+import { mdiInformationOutline } from '@mdi/js';
+import { mdiAlert } from '@mdi/js';
+import { mdiUpdate } from '@mdi/js';
+import { mdiBellRing } from '@mdi/js';
+import Icon from '@mdi/react';
 
 /**
  * REMINDERS
@@ -66,6 +71,7 @@ export class Analytics extends React.Component {
   };
   isUpdating = false;
   isLoading = false;
+  consoleMessages = [];
 
   constructor(props) {
     super(props);
@@ -238,6 +244,21 @@ export class Analytics extends React.Component {
   };
 
   render() {
+    const activityMessages = this.props.state.data.activity.filter((i) => i[0] && i[1] && i[2]);
+    let uniqueActivityMessages = [];
+    activityMessages.reverse();
+    activityMessages.forEach((e) => {
+      let response = false;
+      for (let i = 0; i < uniqueActivityMessages.length; i++) {
+        if (uniqueActivityMessages[i][0] === e[0] && uniqueActivityMessages[i][1] === e[1]) {
+          response = true;
+          break;
+        }
+      }
+      if (!response) uniqueActivityMessages.push(e);
+    });
+    uniqueActivityMessages = uniqueActivityMessages.filter((el, index) => index < 25);
+
     return (
       <React.Fragment>
         <div className={styles.container}>
@@ -310,6 +331,39 @@ export class Analytics extends React.Component {
                   <Users data={this.state.allUsers} />
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className={styles.activityContainer}>
+            <p className={styles.sectionTitle}>Activity</p>
+            <div className={styles.messageContainer}>
+              {uniqueActivityMessages.map((message, i) => {
+                let iconName = mdiInformationOutline;
+                let messageContent = message[1];
+                let time = utils.formatDateForDisplay(message[2]);
+
+                switch (message[0]) {
+                  case 'Default':
+                    break;
+                  case 'Warning':
+                    iconName = mdiAlert;
+                    break;
+                  case 'Update':
+                    iconName = mdiUpdate;
+                    break;
+                  case 'Ready':
+                    iconName = mdiBellRing;
+                    break;
+                }
+
+                return (
+                  <div className={styles.message} key={'message' + i}>
+                    <Icon path={iconName} size={0.75} color="grey" className={styles.messageIcon} />
+                    <p>{messageContent}</p>
+                    <span className={styles.time}>{time}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -52,6 +52,9 @@ export const reducer = (state, action) => {
     case 'UPDATE_HOLON':
       utils.updateHolon(newState, action.payload.holon);
       break;
+    case 'UPDATE_USER':
+      utils.updateUser(newState, action.payload.user);
+      break;
     case 'UPDATE_ALLOCATION':
       utils.updateAllocation(newState, action.payload.allocation);
       break;
@@ -64,17 +67,26 @@ export const reducer = (state, action) => {
     case 'DELETE_ALLOCATION':
       utils.deleteAllocation(newState, action.payload.id);
       break;
+    case 'DELETE_USER':
+      utils.deleteUser(newState, action.payload.id);
+      break;
     case 'ADD_TASK':
       utils.addTask(newState, action.payload.task);
       break;
     case 'ADD_ALLOCATION':
       utils.addAllocation(newState, action.payload.allocation);
       break;
+    case 'ADD_USER':
+      utils.addUser(newState, action.payload.user);
+      break;
     case 'ADD_HOLON':
       utils.addHolon(newState, action.payload.holon);
       break;
     case 'ADD_GLOBAL_ERROR_MESSAGE':
       newState.globalErrorMessage = action.payload.globalErrorMessage;
+      break;
+    case 'ADD_ACTIVITY':
+      newState.data.activity.push([action.payload.type, action.payload.message, new Date()]);
       break;
   }
   return newState;
