@@ -108,7 +108,13 @@ export class LeftSidebar extends React.Component {
               {this.props.state.auth.user ? (
                 <div className={`${styles.link} ${this.props.location.pathname.startsWith('/account') ? styles.activeLink : ''}`} onClick={() => this.linkClick('Account')}>
                   <Icon path={mdiAccountDetails} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
-                  <p className={styles.linkName}>Account</p>
+                  <p className={styles.linkName}>
+                    {this.props.state.auth.user.firstname[0].toUpperCase() +
+                      this.props.state.auth.user.firstname.slice(1) +
+                      ' ' +
+                      this.props.state.auth.user.lastname[0].toUpperCase() +
+                      '.'}
+                  </p>
                 </div>
               ) : (
                 ''
