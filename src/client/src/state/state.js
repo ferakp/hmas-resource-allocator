@@ -20,6 +20,9 @@ export let initialState = {
     activity: [],
   },
   globalErrorMessage: null,
+  settings: {
+    
+  }
 };
 
 const syncFromLocalStorage = () => {

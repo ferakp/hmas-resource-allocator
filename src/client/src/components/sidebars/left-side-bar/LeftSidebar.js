@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './LeftSidebar.module.css';
 import Icon from '@mdi/react';
 import { getContext } from '../../../state/context';
-import { mdiCog } from '@mdi/js';
 import { mdiViewDashboardVariant } from '@mdi/js';
 import { mdiCloudBraces } from '@mdi/js';
 import { mdiCogOutline } from '@mdi/js';
@@ -12,6 +11,7 @@ import { mdiAccountDetails } from '@mdi/js';
 import { mdiAccountGroup } from '@mdi/js';
 import { mdiChevronLeft } from '@mdi/js';
 import { mdiChevronRight } from '@mdi/js';
+import { mdiDatabase } from '@mdi/js';
 
 export class LeftSidebar extends React.Component {
   state = {
@@ -35,7 +35,12 @@ export class LeftSidebar extends React.Component {
   };
 
   linkClick = (link) => {
-    if (link && link !== 'Logout' && link !== 'Login') this.props.navigate('/' + link.toLowerCase());
+    if (link && link === 'KnowledgeGraph') {
+      let host = window.location.origin.split(':')[1].replace('//', '');
+      let port = 7474;
+      const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+      window.open(protocol + ':' + '//' + host + ':' + port, '_blank');
+    } else if (link && link !== 'Logout' && link !== 'Login') this.props.navigate('/' + link.toLowerCase());
     else if (link) {
       this.props.navigate('/');
       this.props.dispatch({ type: 'LOGOUT' });
@@ -78,9 +83,9 @@ export class LeftSidebar extends React.Component {
               <Icon path={mdiAccountGroup} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
               <p className={styles.linkName}>Users</p>
             </div>
-            <div className={`${styles.link} ${this.props.location.pathname.startsWith('/settings') ? styles.activeLink : ''}`} onClick={() => this.linkClick('Settings')}>
-              <Icon path={mdiCogOutline} size={1} color="rgba(255, 255, 255, 0.548)" className={styles.linkIcon} />
-              <p className={styles.linkName}>Settings</p>
+            <div className={`${styles.link} ${styles.knowledgeGraph}`} onClick={() => this.linkClick('KnowledgeGraph')}>
+              <Icon path={mdiDatabase} size={1} color="white" className={styles.linkIcon} />
+              <p className={styles.linkName}>Knowledge Graph</p>
             </div>
             <div className={styles.minimizer}>
               <div className={styles.minimizerContent}>

@@ -96,7 +96,7 @@ export const updateData = async () => {
 
     if (dispatch && Object.keys(data).length > 0) {
       dispatch({ type: 'DATA_UPDATED', payload: { data } });
-      dispatch({ type: 'ADD_ACTIVITY', payload: { type: "Default", message: "API has retrieved data" } });
+      dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Default', message: 'API has retrieved data' } });
       if (failedUpdateTargets.length === 0) logger.log('Success', 'Data have been retrieved');
       else logger.log('Success', 'Data have been partially retrieved');
     } else {
@@ -287,13 +287,29 @@ export async function getUsers(query) {
 }
 
 /**
+ * Add user with given parameters
+ * @param {object} parameters new user details
+ * @returns standard JSON:API response
+ */
+export async function addUser(params) {
+  try {
+    checkConnection();
+    const userResponse = await utils.post('users/', token, params);
+    handleErrorResponse(userResponse.data || userResponse.response.data);
+    return userResponse.data || userResponse.response.data;
+  } catch (err) {
+    return generateErrorTemplate('Error occured while adding the user', err);
+  }
+}
+
+/**
  * Update user
  * @returns standard JSON:API response
  */
 export async function updateUser(userId, params) {
   try {
     checkConnection();
-    const userResponse = await utils.post('users/' + userId, token, params);
+    const userResponse = await utils.patch('users/' + userId, token, params);
     handleErrorResponse(userResponse.data || userResponse.response.data);
     return userResponse.data || userResponse.response.data;
   } catch (err) {
@@ -314,7 +330,7 @@ export async function deleteUser(userId) {
     return userResponse.data || userResponse.response.data;
   } catch (err) {
     // err has cError property which contains actual error
-    return generateErrorTemplate('Error occured while updating user', err);
+    return generateErrorTemplate('Error occured while deleting user', err);
   }
 }
 
@@ -602,7 +618,7 @@ export async function getStatus() {
  * @param {number} allocationId allocation ID
  * @returns standard JSON:API response
  */
- export async function deleteAllocation(allocationId) {
+export async function deleteAllocation(allocationId) {
   try {
     checkConnection();
     const response = await utils.del('allocations/' + allocationId, token);
@@ -633,14 +649,14 @@ export async function updateAllocation(allocationId, params) {
  * Updates the allocation's completion status
  * @returns standard JSON:API response
  */
- export async function updateAllocationCompletion(allocationId) {
+export async function updateAllocationCompletion(allocationId) {
   try {
     checkConnection();
-    const response = await utils.patch('allocations/' + allocationId+"/complete-requests", token, null);
+    const response = await utils.patch('allocations/' + allocationId + '/complete-requests', token, null);
     handleErrorResponse(response.data || response.response.data);
     return response.data || response.response.data;
   } catch (err) {
-    return generateErrorTemplate('Error occured while updating the allocation\'s completion status', err);
+    return generateErrorTemplate("Error occured while updating the allocation's completion status", err);
   }
 }
 
@@ -649,7 +665,7 @@ export async function updateAllocation(allocationId, params) {
  * @param {object} parameters new allocation details
  * @returns standard JSON:API response
  */
- export async function addAllocation(params) {
+export async function addAllocation(params) {
   try {
     checkConnection();
     const response = await utils.post('allocations/', token, params);
@@ -681,10 +697,10 @@ export async function getAllAllocations() {
  *  @param {Boolean} reallocate
  * @returns standard JSON:API response
  */
- export async function updateAllocationReallocateField(allocationId) {
+export async function updateAllocationReallocateField(allocationId) {
   try {
     checkConnection();
-    const response = await utils.post('allocations/' + allocationId+"/reallocate-requests", token, null);
+    const response = await utils.post('allocations/' + allocationId + '/reallocate-requests', token, null);
     handleErrorResponse(response.data || response.response.data);
     return response.data || response.response.data;
   } catch (err) {

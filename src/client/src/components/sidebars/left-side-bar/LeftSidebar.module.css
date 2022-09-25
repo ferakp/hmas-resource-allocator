@@ -46,6 +46,8 @@
 
 .logoContainer {
   margin-top: 5px;
+  padding-bottom: 5px;
+  border-bottom: #555 1px solid;
 }
 
 .titleContainer {
@@ -60,7 +62,7 @@
   font-size: 29px;
   font-weight: bold;
   font-family: Nunito, Open Sans;
-  margin: 0px 0px 10px 0px;
+  margin: 0px 0px 5px 0px;
 }
 
 .titleFullName {
@@ -161,9 +163,6 @@
   position: absolute;
   z-index: 2;
   right: -14px;
-  background-color: #232845 !important;
-  border-radius: 9999px;
-  width: 34px;
   top: 310px;
   justify-content: center;
   display: flex;
@@ -171,6 +170,11 @@
 
 .minimizerIcon:hover {
   cursor: pointer;
+}
+
+.minimizer .linkIcon {
+  background-color: #232845 !important;
+  border-radius: 9999px;
 }
 
 .minimize {
@@ -200,6 +204,12 @@
   padding: 0px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.knowledgeGraph {
+  border-top: #555 1px solid;
+  border-bottom: #555 1px solid;
+  margin-top: 150px;
 }
 
 @media only screen and (max-width: 767px) {
