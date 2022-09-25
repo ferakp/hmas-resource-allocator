@@ -35,6 +35,7 @@ export class UsersEditor extends React.Component {
     deleteUpdaterLoading: false,
     activeTab: 'Details',
     errorMessage: '',
+    showDeleteConfirmationModal: false,
     passwordMessage: '',
     highlight: false,
     fields: {
@@ -58,6 +59,24 @@ export class UsersEditor extends React.Component {
     super(props);
     this.wrapperRef = React.createRef();
   }
+
+  reset = () => {
+    this.setState({
+      fields: {
+        id: this.props.data?.id || '',
+        role: this.props.data?.role || '',
+        username: this.props.data?.username || '',
+        email: this.props.data?.email || '',
+        password: '',
+        passwordAgain: '',
+        firstname: this.props.data?.firstname || '',
+        lastname: this.props.data?.lastname || '',
+        created_on: this.props.data?.created_on || '',
+        last_login: this.props.data?.last_login || '',
+        updated_on: this.props.data?.updated_on || false,
+      },
+    });
+  };
 
   componentDidMount() {
     try {
@@ -166,21 +185,35 @@ export class UsersEditor extends React.Component {
           this.props.dispatch({ type: 'ADD_USER', payload: { user: serverResponse.data[0].attributes } });
           this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'A new user has been added' } });
         }
+
+        // Close editor
         setTimeout(() => {
-          this.props.close();
+          if (this.props.close) this.props.close();
+          this.editedPropertyNames = [];
+          if (this.props.pingStatus) this.props.pingStatus('success');
+          this.reset();
         }, 500);
       }
     } catch (err) {
-      console.log(err);
-      // Show loading
+      // Close loading
       this.setState({ userUpdaterLoading: false });
       this.showErrorMessage('Error occured while updating or adding the user');
+      if (this.props.pingStatus) this.props.pingStatus('fail');
     }
 
-    // Close editor
+    // Close loading
     setTimeout(() => {
       this.setState({ userUpdaterLoading: false });
     }, 500);
+  };
+
+  showDeleteConfirmationModal = () => {
+    this.setState({ showDeleteConfirmationModal: true });
+  };
+
+  deleteConfirmationModalResponseClicked = (response) => {
+    if (response) this.deleteUser();
+    this.setState({ showDeleteConfirmationModal: false });
   };
 
   deleteUser = async () => {
@@ -254,7 +287,7 @@ export class UsersEditor extends React.Component {
                 />
               </div>
               <div className={styles.elementContainer}>
-                <p className={styles.elementLabel}>Assign to</p>
+                <p className={styles.elementLabel}>Role</p>
                 <Select
                   id={'roleCombobox' + (this.props.data?.id || 'draft')}
                   className={styles.roleCombobox}
@@ -365,6 +398,7 @@ export class UsersEditor extends React.Component {
                     spellCheck: 'false',
                     style: {
                       maxHeight: 31,
+                      maxWidth: 205,
                       backgroundColor: 'white',
                       fontSize: 14,
                     },
@@ -383,6 +417,7 @@ export class UsersEditor extends React.Component {
                     spellCheck: 'false',
                     style: {
                       maxHeight: 31,
+                      maxWidth: 205,
                       backgroundColor: 'white',
                       fontSize: 14,
                     },
@@ -405,7 +440,7 @@ export class UsersEditor extends React.Component {
                         textTransform: 'none',
                       }}
                       className={styles.deleteButton}
-                      onClick={this.deleteUser}
+                      onClick={this.showDeleteConfirmationModal}
                       loading={this.state.deleteUpdaterLoading}
                       loadingPosition="start"
                       startIcon={<DeleteIcon size={0.6} />}
@@ -414,6 +449,22 @@ export class UsersEditor extends React.Component {
                     >
                       Delete this account
                     </LoadingButton>{' '}
+                    {this.state.showDeleteConfirmationModal ? (
+                      <div className={styles.modal}>
+                        <p className={styles.modalText}>Are you sure you want to delete this account?</p>
+
+                        <div className={styles.buttons}>
+                          <p className={styles.yesButton} onClick={() => this.deleteConfirmationModalResponseClicked(true)}>
+                            Yes
+                          </p>
+                          <p className={styles.noButton} onClick={() => this.deleteConfirmationModalResponseClicked(false)}>
+                            No
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      ''
+                    )}
                   </React.Fragment>
                 ) : (
                   ''
@@ -456,5 +507,7 @@ export class UsersEditor extends React.Component {
 
   cancelButtonClicked = () => {
     if (this.props.close) this.props.close();
+    this.reset();
+    this.editedPropertyNames = [];
   };
 }

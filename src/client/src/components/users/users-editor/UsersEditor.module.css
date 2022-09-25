@@ -49,6 +49,7 @@
   margin: 0 0 0 10px;
   color: blue;
   font-size: 14px;
+  padding-top: 2px;
 }
 
 .cancelButton:hover {
@@ -126,4 +127,49 @@
   max-height: 1px;
   color: black;
   width: 100%;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+}
+
+.modal {
+  background-color: rgba(85, 85, 85, 0.081);
+  margin-top: 25px;
+  padding: 10px;
+  border-radius: 9px;
+  animation: fadeInShow 0.4;
+}
+
+.modalText {
+  margin: 0px;
+  color: #555;
+}
+
+.buttons p {
+  margin-right: 15px;
+  margin-bottom: 0px;
+}
+
+.buttons p:hover {
+  cursor: pointer;
+}
+
+.yesButton {
+  background-color: rgba(13, 83, 235, 0.887);
+  color: white;
+  border-radius: 3px;
+  padding: 4px;
+  min-width: 39px;
+  text-align: center;
+}
+
+.noButton {
+  background-color: rgba(13, 83, 235, 0.887);
+  color: white;
+  border-radius: 3px;
+  padding: 4px;
+  min-width: 39px;
+  text-align: center;
 }
