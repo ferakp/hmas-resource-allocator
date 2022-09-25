@@ -119,6 +119,7 @@ export class UsersEditor extends React.Component {
     // Return if nothing has changed
     if (this.editedPropertyNames.length === 0) {
       this.props.close();
+      this.setState({ userUpdaterLoading: false });
       return;
     }
 
@@ -126,10 +127,12 @@ export class UsersEditor extends React.Component {
     if (this.editedPropertyNames.includes('password')) {
       if (this.state.fields.password !== this.state.fields.passwordAgain) {
         this.showPasswordMessage("Passwords don't match");
+        this.setState({ userUpdaterLoading: false });
         return;
       }
       if (this.state.fields.password.length < 6 || this.state.fields.password.length > 20) {
         this.showPasswordMessage('Password must have at least 6 and max 20 characters.');
+        this.setState({ userUpdaterLoading: false });
         return;
       }
     }
