@@ -17,11 +17,12 @@ export function createLog(type, message) {
   logCopy.logTime = new Date();
   logs.push(logCopy);
   tempLogs.push(logCopy);
+  if (tempLogs.length > 10) {
+    tempLogs.length = 0;
+  }
   if (isActive) {
-    if (tempLogs.length > 10) {
-      const message = tempLogs.map((i) => i.type + ' ' + i.message + '\n').join('');
-      tempLogs.length = 0;
-    }
+    const message = tempLogs.map((i) => i.type + ' ' + i.message + '\n').join('');
+    console.log(message);
   }
 }
 

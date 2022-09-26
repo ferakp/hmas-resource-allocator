@@ -3,7 +3,7 @@ import * as backendApi from '../api/backend-api';
 
 /**
  * Pipe holon is a holon specialized retrieve and maintain tasks
- * 
+ *
  * NOTICE
  * Tasks are formatted before being moved to storage
  * Invalid tasks are ignored
@@ -56,9 +56,9 @@ export class PipeHolon {
     perceptions.forEach((perception) => {
       if (perception.type === 'tasksUpdate' && Array.isArray(perception.content.tasks)) {
         const tasks = [];
-        perception.content.tasks.forEach(task => {
+        perception.content.tasks.forEach((task) => {
           const formattedTask = utils.formatTask(task);
-          if(formattedTask !== null) tasks.push(formattedTask);
+          if (formattedTask !== null) tasks.push(formattedTask);
         });
         utils.log('Status', 'Pipe holon - tasks have been updated');
         this.data.tasks = tasks;

@@ -320,7 +320,7 @@ export class TaskEditor extends React.Component {
           this.props.dispatch({ type: 'UPDATE_TASK', payload: { task: serverResponse.data[0].attributes } });
         }
         if (this.props.dispatch && this.props.isDraft) {
-          this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'Task ' + this.props.data.id + ' has been created' } });
+          this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'A new task has been created' } });
           this.props.dispatch({ type: 'ADD_TASK', payload: { task: serverResponse.data[0].attributes } });
         }
         setTimeout(() => {
@@ -668,7 +668,7 @@ export class TaskEditor extends React.Component {
   };
 
   getDetailsTab = () => {
-    const users = this.props.state.data.users.filter((u) => ['user', 'moderator', 'admin'].includes(u.role));
+    const users = this.props.state.data.holons;
     this.taskTypeValue = this.state.task?.type || '';
     this.taskDescriptionValue = this.state.task?.description || '';
 
@@ -694,7 +694,7 @@ export class TaskEditor extends React.Component {
           >
             {users.map((user) => (
               <MenuItem key={user.id} value={user.id} style={{ fontSize: 14 }}>
-                {user.firstname[0].toUpperCase() + user.firstname.slice(1) + ' ' + user.lastname[0].toUpperCase() + user.lastname.slice(1)}
+                {user.name}
               </MenuItem>
             ))}
           </Select>

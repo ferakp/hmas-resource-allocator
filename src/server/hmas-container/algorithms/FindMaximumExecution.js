@@ -21,7 +21,7 @@ export const run = (tasks, holons) => {
     const sortedTasks = tasks.filter((task) => {
       if (task.is_completed) return false;
       if (task.start_date) {
-        if ((task.start_date - new Date()) < 0) return true;
+        if (task.start_date - new Date() < 0) return true;
         else return false;
       } else return true;
     });
@@ -91,7 +91,14 @@ export const sortTasksEstimatedTime = (tasks) => {
  */
 export const cloneHolons = (holons) => {
   return holons.map((holon) => {
-    return (({ latest_state, ...i }) => i)(holon);
+    const clonedHolon = {
+      ...holon,
+      availability_data: { ...holon.availability_data },
+      cost_data: { ...holon.cost_data },
+      load_data: { ...holon.load_data },
+      stress_data: { ...holon.stress_data },
+    };
+    return clonedHolon;
   });
 };
 
@@ -115,8 +122,8 @@ export const sortHolons = (holons, criteria) => {
 
 /**
  * Sorts holons according to demands
- * @param {object} task 
- * @param {array} holons 
+ * @param {object} task
+ * @param {array} holons
  */
 export const sortByDemands = (task, holons) => {
   holons.sort((a, b) => {
