@@ -55,6 +55,7 @@ export class HolonRow extends React.Component {
   };
 
   holonIsAvailableClicked = async () => {
+    if (Number(this.props.data.created_by) !== Number(this.props.state.auth.user.id)) return;
     this.setState({ holonIsAvailableLoading: true });
     const response = !this.props.data.is_available
       ? await api.updateHolonIsAvailableField(this.props.data.id, true)
@@ -76,6 +77,7 @@ export class HolonRow extends React.Component {
   };
 
   openEditContainer = (clickedSection) => {
+    if (Number(this.props.data.created_by) !== Number(this.props.state.auth.user.id)) return;
     this.setState({ editMode: true, clickedSection: clickedSection || 'Default' });
   };
 

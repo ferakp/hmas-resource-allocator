@@ -95,7 +95,14 @@ export const sortTasksOptimal = (tasks) => {
  */
 export const cloneHolons = (holons) => {
   return holons.map((holon) => {
-    return (({ latest_state, ...i }) => i)(holon);
+    const clonedHolon = {
+      ...holon,
+      availability_data: { ...holon.availability_data },
+      cost_data: { ...holon.cost_data },
+      load_data: { ...holon.load_data },
+      stress_data: { ...holon.stress_data },
+    };
+    return clonedHolon;
   });
 };
 

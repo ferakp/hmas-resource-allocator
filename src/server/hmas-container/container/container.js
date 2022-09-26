@@ -30,7 +30,7 @@ export let perceptions = [];
  */
 
 /**
- * Initialize container 
+ * Initialize container
  * - Creates a super holon
  * - Creates holons
  * - Configure all holons
@@ -105,7 +105,6 @@ function initialize() {
     isInitialized = true;
     logger.createLog('Status', 'Container - container has been initialized');
   } catch (err) {
-    console.log(err);
     logger.createLog('Error', 'Container - unable to initialize container');
     isInitialized = false;
     isContainerActive = false;
@@ -166,7 +165,6 @@ const updateAllocations = () => {
 const deliverPerceptions = () => {
   const perceptionsTemp = perceptions;
   perceptions = [];
-
   perceptionsTemp.forEach((perception) => {
     holons.forEach((holon) => {
       holon.receivePerception(perception);
@@ -184,7 +182,7 @@ let dataUpdaterInterval = setInterval(() => {
   updateTasks();
   updateAllocations();
   deliverPerceptions();
-}, 7000);
+}, 15000);
 let initializerInterval = setInterval(() => {
   if (isInitialized) clearInterval(initializerInterval);
   else {
@@ -202,15 +200,11 @@ let coreActivityMonitorInterval = setInterval(() => {
     utils.log('Status', 'Container - core is active, activating container');
   }
 }, 1000);
-let perceptionDelivererInterval = setInterval(() => {
-  deliverPerceptions();
-}, 2000);
 
 export const stop = () => {
   clearInterval(dataUpdaterInterval);
   clearInterval(initializerInterval);
   clearInterval(coreActivityMonitorInterval);
-  clearInterval(perceptionDelivererInterval);
   holons.forEach((holon) => {
     if (['AllocationHolon', 'CoreHolon', 'InterfaceHolon'].includes(holon.name)) {
       holon.stop();

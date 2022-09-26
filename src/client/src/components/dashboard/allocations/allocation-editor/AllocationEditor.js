@@ -225,7 +225,7 @@ export class AllocationEditor extends React.Component {
         if (this.props.dispatch && !this.props.isDraft) this.props.dispatch({ type: 'UPDATE_ALLOCATION', payload: { allocation: serverResponse.data[0].attributes } });
         if (this.props.dispatch && this.props.isDraft) {
           this.props.dispatch({ type: 'ADD_ALLOCATION', payload: { allocation: serverResponse.data[0].attributes } });
-          this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'Allocation ' + this.props.data.id + ' has been added' } });
+          this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'A new allocation has been added' } });
         }
       }
 
@@ -520,7 +520,7 @@ export class AllocationEditor extends React.Component {
               const name = task.name[0].toUpperCase() + task.name.slice(1);
               return (
                 <React.Fragment>
-                  <ListItem className={styles.taskElement} key={'ListItemTaskResult' + i} disablePadding>
+                  <ListItem className={styles.taskElement} key={'ListItemTaskResult' + i+"#"+id} disablePadding>
                     <ListItemButton style={{ marginLeft: '0px', paddingLeft: '9px' }} role={undefined} dense>
                       <p className={`${styles.relationParent}`}>TASK</p>
                       <p className={`${styles.taskName}`}>{name}</p>

@@ -652,7 +652,7 @@ export async function updateAllocation(allocationId, params) {
 export async function updateAllocationCompletion(allocationId) {
   try {
     checkConnection();
-    const response = await utils.patch('allocations/' + allocationId + '/complete-requests', token, null);
+    const response = await utils.post('allocations/' + allocationId + '/complete-requests', token, null);
     handleErrorResponse(response.data || response.response.data);
     return response.data || response.response.data;
   } catch (err) {
@@ -753,7 +753,7 @@ function generateErrorTemplate(title, errorObject) {
       {
         code: 'N/A',
         title: title,
-        detail: errorObject.cError.detail,
+        detail: errorObject.cError?.detail,
       },
     ],
   };

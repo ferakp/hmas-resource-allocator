@@ -134,7 +134,7 @@ export class HolonEditor extends React.Component {
           this.props.dispatch({ type: 'UPDATE_HOLON', payload: { holon: serverResponse.data[0].attributes } });
         }
         if (this.props.dispatch && this.props.isDraft) {
-          this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'Holon ' + this.props.data.id + ' has been created' } });
+          this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'A new holon has been created' } });
           this.props.dispatch({ type: 'ADD_HOLON', payload: { holon: serverResponse.data[0].attributes } });
         }
         setTimeout(() => {
@@ -142,6 +142,7 @@ export class HolonEditor extends React.Component {
         }, 500);
       }
     } catch (err) {
+      console.log(err)
       this.showErrorMessage('Error occured while updating the holon');
     }
 
