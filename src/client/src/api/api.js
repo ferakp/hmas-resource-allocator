@@ -24,7 +24,7 @@ export const activateApi = utils.debounce(() => {
   isRestApiActive = true;
   dataUpdateInterval = setInterval(async () => {
     await updateData();
-  }, 10000);
+  }, 15000);
   updateData();
 });
 
@@ -33,7 +33,7 @@ export const activateApiSync = () => {
   isRestApiActive = true;
   dataUpdateInterval = setInterval(async () => {
     await updateData();
-  }, 10000);
+  }, 15000);
   updateData();
 };
 
