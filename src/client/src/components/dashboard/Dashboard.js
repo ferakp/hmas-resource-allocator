@@ -33,10 +33,10 @@ export class Dashboard extends React.Component {
       case 'tasks':
         this.setState({ selectedTab: 'Tasks' });
         break;
-      case 'Holons':
+      case 'holons':
         this.setState({ selectedTab: 'Holons' });
         break;
-      case 'Algorithms':
+      case 'algorithms':
         this.setState({ selectedTab: 'Algorithms' });
         break;
     }
