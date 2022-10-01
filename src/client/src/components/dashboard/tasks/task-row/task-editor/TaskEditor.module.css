@@ -293,9 +293,9 @@
 }
 
 .resourceDemandContainer {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .resourceDemandLabel {
@@ -308,23 +308,23 @@
 }
 
 .resourceDemandDisplayerAndAdder {
-    margin-top: 15px;
+  margin-top: 15px;
 }
 
 .resourceDemandAdder {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: flex-end;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-end;
 }
 
 .taskResourceDemandExperienceYearsField {
-    margin-left: 10px !important;
+  margin-left: 10px !important;
 }
 
 .taskResourceDemandKnowledgeTagsField {
-    margin-left: 10px !important;
-    margin-right: 10px !important;
+  margin-left: 10px !important;
+  margin-right: 10px !important;
 }
 
 .resourceDemandDisplayer {
@@ -350,7 +350,8 @@
   margin-top: 10px;
 }
 
-.resourceDemandDisplayerTable th,td {
+.resourceDemandDisplayerTable th,
+td {
   font-size: 14px;
   opacity: 0.7;
 }
