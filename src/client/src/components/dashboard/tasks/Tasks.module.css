@@ -32,6 +32,7 @@
   flex: 1;
   max-height: 55px;
   align-items: flex-end;
+  margin-bottom: 10px;
 }
 
 .headerTitle {

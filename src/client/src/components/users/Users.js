@@ -118,7 +118,10 @@ export class Users extends React.Component {
   };
 
   render() {
-    if (!this.props.state.auth.user) setTimeout(() => this.props.navigate('/'), 50);
+    if (!this.props.state.auth.user) {
+      setTimeout(() => this.props.navigate('/'), 50);
+      return <div></div>;
+    }
     return (
       <div className={styles.container}>
         <div className={styles.mainHeader}>

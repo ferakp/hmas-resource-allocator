@@ -19,6 +19,11 @@ export class Account extends React.Component {
   };
 
   render() {
+    if (!this.props.state.auth.user) {
+      setTimeout(() => this.props.navigate('/'), 50);
+      return <div></div>;
+    }
+    
     return (
       <div className={styles.container}>
         <div className={styles.header}>
@@ -34,11 +39,11 @@ export class Account extends React.Component {
             You've logged in as{' '}
             <u>
               <b>
-                {this.props.state.auth.user.firstname[0].toUpperCase() +
-                  this.props.state.auth.user.firstname.slice(1) +
+                {this.props.state.auth.user?.firstname[0].toUpperCase() +
+                  this.props.state.auth.user?.firstname.slice(1) +
                   ' ' +
-                  this.props.state.auth.user.lastname[0].toUpperCase() +
-                  this.props.state.auth.user.lastname.slice(1)}
+                  this.props.state.auth.user?.lastname[0].toUpperCase() +
+                  this.props.state.auth.user?.lastname.slice(1)}
               </b>
             </u>
           </p>
@@ -49,7 +54,7 @@ export class Account extends React.Component {
             It's recommended that you do not change your role.
           </p>
 
-          <UsersEditor {...this.props} isDraft={false} pingStatus={this.pingStatus} data={this.props.state.auth.user} />
+          <UsersEditor {...this.props} isDraft={false} pingStatus={this.pingStatus} data={this.props.state.auth?.user} />
           {this.state.message ? <p className={`${styles.message} ${this.state.mode === 'success' ? styles.success : styles.fail}`}>{this.state.message}</p> : ''}
         </div>
       </div>
