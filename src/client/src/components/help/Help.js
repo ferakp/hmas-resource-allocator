@@ -14,7 +14,6 @@ export class Help extends React.Component {
 
   selectAnchor = (name) => {
     this.setState({ anchor: name });
-    setTimeout(() => console.log(this.state.anchor), 300);
   };
 
   render() {
