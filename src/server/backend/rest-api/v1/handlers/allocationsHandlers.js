@@ -351,7 +351,6 @@ export async function postAllocationCompleteRequests(req, res) {
             responseDetails.errors.push(errorMessages.NO_ALLOCABLE_RESULT);
           }
         } catch (err) {
-          console.log(err);
           // Failed to complete allocation
           responseDetails.errors.push(errorMessages.FAILED_TO_COMPLETE_ALLOCATION);
         }

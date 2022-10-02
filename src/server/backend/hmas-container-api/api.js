@@ -29,7 +29,6 @@ export async function getStatus() {
     }
     return responseDetails;
   } catch (err) {
-    console.log(err);
     return { errors: [{ code: 'N/A', title: 'AXIOS ERROR', detail: 'Error occured while establishing connection to the server.' }] };
   }
 }
@@ -44,7 +43,6 @@ const get = async (path, query, token) => {
       },
     });
   } catch (err) {
-    console.log(err);
     return false;
   }
 };

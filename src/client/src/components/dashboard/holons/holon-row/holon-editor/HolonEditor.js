@@ -142,7 +142,6 @@ export class HolonEditor extends React.Component {
         }, 500);
       }
     } catch (err) {
-      console.log(err)
       this.showErrorMessage('Error occured while updating the holon');
     }
 
@@ -415,7 +414,6 @@ export class HolonEditor extends React.Component {
       data.push({ name: 'Now', value: availabilityData.currentValue });
       return data;
     } catch (err) {
-      console.log(err);
       return [];
     }
   };

@@ -7,7 +7,6 @@ export class BasicNavbar extends React.Component {
   constructor(props) {
     super(props);
     this.wrapperRef = React.createRef();
-    console.log(this.props.navbarObject)
     this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
