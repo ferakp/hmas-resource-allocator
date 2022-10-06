@@ -16,7 +16,7 @@ import * as errorMessages from './rest-api/v1/messages/errors';
 export default function initializeServer(router) {
   // JTW configuration
   const SECRET_KEY = crypto.randomBytes(64).toString('hex');
-  //utils.addEnvVariable(path.join(__dirname, ".env"), "SECRET_KEY", SECRET_KEY);
+  utils.addEnvVariable(path.join(__dirname, ".env"), "SECRET_KEY", SECRET_KEY);
 
   // dotenv configuration
   dotenv.config({ path: path.join(__dirname + '/.env') });
@@ -24,7 +24,7 @@ export default function initializeServer(router) {
   // Rate limit configuration
   const limiter = rateLimit({
     windowMs: 1 * 60 * 1000,
-    max: 250,
+    max: 300,
     standardHeaders: true,
     legacyHeaders: false,
     message: JSON.stringify({ errors: [errorMessages.TOO_MANY_REQUESTS] }),

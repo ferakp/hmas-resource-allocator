@@ -593,8 +593,8 @@ export const getWeekNumber = (date) => {
  * AJAX CALLS
  */
 
-const host = 'localhost';
-const port = 5000;
+const host = process.env.NODE_ENV === 'production' ? (process.env.REST_HOST || 'localhost') : "localhost";
+const port = process.env.NODE_ENV === 'production' ? (process.env.REST_PORT || 80) : 5000;
 const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
 
 export const login = async (username, password) => {
