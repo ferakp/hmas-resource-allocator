@@ -11,7 +11,6 @@ const configInterval = setInterval(() => {
   if (process.env.REST_API_HOST && process.env.REST_API_PORT && process.env.NODE_ENV) {
     host = process.env.REST_API_HOST;
     port = process.env.REST_API_PORT;
-    protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
     clearInterval(configInterval);
   }
 }, 500);

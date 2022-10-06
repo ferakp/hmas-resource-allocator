@@ -19,7 +19,8 @@
   },
   "scripts": {
     "test": "jest",
-    "start": "nodemon --exec babel-node ./app.js"
+    "start": "nodemon --exec babel-node ./app.js",
+    "build": "npm install"
   },
   "eslintConfig": {
     "extends": [

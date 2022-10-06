@@ -36,8 +36,8 @@ export class LeftSidebar extends React.Component {
 
   linkClick = (link) => {
     if (link && link === 'KnowledgeGraph') {
-      let host = window.location.origin.split(':')[1].replace('//', '');
-      let port = 7474;
+      let host = process.env.NEO4J_HOST || window.location.origin.split(':')[1].replace('//', '');
+      let port =  process.env.NEO4J_PORT || 7474;
       const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
       window.open(protocol + ':' + '//' + host + ':' + port, '_blank');
     } else if (link && link !== 'Logout' && link !== 'Login') this.props.navigate('/' + link.toLowerCase());
