@@ -1,14 +1,8 @@
 version: "3.9"
 services:
-  react:
+  hmas:
     build: .
     ports:
-      - "3000:3000"
-  rest:
-    build: .
-    ports:
+      - "3000:8080"
       - "5000:5000"
-  neo4j:
-    build: .
-    ports:
-      - "7474:7474"
+      - "7300:7474"
