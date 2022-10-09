@@ -30,7 +30,6 @@ const wait = async (ms) => {
   return new Promise((r) => setTimeout(r, ms));
 };
 
-
 /**********************************'******************************
  *            CONTENT
  ***********************************'****************************/
@@ -48,7 +47,6 @@ if (!isInstalled) {
   runCommand('sudo apt-get install software-properties-common -y');
   runCommand('sudo apt-get -y install systemctl');
   runCommand('sudo apt-get install apt-utils -y');
-
   /**********************************'******************************
    *            POSTGRESQL INSTALLATION & CONFIGURATION
    ***********************************'****************************/

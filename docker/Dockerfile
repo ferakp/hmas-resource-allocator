@@ -2,7 +2,6 @@
 FROM ubuntu:22.04
 WORKDIR /app
 
-
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install sudo -y
 RUN sudo apt-get install software-properties-common -y
