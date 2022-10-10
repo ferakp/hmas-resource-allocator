@@ -158,6 +158,19 @@ async function createProductionEnvironment(pool) {
           new Date(),
           new Date(),
         ]);
+
+        await client.query('COMMIT');
+        await client.query('BEGIN');
+        await client.query('INSERT INTO users (role, username, password, email, firstname, lastname, created_on, updated_on) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [
+          'admin',
+          process.env.REST_ADMIN_USERNAME,
+          await encryptPassword(process.env.REST_ADMIN_PASSWORD),
+          'NA',
+          'NA',
+          'NA',
+          new Date(),
+          new Date(),
+        ]);
         await client.query('COMMIT');
       } catch (e) {
         await client.query('ROLLBACK');
@@ -167,7 +180,6 @@ async function createProductionEnvironment(pool) {
     })().catch((err) => console.log(err.stack));
   }
 }
-
 
 async function encryptPassword(plainPassword) {
   return new Promise(function (resolve, reject) {
