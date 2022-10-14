@@ -168,7 +168,7 @@ runCommand('pm2 start app.js --interpreter ./node_modules/@babel/node/bin/babel-
 process.chdir(path.join(__dirname, 'hmas-resource-allocator/src/server/hmas-container'));
 runCommand('pm2 start app.js --interpreter ./node_modules/@babel/node/bin/babel-node.js');
 process.chdir(path.join(__dirname, 'hmas-resource-allocator/src/client'));
-runCommand('pm2 serve build/');
+runCommand('pm2 serve -s build/');
 console.log("Frontend, Backend and HMAS Container are running");
 
 const run = async () => {
