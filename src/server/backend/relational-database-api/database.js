@@ -2,6 +2,7 @@ import { Pool } from 'pg';
 import * as errorMessages from './messages/errors';
 import * as createTableQueries from './queries/createTable';
 import * as testEnvironment from './queries/testEnvironment';
+import bcrypt from 'bcrypt';
 
 export let connection = {
   pool: null,
@@ -148,11 +149,14 @@ async function createProductionEnvironment(pool) {
       try {
         await testEnvironment.initialize();
         await client.query('BEGIN');
+        await client.query('DELETE FROM users WHERE username=$1 RETURNING *', [
+          process.env.HMAS_ACCOUNT,
+        ]);
         await client.query('INSERT INTO users (role, username, password, email, firstname, lastname, created_on, updated_on) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [
           'app',
           process.env.HMAS_ACCOUNT,
           await encryptPassword(process.env.HMAS_PASSWORD),
-          'NA',
+          'NA@app',
           'NA',
           'NA',
           new Date(),
@@ -161,11 +165,14 @@ async function createProductionEnvironment(pool) {
 
         await client.query('COMMIT');
         await client.query('BEGIN');
+        await client.query('DELETE FROM users WHERE username=$1 RETURNING *', [
+          process.env.REST_ADMIN_USERNAME,
+        ]);
         await client.query('INSERT INTO users (role, username, password, email, firstname, lastname, created_on, updated_on) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', [
           'admin',
           process.env.REST_ADMIN_USERNAME,
           await encryptPassword(process.env.REST_ADMIN_PASSWORD),
-          'NA',
+          'NA@admin',
           'NA',
           'NA',
           new Date(),
@@ -173,6 +180,7 @@ async function createProductionEnvironment(pool) {
         ]);
         await client.query('COMMIT');
       } catch (e) {
+        console.log(e);
         await client.query('ROLLBACK');
       } finally {
         client.release();
