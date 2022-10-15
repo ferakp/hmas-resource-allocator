@@ -56,7 +56,7 @@ if (!isInstalled) {
   let postgreSqlPassword = generatePassword();
 
   // Configure
-  runCommand('sudo cp ./postgresql.conf /etc/postgresql/14/main/postgresql.conf');
+  runCommand("sudo sed -i 's/#listen_addresses = 'localhost'/listen_addresses = '*'/g' /etc/postgresql/14/main/postgresql.conf");
   runCommand('sudo service postgresql start');
   runCommand(`sudo -u postgres psql -c "ALTER USER postgres PASSWORD '${defaultPassword}';" `);
   runCommand(`sudo -u postgres psql -c "CREATE DATABASE hmas;" `);
