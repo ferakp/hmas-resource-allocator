@@ -69,7 +69,7 @@ if (!isInstalled) {
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'DB_CONLIMIT', 150);
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'DB_HOST', 'localhost');
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'DB_PORT', 5432);
-  console.log("PostgreSQL configured");
+  console.log('PostgreSQL configured');
 
   /**********************************'******************************
    *            NEO4J INSTALLATION & CONFIGURATION
@@ -90,7 +90,7 @@ if (!isInstalled) {
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/hmas-container/.env'), 'GRAPH_DB_PORT', 7687);
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/hmas-container/.env'), 'GRAPH_DB_USERNAME', 'neo4j');
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/hmas-container/.env'), 'GRAPH_DB_PASSWORD', neo4jPassword);
-  console.log("Neo4j configured");
+  console.log('Neo4j configured');
 
   /**********************************'******************************
    *            BACKEND INSTALLATION & CONFIGURATION
@@ -101,8 +101,8 @@ if (!isInstalled) {
 
   const hmasRestPassword = generatePassword();
 
-  addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'REST_ADMIN_USERNAME', process.env.REST_ADMIN_USERNAME || "username");
-  addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'REST_ADMIN_PASSWORD', process.env.REST_ADMIN_PASSWORD || "password");
+  addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'REST_ADMIN_USERNAME', process.env.REST_ADMIN_USERNAME || 'username');
+  addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'REST_ADMIN_PASSWORD', process.env.REST_ADMIN_PASSWORD || 'password');
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'NODE_ENV', 'production');
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'HMAS_HOST', 'localhost');
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'HMAS_PORT', 5001);
@@ -111,7 +111,7 @@ if (!isInstalled) {
 
   runCommand('sudo npm install pm2@latest -g');
   runCommand('sudo npm install');
-  console.log("Backend installed");
+  console.log('Backend installed');
 
   /**********************************'******************************
    *            HMAS CONTAINER INSTALLATION & CONFIGURATION
@@ -127,7 +127,7 @@ if (!isInstalled) {
 
   process.chdir(path.join(__dirname, 'hmas-resource-allocator/src/server/hmas-container'));
   runCommand('sudo npm install');
-  console.log("HMAS Container installed");
+  console.log('HMAS Container installed');
 
   /**********************************'******************************
    *            FRONTEND INSTALLATION & CONFIGURATION
@@ -147,14 +147,14 @@ if (!isInstalled) {
   }
   dotenv.config({ path: path.join(__dirname + '/.env') });
   process.chdir(path.join(__dirname, 'hmas-resource-allocator/src/client/'));
-  runCommand('export DOMAIN=' + process.env.DOMAIN);
-  runCommand('export REST_HOST=' + process.env.REST_HOST);
-  runCommand('export REST_PORT=' + process.env.REST_PORT);
-  runCommand('export NEO4J_HOST=' + process.env.NEO4J_HOST);
-  runCommand('export NEO4J_PORT=' + process.env.NEO4J_PORT);
+  addEnvVariable(path.join(__dirname, '.env'), 'REACT_APP_DOMAIN', process.env.DOMAIN);
+  addEnvVariable(path.join(__dirname, '.env'), 'REACT_APP_REST_HOST', process.env.REST_HOST);
+  addEnvVariable(path.join(__dirname, '.env'), 'REACT_APP_REST_PORT', process.env.REST_PORT);
+  addEnvVariable(path.join(__dirname, '.env'), 'REACT_APP_NEO4J_HOST', process.env.NEO4J_HOST);
+  addEnvVariable(path.join(__dirname, '.env'), 'REACT_APP_NEO4J_PORT', process.env.NEO4J_PORT);
   runCommand('sudo npm install');
   runCommand('sudo npm run build');
-  console.log("Frontend installed");
+  console.log('Frontend installed');
 
   /**********************************'******************************
    *            THE REST OF CONFIGURATIONS
@@ -170,7 +170,7 @@ process.chdir(path.join(__dirname, 'hmas-resource-allocator/src/server/hmas-cont
 runCommand('pm2 start app.js --interpreter ./node_modules/@babel/node/bin/babel-node.js');
 process.chdir(path.join(__dirname, 'hmas-resource-allocator/src/client'));
 runCommand('pm2 serve -s build/');
-console.log("Frontend, Backend and HMAS Container are running");
+console.log('Frontend, Backend and HMAS Container are running');
 
 const run = async () => {
   while (true) {
