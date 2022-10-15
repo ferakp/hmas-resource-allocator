@@ -593,14 +593,15 @@ export const getWeekNumber = (date) => {
  * AJAX CALLS
  */
 
-const host = process.env.NODE_ENV === 'production' ? (process.env.REACT_APP_REST_HOST || 'localhost') : "localhost";
-const port = process.env.NODE_ENV === 'production' ? (process.env.REACT_APP_REST_PORT || 80) : 5000;
+const host = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_REST_HOST || 'localhost' : 'localhost';
+const port = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_REST_PORT || 80 : 5000;
 const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+const urlBase = process.env.REACT_APP_REST_PORT === 80 ? protocol + '://' + host : protocol + '://' + host + ':' + port;
 
 export const login = async (username, password) => {
   try {
     return await axios({
-      url: protocol + '://' + host + ':' + port + '/api/v1/auth/login',
+      url: urlBase + '/api/v1/auth/login',
       method: 'get',
       headers: {
         Authorization: 'Basic ' + window.btoa(username + ':' + password),
@@ -617,7 +618,7 @@ export const login = async (username, password) => {
 export const get = async (path, query, token) => {
   try {
     return await axios({
-      url: protocol + '://' + host + ':' + port + '/api/v1/' + path + '/' + query,
+      url: urlBase + '/api/v1/' + path + '/' + query,
       method: 'get',
       headers: {
         Authorization: 'Bearer ' + token,
@@ -634,7 +635,7 @@ export const get = async (path, query, token) => {
 export const post = async (path, token, reqParams) => {
   try {
     return await axios({
-      url: protocol + '://' + host + ':' + port + '/api/v1/' + path,
+      url: urlBase + '/api/v1/' + path,
       method: 'post',
       headers: {
         Authorization: 'Bearer ' + token,
@@ -652,7 +653,7 @@ export const post = async (path, token, reqParams) => {
 export const patch = async (path, token, reqParams) => {
   try {
     return await axios({
-      url: protocol + '://' + host + ':' + port + '/api/v1/' + path,
+      url: urlBase + '/api/v1/' + path,
       method: 'patch',
       headers: {
         Authorization: 'Bearer ' + token,
@@ -670,7 +671,7 @@ export const patch = async (path, token, reqParams) => {
 export const del = async (path, token) => {
   try {
     return await axios({
-      url: protocol + '://' + host + ':' + port + '/api/v1/' + path,
+      url: urlBase + '/api/v1/' + path,
       method: 'delete',
       headers: {
         Authorization: 'Bearer ' + token,
