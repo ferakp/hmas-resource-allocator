@@ -596,7 +596,7 @@ export const getWeekNumber = (date) => {
 const host = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_REST_HOST || 'localhost' : 'localhost';
 const port = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_REST_PORT || 80 : 5000;
 const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-const urlBase = process.env.REACT_APP_REST_PORT === 80 ? protocol + '://' + host : protocol + '://' + host + ':' + port;
+const urlBase = process.env.REACT_APP_REST_PORT.toString() === "80" ? protocol + '://' + host : protocol + '://' + host + ':' + port;
 
 export const login = async (username, password) => {
   try {

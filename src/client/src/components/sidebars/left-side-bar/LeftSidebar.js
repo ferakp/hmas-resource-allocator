@@ -39,7 +39,7 @@ export class LeftSidebar extends React.Component {
       let host = process.env.REACT_APP_NEO4J_HOST || window.location.origin.split(':')[1].replace('//', '');
       let port =  process.env.REACT_APP_NEO4J_PORT || 7474;
       const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-      const url = process.env.REACT_APP_NEO4J_PORT === 80 ? protocol + '://' + host : protocol + '://' + host + ':' + port;
+      const url = process.env.REACT_APP_NEO4J_PORT.toString() === "80" ? protocol + '://' + host : protocol + '://' + host + ':' + port;
       window.open(url, '_blank');
     } else if (link && link !== 'Logout' && link !== 'Login') this.props.navigate('/' + link.toLowerCase());
     else if (link) {
