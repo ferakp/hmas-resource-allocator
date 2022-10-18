@@ -8,8 +8,7 @@ const configInterval = setInterval(() => {
   if (process.env.HMAS_HOST && process.env.HMAS_PORT && process.env.NODE_ENV) {
     host = process.env.HMAS_HOST;
     port = process.env.HMAS_PORT;
-    if (process.env.NODE_ENV === 'production') protocol = 'https';
-    else protocol = 'http';
+    protocol = 'http';
     clearInterval(configInterval);
   }
 }, 500);
