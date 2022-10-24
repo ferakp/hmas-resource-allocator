@@ -39,6 +39,7 @@ RUN sudo npm install nodemon -g
 EXPOSE 3000
 EXPOSE 5000
 EXPOSE 7300
+EXPOSE 7687
 
 COPY . .
 
