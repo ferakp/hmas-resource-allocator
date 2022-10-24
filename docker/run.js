@@ -8,7 +8,7 @@ var process = require('process');
  ***********************************'****************************/
 
 const generatePassword = () => {
-  return 'a!8jsj11' + Math.floor(Math.random() * 5422554) + 'aas3' + Buffer.from(Math.random().toString()).toString('base64').substring(10, 15);
+  return 'a8jsj11' + Math.floor(Math.random() * 5422554) + 'aas3' + Buffer.from(Math.random().toString()).toString('base64').substring(10, 15);
 };
 
 const runCommand = (command) => {
