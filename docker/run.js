@@ -149,8 +149,13 @@ if (!isInstalled) {
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/client/.env'), 'REACT_APP_DOMAIN', process.env.DOMAIN);
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/client/.env'), 'REACT_APP_REST_HOST', 'api.' + process.env.DOMAIN);
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/client/.env'), 'REACT_APP_REST_PORT', 80);
-  addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/client/.env'), 'REACT_APP_NEO4J_HOST', 'neo4j.' + process.env.DOMAIN);
-  addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/client/.env'), 'REACT_APP_NEO4J_PORT', 80);
+  if (process.env.IP === 'localhost') {
+    addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/client/.env'), 'REACT_APP_NEO4J_HOST', 'neo4j.' + process.env.DOMAIN);
+    addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/client/.env'), 'REACT_APP_NEO4J_PORT', 80);
+  } else {
+    addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/client/.env'), 'REACT_APP_NEO4J_HOST', process.env.IP);
+    addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/client/.env'), 'REACT_APP_NEO4J_PORT', 7300);
+  }
   runCommand('sudo npm install');
   runCommand('sudo npm run build');
   console.log('Frontend installed');
