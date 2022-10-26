@@ -22,7 +22,7 @@ RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-
 RUN apt-get install wget -y
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install postgresql postgresql-contrib -y
+RUN apt-get install postgresql-14 postgresql-contrib -y
 
 RUN apt-get update -y
 RUN apt-get install openjdk-11-jre -y
