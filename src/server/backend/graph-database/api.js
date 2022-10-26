@@ -39,9 +39,9 @@ export async function createAccount(username, password) {
     if (loginUsername === null || loginPassword === null) return false;
     const baseCommand = 'cypher-shell -u ' + loginUsername + ' -p ' + loginPassword;
     let deleteCommand = baseCommand + ' > echo ' + " 'DROP USER " + username + " IF EXISTS'";
-    executeCommand(deleteCommand)
+    await executeCommand(deleteCommand)
     let createUserCommand = baseCommand + " > echo 'CREATE USER " + username + ' SET PASSWORD "' + password + '" CHANGE NOT REQUIRED\'';
-    if (!executeCommand(createUserCommand)) return false;
+    if (!await executeCommand(createUserCommand)) return false;
     return true;
   } catch (err) {
     return false;
