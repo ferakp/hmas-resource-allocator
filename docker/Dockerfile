@@ -29,7 +29,7 @@ RUN apt-get install openjdk-11-jre -y
 RUN wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
 RUN echo 'deb https://debian.neo4j.com stable latest' | sudo tee -a /etc/apt/sources.list.d/neo4j.list
 RUN apt-get update
-RUN apt-get install neo4j=1:4.4.9 -y
+RUN apt-get install neo4j -y
 
 
 RUN sudo npm install dotenv -g
