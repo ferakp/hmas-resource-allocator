@@ -62,6 +62,7 @@ if (!isInstalled) {
   runCommand(`sudo -u postgres psql -c "CREATE DATABASE hmas;" `);
   runCommand(`sudo -u postgres psql -c "CREATE USER ${postgresqlUsername} WITH PASSWORD '${postgreSqlPassword}';" `);
   runCommand(`sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE hmas TO ${postgresqlUsername};" `);
+  runCommand(`sudo -u postgres psql -c "ALTER USER ${postgresqlUsername} WITH SUPERUSER;" `);
 
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'DB_DATABASE', 'hmas');
   addEnvVariable(path.join(__dirname, 'hmas-resource-allocator/src/server/backend/.env'), 'DB_PASSWORD', postgreSqlPassword);
