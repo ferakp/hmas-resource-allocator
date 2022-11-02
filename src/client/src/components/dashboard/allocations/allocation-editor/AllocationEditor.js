@@ -218,10 +218,10 @@ export class AllocationEditor extends React.Component {
       });
 
       let serverResponse = null;
-      if (!this.props.isDraft) serverResponse = await api.updateAllocation(this.props.data.id, params);
-      else serverResponse = await api.addAllocation(params);
-      if (serverResponse.errors.length > 0) this.showErrorMessage(serverResponse.errors[0].detail);
-      else if (serverResponse.data) {
+      if (!this.props.isDraft && Object.keys(params).length > 0) serverResponse = await api.updateAllocation(this.props.data.id, params);
+      else if(this.props.isDraft && Object.keys(params).length > 0) serverResponse = await api.addAllocation(params);
+      if (serverResponse?.errors.length > 0) this.showErrorMessage(serverResponse.errors[0].detail);
+      else if (serverResponse?.data) {
         if (this.props.dispatch && !this.props.isDraft) this.props.dispatch({ type: 'UPDATE_ALLOCATION', payload: { allocation: serverResponse.data[0].attributes } });
         if (this.props.dispatch && this.props.isDraft) {
           this.props.dispatch({ type: 'ADD_ALLOCATION', payload: { allocation: serverResponse.data[0].attributes } });
@@ -230,7 +230,7 @@ export class AllocationEditor extends React.Component {
       }
 
       if (this.editedPropertyNames.includes('complete')) {
-        serverResponse = api.updateAllocationCompletion(this.props.data.id);
+        serverResponse = await api.updateAllocationCompletion(this.props.data.id);
         if (serverResponse.errors.length > 0) this.showErrorMessage(serverResponse.errors[0].detail);
         this.props.dispatch({ type: 'UPDATE_ALLOCATION', payload: { allocation: serverResponse.data[0].attributes } });
         this.props.dispatch({ type: 'ADD_ACTIVITY', payload: { type: 'Update', message: 'Allocation ' + this.props.data.id + ' has been updated' } });
@@ -240,6 +240,7 @@ export class AllocationEditor extends React.Component {
         this.props.close();
       }, 500);
     } catch (err) {
+      console.log(err)
       this.showErrorMessage('Error occured while updating or adding the allocation');
     }
 

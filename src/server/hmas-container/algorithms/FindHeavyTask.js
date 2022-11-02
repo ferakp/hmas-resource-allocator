@@ -1,5 +1,5 @@
 /**
- * FIND MAXIMUM EXECUTION ALGORITHM
+ * FIND HEAVY TASK ALGORITHM
  *
  * Runs algorithm with given parameters
  * ALGORITHMS PHASES
