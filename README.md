@@ -2,19 +2,19 @@
 
 Resource allocation system is a web application for smart resource allocation. It's a holonic multiagent system based on knowledge graph with REST API.  
 
-# Using system
+## Using system
 
 It is available both as a standalone server, or an embeddable component. 
 
-# Dependencies
+## Dependencies
 
 The system is built using [PostgreSQL](https://www.postgresql.org/) version 14 and a recent version of supported Neo4j (4.4 is recommended). Node and Express are also required.
 
-# Production
+## Production
 
 The web application is available for production as a Docker container. Please, read /Docker folder's README file for further instructions. 
 
-# Development
+## Development
 
 Following instructions helps to set up a development environment:<br>
 
