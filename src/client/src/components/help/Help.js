@@ -30,13 +30,12 @@ export class Help extends React.Component {
             <div className={styles.descriptionContainer}>
               <p className={styles.descriptionText}>
                 The HMAS resource allocation system is a holonic multi-agent system providing allocation services for labour resources. It manages a fixed amount of some given
-                tasks that must be allocated to labour resources (holons) who request that resource from the system. The system converts labour resources into holons and provide
-                additional features for registering tasks.
+                tasks that must be allocated to labour resources (holons). The system converts labour resources into holons and provide additional features for registering tasks.
               </p>
 
               <p className={styles.descriptionText}>
                 The purpose of the system is to provide a flexible platform for advanced and complex allocation requests that are dependent on real-time dynamic labour resources
-                and tasks. The system consist of six sub-systems: web application, backend, HMAS Container, relational database, graph database and natural language interface.
+                and tasks. The system consist of six sub-systems: web application, backend, HMAS Container, relational database and graph database.
               </p>
             </div>
 
@@ -177,16 +176,6 @@ export class Help extends React.Component {
               </p>
             </div>
 
-            <p className={styles.sectionTitle} id="naturallanguageinterface">
-              Natural Language Interface
-            </p>
-            <div className={styles.descriptionContainer}>
-              <p className={styles.descriptionText}>
-                Natural Language Interface is a Python module providing interpretation functionalities from English to intermediate command language. It inspects sentences for
-                possible commands and produces intermediate interpretations.
-              </p>
-            </div>
-
             <p className={styles.sectionTitle} id="version">
               Version
             </p>
@@ -264,15 +253,6 @@ export class Help extends React.Component {
                 <li>
                   <a className={this.state.anchor === 'hmascontainer' ? styles.active : ''} href="#hmascontainer" onClick={() => this.selectAnchor('hmascontainer')}>
                     HMAS Container
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className={this.state.anchor === 'naturallanguageinterface' ? styles.active : ''}
-                    href="#naturallanguageinterface"
-                    onClick={() => this.selectAnchor('naturallanguageinterface')}
-                  >
-                    Natural Language Interface
                   </a>
                 </li>
                 <li>
