@@ -29,3 +29,4 @@ Following instructions helps to set up a development environment:<br>
 ## Ignore
 
 Ignore auto-generated passwords and IDE settings. 
+Ignore inconsistent client-REST API request/response handling structure as the system was originally designed to be integrated into another React system.
