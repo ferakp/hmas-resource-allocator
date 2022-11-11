@@ -25,3 +25,7 @@ Following instructions helps to set up a development environment:<br>
 - Open src/server/backend/.env file and set NODE_ENV variable's value to <b>development</b>. Then add your database's connection parameters to DB_ variables. 
 - Open src/server/hmas-container/.env file and configure both GRAPH_ and REST_API_ variables. 
 - Run all three components with <b>npm run start</b> command. 
+
+## Ignore
+
+Ignore auto-generated passwords and IDE settings. 
