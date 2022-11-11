@@ -314,7 +314,7 @@ function formatData(data) {
  * @param {object} task task object
  * @returns boolean
  */
-export const updateTask = debounce((state, task) => {
+export const updateTask = (state, task) => {
   try {
     const formattedTask = formatTask(task);
     for (let i = 0; i < state.data.tasks.length; i++) {
@@ -326,7 +326,7 @@ export const updateTask = debounce((state, task) => {
   } catch (err) {
     return false;
   }
-});
+};
 
 /**
  * Update the state with the updated user
@@ -596,7 +596,7 @@ export const getWeekNumber = (date) => {
 const host = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_REST_HOST || 'localhost' : 'localhost';
 const port = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_REST_PORT || 80 : 5000;
 const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-const urlBase = process.env.REACT_APP_REST_PORT.toString() === "80" ? protocol + '://' + host : protocol + '://' + host + ':' + port;
+const urlBase = process.env.REACT_APP_REST_PORT.toString() === '80' ? protocol + '://' + host : protocol + '://' + host + ':' + port;
 
 export const login = async (username, password) => {
   try {
