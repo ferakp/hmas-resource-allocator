@@ -11,12 +11,12 @@ This file contains environment variables for initialization and configuration se
 | STATE |   State of container     || installed or uninstalled                                                                 |
 | DOMAIN | Domain address || Default is localhost |
 | IP | IP address of the server || Default is localhost |
-| REST_HOST  | Host of the REST API for Frontend in production mode |
-| REST_PORT | Port of the REST API for Frontend in production mode |
-| NEO4J_HOST | Host of the NEO4J for Frontend in production mode |
-| NEO4J_PORT | Port of the NEO4J for Frontend in production mode |
-| REST_ADMIN_USERNAME | Default username for Frontend |
-| REST_ADMIN_PASSWORD | Default password for Frontend |
+| REST_HOST  | Host of the REST API for Frontend in production mode (auto-generated)|
+| REST_PORT | Port of the REST API for Frontend in production mode (auto-generated)|
+| NEO4J_HOST | Host of the NEO4J for Frontend in production mode (auto-generated)|
+| NEO4J_PORT | Port of the NEO4J for Frontend in production mode (auto-generated)|
+| REST_ADMIN_USERNAME | Default username for web application |
+| REST_ADMIN_PASSWORD | Default password for web application |
 
 
 ## Installation instructions
