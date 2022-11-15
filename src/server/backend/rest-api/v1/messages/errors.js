@@ -1,7 +1,4 @@
 
-/**
- * RELATIONAL DATABASE ERROR MESSAGES
- */
 
 export const CREATE_TABLE_ERROR = {
     status: 500,
