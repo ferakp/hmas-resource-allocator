@@ -10,6 +10,7 @@ This file contains environment variables for initialization and configuration se
 |--------|-------------------------------------------------------------------------|
 | STATE |   State of container     || installed or uninstalled                                                                 |
 | DOMAIN | Domain address || Default is localhost |
+| IP | IP address of the server || Default is localhost |
 | REST_HOST  | Host of the REST API for Frontend in production mode |
 | REST_PORT | Port of the REST API for Frontend in production mode |
 | NEO4J_HOST | Host of the NEO4J for Frontend in production mode |
@@ -30,7 +31,7 @@ To install and run container you need to make sure of the following:
 * A domain name
 
 #### Step 1
-Open .env file and add your domain name without protocol. For example, mydomain.com.
+Open .env file and add your domain name without protocol. For example, mydomain.com. <br>Fill the IP field with your static IP address.<br>Enter default username and password for the administrator account using REST_ADMIN_USERNAME AND REST_ADMIN_PASSWORD fields. 
 
 #### Step 2
 Set the value of STATE variable to uninstalled. 
